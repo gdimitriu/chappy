@@ -18,6 +18,8 @@ Chappy uses the following libraries and technologies:
 - Saxon for xml2xml mapping.
 - Apache Digester for running a flow in one step.
 - JAXB for data-binding.Maven for building.
+- AXM for bytecode modification
+- reflections for resource discovery.
 
 
 
