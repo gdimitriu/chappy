@@ -7,8 +7,8 @@ The transformation server was choose as type of long running server. The transfo
 Chappy wish to implement the following characteristics of the long running server:
 - REST server using Jersey and Jetty.
 - Predefined service for transformation using staxon and saxon.
-- Auto-upgrade of the transformation flows/step. (not implemented yet)
-- Persistence of the upgrade.(not implemented yet)
+- hot-plugin of the transformation steps.
+- Persistence of the upgrade/hot-plugin.(not implemented yet)
 - HTTP upgrade service. (not implemented yet)
 
 Chappy uses the following libraries and technologies:
@@ -18,7 +18,7 @@ Chappy uses the following libraries and technologies:
 - Saxon for xml2xml mapping.
 - Apache Digester for running a flow in one step.
 - JAXB for data-binding.Maven for building.
-- AXM for bytecode modification
+- ASM for bytecode modification
 - reflections for resource discovery.
 
 
