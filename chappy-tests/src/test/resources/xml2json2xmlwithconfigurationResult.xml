@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<virtual>
+<flow>
+   <steps>
+      <step class="Xml2JsonStep">
+         <disabled>true</disabled>
+         <parameters>
+         	<mode>xml2json</mode>
+         </parameters>
+      </step>
+      <step class="Json2XmlStep">
+         <disabled>false</disabled>
+         <parameters>
+         	<mode>json2xml</mode>
+         </parameters>
+      </step>
+   </steps>
+</flow>
+</virtual>

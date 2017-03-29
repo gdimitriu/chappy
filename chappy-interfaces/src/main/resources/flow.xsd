@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+
+    This file is part of chappy project.
+
+    Chappy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Chappy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Chappy.  If not, see <http://www.gnu.org/licenses/>. 
+ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name = "flow">
+	<xs:complexType>
+		<xs:sequence>
+			<xs:element name = "steps" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name = "step" type = "stepDefinition" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+<xs:complexType name = "stepDefinition">
+	<xs:sequence>
+		<xs:element name = "disabled" type = "xs:string" minOccurs="1" maxOccurs="1"/>
+		<xs:element	name = "configuration" type = "configurationDef" minOccurs="0" maxOccurs="1"/>
+		<xs:element name = "parameters" type = "parametersDef" minOccurs="0" maxOccurs="1"/>
+	</xs:sequence>
+	<xs:attribute name = "class" type = "xs:string"/>
+</xs:complexType>
+
+<xs:complexType name = "configurationDef">
+	<xs:sequence>
+		<xs:element name = "autoPrimitive" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+		<xs:element name = "autoArray" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+		<xs:element name = "virtualNode" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+		<xs:element name = "inputProperty" type = "propertyDef" minOccurs="0" maxOccurs="unbounded"/>
+		<xs:element name = "outputProperty" type = "propertyDef" minOccurs="0" maxOccurs="unbounded"/>
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name = "propertyDef">
+	<xs:attribute name = "property" type = "xs:string"/>
+	<xs:attribute name = "value" type = "xs:string"/>
+</xs:complexType>
+
+<xs:complexType name = "parametersDef">
+	<xs:choice>
+		<xs:sequence>
+			<xs:element name = "factoryEngine" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name = "mappingName" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:element name = "mode" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+	</xs:choice>
+</xs:complexType>
+</xs:schema>

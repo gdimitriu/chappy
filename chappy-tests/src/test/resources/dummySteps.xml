@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow >
+   <steps>
+      <step class="PreProcessingStep">
+         <disabled>true</disabled>
+         <parameters>
+         	<mode>json2xml</mode>
+         </parameters>
+      </step>
+      <step class="ProcessingStep">
+         <disabled>false</disabled>
+         <parameters>
+         	<factoryEngine>net.sf.saxon.TransformerFactoryImpl</factoryEngine>
+         	<mappingName>xsltMap.xsl</mappingName>
+         </parameters>
+      </step>
+      <step class="PostProcessingStep">
+         <disabled>false</disabled>
+         <parameters>
+         	<mode>xml2json</mode>
+         </parameters>
+      </step>
+   </steps>
+</flow>
