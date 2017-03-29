@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.gdimitriu.chappy</groupId>
+		<artifactId>chappy</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<dependenciesToScan>com.github.gdimitriu.chappy:chappy-providers, com.github.gdimitriu.chappy:chappy-services, com.github.gdimitriu.chappy:chappy-flows, com.github.gdimitriu.chappy:chappy-interfaces, com.github.gdimitriu.chappy:chappy-configurations, com.github.gdimitriu.chappy:chappy-transformers</dependenciesToScan>
+					<additionalClasspathElements>
+						<additionalClasspathElement>${project.basedir}/src/test/resources/</additionalClasspathElement>
+						<additionalClasspathElement>${basedir}/../chappy-interfaces/src/main/resources/</additionalClasspathElement>
+					</additionalClasspathElements>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<artifactId>chappy-tests</artifactId>
+	<name>chappy-tests</name>
+	<description>functional tests</description>
+	<dependencies>
+		<!-- Jetty server -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<!-- jersery multipart -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-interfaces</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-configurations</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-services</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-flows</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-transformers</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+	</dependencies>
+</project>
