@@ -68,4 +68,21 @@ public class TransformerProvider {
 		}
 		return (ITransformerStep) result.newInstance();
 	}
+	
+	
+	/**
+	 * This will create the concrete step for the user. 
+	 * This is equivalent with the StepsFactory from digester.
+	 * @param fullName of the step (class)
+	 * @param userName is the user from cookie the same user that have push the transformer.
+	 * @return created steps
+	 * @throws Exception 
+	 */
+	public ITransformerStep createStep(final String fullName, final String userName) throws Exception {
+		try {
+			return CustomTransformerProvider.getInstance().createStep(fullName, userName);
+		} catch (Exception e) {
+			return createStep(fullName);
+		}
+	}
 }

@@ -120,4 +120,9 @@ public class DigesterFlowRunner implements IFlowRunner {
 	public void configure(final String mode, final String configuration) {
 		//nothing to to for digester
 	}
+
+	@Override
+	public void createSteps(String userName) throws Exception {
+		//nothing to do the the digester flow because this flow could not be overriden
+	}
 }

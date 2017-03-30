@@ -45,5 +45,9 @@ public class Remapper extends  RemapperValue {
 		}
 		return typeName;
 	}
+
+	@Override
+	public void setUserName(String user) {
+	}
 	
 }

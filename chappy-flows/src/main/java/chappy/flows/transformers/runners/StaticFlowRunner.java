@@ -96,7 +96,25 @@ public class StaticFlowRunner implements IFlowRunner{
 		}
 		
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
+	 */
+	@Override
+	public void createSteps(final String userName) throws Exception {
+		if (userName == null || userName.equals("")) {
+			createSteps();
+			return;
+		}
+		StepConfiguration[] steps = configuration.getSteps();
+		for (StepConfiguration conf : steps) {
+			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName(), userName);
+			step.setDisabled(String.valueOf(conf.isDisabled()));
+			conf.setStageParameters(step);
+			stepList.add(step);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.flows.IFlowRunner#executeSteps(chappy.utils.streams.wrappers.StreamHolder)
 	 */

@@ -95,4 +95,9 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public void createSteps(String userName) throws Exception {
+		//nothing to do for staxon simple flow because this flow could not be overriden
+	}
+
 }

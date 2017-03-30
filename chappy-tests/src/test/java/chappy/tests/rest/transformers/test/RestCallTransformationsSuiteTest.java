@@ -26,7 +26,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ RestCallsForDigesterTransformationsTest.class,
 		RestCallsForStaxonTransformationsTest.class,
-		RestCallsForFlowTransformationsTest.class})
+		RestCallsForFlowTransformationsTest.class,
+		RestUserCallsForFlowTransformationsTest.class})
 public class RestCallTransformationsSuiteTest {
 
 }

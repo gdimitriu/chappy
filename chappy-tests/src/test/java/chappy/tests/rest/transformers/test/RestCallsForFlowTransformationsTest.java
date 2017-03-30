@@ -46,6 +46,7 @@ import org.junit.Test;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
 
@@ -94,6 +95,7 @@ public class RestCallsForFlowTransformationsTest {
 			}
 		};
 		thread.start();
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
 	/**
@@ -218,23 +220,20 @@ public class RestCallsForFlowTransformationsTest {
 		WebTarget target = client.target(baseUri);
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field("name", "PreProcessingStep")
-	     .field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		Response response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "PostProcessingStep")
-	     .field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "ProcessingStep")
-	     .field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
@@ -250,6 +249,4 @@ public class RestCallsForFlowTransformationsTest {
 						StreamUtils.toStringFromStream(inputStream));
 		}
 	}
-	
-
 }

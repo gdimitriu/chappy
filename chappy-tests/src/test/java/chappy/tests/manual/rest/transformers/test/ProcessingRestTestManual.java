@@ -19,6 +19,8 @@
  */
 package chappy.tests.manual.rest.transformers.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -213,7 +215,6 @@ public class ProcessingRestTestManual {
 				.field("name", "PreProcessingStep")
 	     .field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		Response response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		System.out.println(response.getStatus());
@@ -221,7 +222,6 @@ public class ProcessingRestTestManual {
 				.field("name", "PostProcessingStep")
 	     .field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		System.out.println(response.getStatus());
@@ -229,7 +229,6 @@ public class ProcessingRestTestManual {
 				.field("name", "ProcessingStep")
 	     .field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		System.out.println(response.getStatus());
@@ -244,12 +243,52 @@ public class ProcessingRestTestManual {
 			InputStream inputStream = response.readEntity(InputStream.class);
 			System.out.println(StreamUtils.getStringFromResource("dummyStepsResponse.txt") + " \nvs\n" +
 						StreamUtils.toStringFromStream(inputStream));
-			}
+		}
 	}
 	
+	public void push3CustomTransformersByUserAndMakeTransformation() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("name", "PreProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		Response response = target.path("rest").path("add").path("flow").path("transformerByUser")
+				.queryParam("user", "gdimitriu")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "PostProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path("rest").path("add").path("flow").path("transformerByUser")
+				.queryParam("user", "gdimitriu")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "ProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path("rest").path("add").path("flow").path("transformerByUser")
+				.queryParam("user", "gdimitriu")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		multipartEntity = new FormDataMultiPart()
+				.field("data", "blabla");
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path("rest").path("transform").path("flow")
+					.queryParam("user", "gdimitriu")
+					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			System.out.println(StreamUtils.getStringFromResource("dummyStepsResponse.txt") + " \nvs\n" +
+						StreamUtils.toStringFromStream(inputStream));
+		}
+	}
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
-		test.pushTransformerAndUseIt();
+		test.push3CustomTransformersByUserAndMakeTransformation();
 	}
 
 }

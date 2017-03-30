@@ -73,6 +73,7 @@ public class TransformResources {
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamFlow(final FormDataMultiPart multipart,
+			@QueryParam("user") final String userName,
 			@Context UriInfo uriInfo) throws Exception {
 		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
@@ -98,7 +99,7 @@ public class TransformResources {
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
 				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
-		runner.createSteps();
+		runner.createSteps(userName);
 		runner.executeSteps(holder);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
