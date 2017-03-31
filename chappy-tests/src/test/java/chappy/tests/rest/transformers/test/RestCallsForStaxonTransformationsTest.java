@@ -45,6 +45,7 @@ import org.junit.Test;
 
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
@@ -105,7 +106,7 @@ public class RestCallsForStaxonTransformationsTest {
 	public void xml2jsonStepTest() {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path("rest").path("transform").path("staxon")
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON)
 				.queryParam("mode", "xml2json")
 				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE)
 				.request(MediaType.APPLICATION_XML)
@@ -122,7 +123,7 @@ public class RestCallsForStaxonTransformationsTest {
 	public void json2xmlStepTest() {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path("rest").path("transform").path("staxon")
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON)
 				.queryParam("mode", "json2xml")
 				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE)
 				.request(MediaType.APPLICATION_JSON)

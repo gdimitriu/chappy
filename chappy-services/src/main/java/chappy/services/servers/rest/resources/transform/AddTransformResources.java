@@ -32,13 +32,15 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-@Path("rest/add/flow")
+@Path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
 public class AddTransformResources {
 
 	@Context
@@ -57,7 +59,7 @@ public class AddTransformResources {
 	 * @return response with cookie used for the put operations.
 	 * @throws Exception
 	 */
-	@Path("transformer")
+	@Path(IRestResourcesConstants.REST_TRANSFORMER)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response pushTransformer(final FormDataMultiPart multipart,
@@ -77,7 +79,7 @@ public class AddTransformResources {
 	 * @return response with cookie used for the put operations.
 	 * @throws Exception
 	 */
-	@Path("transformerByUser")
+	@Path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response pushTransformer(final FormDataMultiPart multipart,

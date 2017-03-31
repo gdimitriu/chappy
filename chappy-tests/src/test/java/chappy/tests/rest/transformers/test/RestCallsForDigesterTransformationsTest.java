@@ -47,6 +47,7 @@ import org.junit.Test;
 
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
@@ -57,8 +58,6 @@ import chappy.utils.streams.StreamUtils;
  */
 public class RestCallsForDigesterTransformationsTest {
 	
-	private static final String DIGESTER_ONE_STEP = "digesterFlow";
-
 	private IServiceServer server = null;
 	
 	private int port = 0;
@@ -115,7 +114,7 @@ public class RestCallsForDigesterTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("configuration", StreamUtils.getStringFromResource("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(DIGESTER_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -133,7 +132,7 @@ public class RestCallsForDigesterTransformationsTest {
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(DIGESTER_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.queryParam("configuration", StreamUtils.getStringFromResource("xml2json2xmlwithconfigurations.xml"))
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
@@ -156,7 +155,7 @@ public class RestCallsForDigesterTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(DIGESTER_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -180,7 +179,7 @@ public class RestCallsForDigesterTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("processingMap1.xsl", getClass().getClassLoader().getResourceAsStream("processingMap1.xsl"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(DIGESTER_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -202,7 +201,7 @@ public class RestCallsForDigesterTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("processingMapParameters.xsl", getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(DIGESTER_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.queryParam("param1", "buru")
 				.queryParam("param2", "-1000")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})

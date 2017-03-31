@@ -45,6 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
@@ -114,28 +116,31 @@ public class RestUserCallsForFlowTransformationsTest {
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field("name", "PreProcessingStep")
 				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		Response response = target.path("rest").path("add").path("flow").path("transformerByUser")
+		Response response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
 				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "PostProcessingStep")
 				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path("rest").path("add").path("flow").path("transformerByUser")
+		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
 				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "ProcessingStep")
 				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path("rest").path("add").path("flow").path("transformerByUser")
+		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
 				.queryParam("user", "gdimitriu")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("data", "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
-		response = target.path("rest").path("transform").path("flow")
+		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 					.queryParam("user", "gdimitriu")
 					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA})
