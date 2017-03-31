@@ -19,22 +19,22 @@
  */
 package chappy.providers.authentication;
 
-import chappy.interfaces.authentication.IUserAuthentication;
+import chappy.interfaces.authentication.IUserPolicy;
 
 /**
  * provider for the authentication system.
  * @author Gabriel Dimitriu
  *
  */
-public class SystemAuthenticationProvider {
+public class SystemPolicyProvider {
 
 	/** singleton */
-	private static SystemAuthenticationProvider singleton = new SystemAuthenticationProvider();
+	private static SystemPolicyProvider singleton = new SystemPolicyProvider();
 	
 	/**
 	 * constructor for singleton.
 	 */
-	private SystemAuthenticationProvider() {
+	private SystemPolicyProvider() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -42,7 +42,7 @@ public class SystemAuthenticationProvider {
 	 * get the singleton instance.
 	 * @return singleton.
 	 */
-	public static SystemAuthenticationProvider getInstance() {
+	public static SystemPolicyProvider getInstance() {
 		return singleton;
 	}
 	
@@ -50,8 +50,8 @@ public class SystemAuthenticationProvider {
 	 * get the authentication handler 
 	 * @return authentication handler
 	 */
-	public IUserAuthentication getAuthenticationHandler() {
-		return new IUserAuthentication() {
+	public IUserPolicy getAuthenticationHandler() {
+		return new IUserPolicy() {
 		};
 	}
 }

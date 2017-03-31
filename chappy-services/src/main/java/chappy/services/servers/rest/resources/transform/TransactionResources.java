@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
-import chappy.providers.authentication.SystemAuthenticationProvider;
+import chappy.providers.authentication.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.utils.streams.rest.RestStreamingOutput;
@@ -88,7 +88,7 @@ public class TransactionResources {
 	@GET
 	public Response authenticate(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
 		
-		if (!SystemAuthenticationProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
+		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		CookieTransactionsToken response = new CookieTransactionsToken();

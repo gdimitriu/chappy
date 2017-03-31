@@ -24,7 +24,7 @@ package chappy.interfaces.authentication;
  * @author Gabriel Dimitriu
  *
  */
-public interface IUserAuthentication {
+public interface IUserPolicy {
 
 	/**
 	 * is the user Authenticated
