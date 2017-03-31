@@ -46,7 +46,6 @@ import javax.xml.validation.SchemaFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
-import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import chappy.configurations.system.SystemConfiguration;

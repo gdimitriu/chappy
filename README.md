@@ -8,7 +8,7 @@ Chappy wish to implement the following characteristics of the long running serve
 - REST server using Jersey and Jetty.
 - Predefined service for transformation using staxon and saxon.
 - Hot-plugin of the transformation steps.
-- Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. (not implemented yet)
+- Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. (delete or update is not implemented yet)
 - Hot-plugin of the transformations step with dependencies. (not implemented yet)
 - Persistence of the upgrade/hot-plugin.(not implemented yet)
 - HTTP upgrade service. (not implemented yet)
