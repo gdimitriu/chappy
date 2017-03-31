@@ -19,8 +19,6 @@
  */
 package chappy.tests.manual.rest.transformers.test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -115,9 +113,11 @@ public class ProcessingRestTestManual {
 		}
 	}
 
+	
 	public void xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	    .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -136,6 +136,7 @@ public class ProcessingRestTestManual {
 	public void xml2xmlXsltOneStepWParametersTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -156,6 +157,7 @@ public class ProcessingRestTestManual {
 	public void xml2json2xmlStepsFlowWithConfigurationTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE);
@@ -171,6 +173,7 @@ public class ProcessingRestTestManual {
 	public void xml2xml2xmlXsltFlowOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -193,6 +196,7 @@ public class ProcessingRestTestManual {
 				.register(MultiPartFeature.class)
 				.register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -206,6 +210,7 @@ public class ProcessingRestTestManual {
 		}
 	}
 	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
+	@SuppressWarnings("resource")
 	public void pushTransformerAndUseIt() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
@@ -246,6 +251,7 @@ public class ProcessingRestTestManual {
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public void push3CustomTransformersByUserAndMakeTransformation() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)

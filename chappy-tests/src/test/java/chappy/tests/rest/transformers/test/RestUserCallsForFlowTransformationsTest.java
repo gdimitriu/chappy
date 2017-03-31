@@ -46,7 +46,6 @@ import org.junit.Test;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.services.IServiceServer;
-import chappy.providers.transformers.custom.CustomTransformerProvider;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
@@ -59,8 +58,6 @@ import chappy.utils.streams.StreamUtils;
 public class RestUserCallsForFlowTransformationsTest {
 	
 	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
-
-	private static final String FLOW_ONE_STEP = "flow";
 
 	private IServiceServer server = null;
 	
@@ -107,6 +104,7 @@ public class RestUserCallsForFlowTransformationsTest {
 		server.stopServer();
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void push3CustomTransformersByUserAndMakeTransformation() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient()

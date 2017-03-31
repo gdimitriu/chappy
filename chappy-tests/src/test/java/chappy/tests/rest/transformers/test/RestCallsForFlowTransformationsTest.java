@@ -112,6 +112,7 @@ public class RestCallsForFlowTransformationsTest {
 				.register(MultiPartFeature.class)
 				.register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -131,6 +132,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2json2xmlStepsWithConfigurationTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE);
@@ -149,6 +151,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -170,6 +173,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -193,6 +197,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2xmlXsltOneStepWParametersTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -212,6 +217,7 @@ public class RestCallsForFlowTransformationsTest {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void push3CustomTransformersAndMakeTransformation() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient()
