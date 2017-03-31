@@ -42,6 +42,4 @@ public interface IRestPathConstants {
 			+ IRestResourcesConstants.REST_ADD + "/" + IRestResourcesConstants.REST_FLOW;
 	String PATH_TO_TRANSACTION = IRestResourcesConstants.BASE_REST + "/" 
 			+ IRestResourcesConstants.REST_TRANSACTION;
-	
-
 }

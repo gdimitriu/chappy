@@ -17,18 +17,43 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.rest.transformers.test;
+package chappy.services.servers.rest.resources.transform;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@RunWith(Suite.class)
-@SuiteClasses({ RestCallsForDigesterTransformationsTest.class,
-		RestCallsForStaxonTransformationsTest.class,
-		RestCallsForFlowTransformationsTest.class,
-		RestUserCallsForFlowTransformationsTest.class,
-		RestTrasactionFlowTransformationsTest.class})
-public class RestCallTransformationsSuiteTest {
+/**
+ * Cookie for transactions.
+ * @author Gabriel Dimitriu
+ *
+ */
+
+@XmlRootElement
+public class CookieTransactionsToken {
+
+	/** name of the user */
+	private String userName;
+
+	/**
+	 * cookie transaction token constructor
+	 */
+	public CookieTransactionsToken() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * get the user name
+	 * @return the user name
+	 */
+	public String getUserName() {
+		return userName;
+	}
+	
+	/**
+	 * set the user Name.
+	 * @param nameUser
+	 */
+	public void setUserName(String nameUser) {
+		this.userName = nameUser;
+	}
 
 }

@@ -17,18 +17,22 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.rest.transformers.test;
+package chappy.interfaces.authentication;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/**
+ * User authentication on the system.
+ * @author Gabriel Dimitriu
+ *
+ */
+public interface IUserAuthentication {
 
-@RunWith(Suite.class)
-@SuiteClasses({ RestCallsForDigesterTransformationsTest.class,
-		RestCallsForStaxonTransformationsTest.class,
-		RestCallsForFlowTransformationsTest.class,
-		RestUserCallsForFlowTransformationsTest.class,
-		RestTrasactionFlowTransformationsTest.class})
-public class RestCallTransformationsSuiteTest {
-
+	/**
+	 * is the user Authenticated
+	 * @param userName name of the user
+	 * @param password for the user
+	 * @return true if is authenticate correct
+	 */
+	default boolean isAuthenticate(final String userName, final String password) {
+		return true;
+	}
 }

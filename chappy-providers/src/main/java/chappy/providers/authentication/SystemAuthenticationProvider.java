@@ -17,35 +17,41 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.rest.resources;
+package chappy.providers.authentication;
+
+import chappy.interfaces.authentication.IUserAuthentication;
 
 /**
- * Constants for base rest paths.
- * 
+ * provider for the authentication system.
  * @author Gabriel Dimitriu
  *
  */
-public interface IRestResourcesConstants {
+public class SystemAuthenticationProvider {
+
+	/** singleton */
+	private static SystemAuthenticationProvider singleton = new SystemAuthenticationProvider();
 	
-	String BASE_REST = "rest";
+	/**
+	 * constructor for singleton.
+	 */
+	private SystemAuthenticationProvider() {
+		// TODO Auto-generated constructor stub
+	}
 
-	String REST_TRANSACTION = "transaction";
-
-	String REST_ADD = "add";
-
-	String REST_UPGRADE = "upgrade";
-
-	String REST_FLOW = "flow";
-
-	String REST_DIGESTER_FLOW = "digesterFlow";
-
-	String REST_TRANSFORM = "transform";
-
-	String REST_TRANSFORMER_STAXON = "staxon";
-
-	String REST_TRANSFORMER = "transformer";
-
-	String REST_TRANSFORMER_BY_USER = "transformerByUser";
+	/**
+	 * get the singleton instance.
+	 * @return singleton.
+	 */
+	public static SystemAuthenticationProvider getInstance() {
+		return singleton;
+	}
 	
-	String REST_AUTHENTICATE = "authenticate";
+	/**
+	 * get the authentication handler 
+	 * @return authentication handler
+	 */
+	public IUserAuthentication getAuthenticationHandler() {
+		return new IUserAuthentication() {
+		};
+	}
 }
