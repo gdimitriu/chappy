@@ -32,13 +32,15 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-@Path("rest/add/flow")
+@Path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
 public class AddTransformResources {
 
 	@Context
@@ -57,16 +59,36 @@ public class AddTransformResources {
 	 * @return response with cookie used for the put operations.
 	 * @throws Exception
 	 */
-	@Path("transformer")
+	@Path(IRestResourcesConstants.REST_TRANSFORMER)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response pushTransformer(final FormDataMultiPart multipart,
-			@QueryParam("user") String user,
 			@Context UriInfo uriInfo) throws Exception {
 		String transformerName = multipart.getField("name").getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
 				.getField("data").getValue());
 		CustomTransformerStorageProvider.getInstance().pushNewTransformer(transformerName, transformerData);
+		return Response.ok().build();
+	}
+	
+	/**
+	 * post transformer resources for a specific user
+	 * @param multipart
+	 * @param user
+	 * @param uriInfo
+	 * @return response with cookie used for the put operations.
+	 * @throws Exception
+	 */
+	@Path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response pushTransformer(final FormDataMultiPart multipart,
+			@QueryParam("user") final String userName,
+			@Context UriInfo uriInfo) throws Exception {
+		String transformerName = multipart.getField("name").getValue();
+		byte[] transformerData = Base64.getDecoder().decode(multipart
+				.getField("data").getValue());
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, transformerName, transformerData);
 		return Response.ok().build();
 	}
 }

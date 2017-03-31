@@ -55,4 +55,15 @@ public class CustomTransformerProvider {
 	public ITransformerStep createStep(final String name) throws Exception {
 		return CustomTransformerStorageProvider.getInstance().getNewInstance(name);
 	}
+	
+	/**
+	 * This will create the concrete step for the user. 
+	 * This is equivalent with the StepsFactory from digester.
+	 * @param name of the step (class)
+	 * @return created step
+	 * @throws Exception 
+	 */
+	public ITransformerStep createStep(final String fullName, final String userName) throws Exception {
+		return CustomTransformerStorageProvider.getInstance().getNewInstance(fullName, userName);
+	}
 }

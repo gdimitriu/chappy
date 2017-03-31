@@ -45,7 +45,10 @@ import org.junit.Before;
 import org.junit.Test;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
 
@@ -57,8 +60,6 @@ import chappy.utils.streams.StreamUtils;
 public class RestCallsForFlowTransformationsTest {
 	
 	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
-
-	private static final String FLOW_ONE_STEP = "flow";
 
 	private IServiceServer server = null;
 	
@@ -94,6 +95,7 @@ public class RestCallsForFlowTransformationsTest {
 			}
 		};
 		thread.start();
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
 	/**
@@ -110,12 +112,13 @@ public class RestCallsForFlowTransformationsTest {
 				.register(MultiPartFeature.class)
 				.register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("configuration", StreamUtils.getStringFromResource("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(FLOW_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -129,10 +132,11 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2json2xmlStepsWithConfigurationTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(FLOW_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 				.queryParam("configuration", StreamUtils.getStringFromResource("xml2json2xmlwithconfigurations.xml"))
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
@@ -147,6 +151,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -154,7 +159,7 @@ public class RestCallsForFlowTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(FLOW_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -168,6 +173,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -177,7 +183,7 @@ public class RestCallsForFlowTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("processingMap1.xsl", getClass().getClassLoader().getResourceAsStream("processingMap1.xsl"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(FLOW_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -191,6 +197,7 @@ public class RestCallsForFlowTransformationsTest {
 	public void xml2xmlXsltOneStepWParametersTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 	    		MediaType.APPLICATION_XML_TYPE)
@@ -198,7 +205,7 @@ public class RestCallsForFlowTransformationsTest {
 	    		MediaType.APPLICATION_XML_TYPE)
 	     .field("processingMapParameters.xsl", getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
 	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path("rest").path("transform").path(FLOW_ONE_STEP)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 				.queryParam("param1", "buru")
 				.queryParam("param2", "-1000")
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
@@ -210,6 +217,7 @@ public class RestCallsForFlowTransformationsTest {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void push3CustomTransformersAndMakeTransformation() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient()
@@ -218,29 +226,29 @@ public class RestCallsForFlowTransformationsTest {
 		WebTarget target = client.target(baseUri);
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field("name", "PreProcessingStep")
-	     .field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		Response response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
+				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		Response response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "PostProcessingStep")
-	     .field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
+				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "ProcessingStep")
-	     .field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path("rest").path("add").path("flow").path("transformer")
-				.queryParam("user", "gdimitriu")
+				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		multipartEntity = new FormDataMultiPart()
 				.field("data", "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
-		response = target.path("rest").path("transform").path("flow")
+		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
 					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
@@ -250,6 +258,4 @@ public class RestCallsForFlowTransformationsTest {
 						StreamUtils.toStringFromStream(inputStream));
 		}
 	}
-	
-
 }

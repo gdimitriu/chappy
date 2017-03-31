@@ -50,6 +50,14 @@ public class CustomTransformerStorageProvider {
 	}
 	
 	/**
+	 * clean the repository
+	 */
+	public void cleanRepository() {
+		transformersStorage = new HashMap<String, byte[]>();
+		loadedTransformers = new HashMap<String, Class<?>>();
+	}
+	
+	/**
 	 * get the singleton instance.
 	 * @return singleton instance.
 	 */
@@ -74,26 +82,56 @@ public class CustomTransformerStorageProvider {
 	}
 	
 	/**
+	 * push new transformer defined in one class.
+	 * @param userName
+	 * @param fullName
+	 * @param remappedBytecode
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws IOException 
+	 */
+	public void pushNewUserTransformer(final String userName, final String fullName, final byte[] originalByteCode) 
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+		RemapperValue remapper = (RemapperValue) getClass().getClassLoader()
+					.loadClass("chappy.transformers.custom.Remapper").newInstance();
+		remapper.setUserName(userName);
+		byte[] remappedBytecode = new ChangeByteCode().remapByteCode(originalByteCode, remapper);
+		transformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
+	}
+	
+	/**
 	 * get the new instance of the transformer.
-	 * @param name of the transformer
+	 * @param fullName of the transformer
 	 * @return transformer instance
 	 * @throws Exception
 	 */
-	public ITransformerStep getNewInstance(final String name) throws Exception {
-		if (loadedTransformers.containsKey(name)) {
+	public ITransformerStep getNewInstance(final String fullName) throws Exception {
+		if (loadedTransformers.containsKey(fullName)) {
 			try {
-				return (ITransformerStep) loadedTransformers.get(name).newInstance();
+				return (ITransformerStep) loadedTransformers.get(fullName).newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throw new Exception("For transformer " + name + "dependencies are not fullfilled " + e.getLocalizedMessage());
+				throw new Exception("For transformer " + fullName + "dependencies are not fullfilled " + e.getLocalizedMessage());
 			}
 		}
-		if (transformersStorage.containsKey(name)) {
-			byte[] classData = transformersStorage.get(name);
+		if (transformersStorage.containsKey(fullName)) {
+			byte[] classData = transformersStorage.get(fullName);
 			JavaClassLoaderSimple simpleLoader = new JavaClassLoaderSimple(getClass().getClassLoader());
-			Class<?> classDefinition = simpleLoader.loadClass(name, classData);
-			loadedTransformers.put(name, classDefinition);
+			Class<?> classDefinition = simpleLoader.loadClass(fullName, classData);
+			loadedTransformers.put(fullName, classDefinition);
 			return (ITransformerStep) classDefinition.newInstance();
 		}
 		return null;
 	}
+	
+	/**
+	 * get the new instance of the transformer.
+	 * @param fullName of the transformer
+	 * @return transformer instance
+	 * @throws Exception
+	 */
+	public ITransformerStep getNewInstance(final String fullName, final String userName) throws Exception {
+		return getNewInstance(CustomUtils.generateStorageName(userName, fullName));
+	}
+	
 }

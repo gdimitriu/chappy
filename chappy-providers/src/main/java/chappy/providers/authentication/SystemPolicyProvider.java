@@ -17,58 +17,41 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.absract.bytecode;
+package chappy.providers.authentication;
 
-import org.objectweb.asm.commons.Remapper;
+import chappy.interfaces.authentication.IUserPolicy;
 
 /**
+ * provider for the authentication system.
  * @author Gabriel Dimitriu
  *
  */
-public abstract class RemapperValue extends Remapper {
+public class SystemPolicyProvider {
 
-	private String originalValue = null;
-	private String newValue = null;
+	/** singleton */
+	private static SystemPolicyProvider singleton = new SystemPolicyProvider();
 	
 	/**
-	 * constructor
+	 * constructor for singleton.
 	 */
-	public RemapperValue() {
+	private SystemPolicyProvider() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @return the originalValue
+	 * get the singleton instance.
+	 * @return singleton.
 	 */
-	public String getOriginalValue() {
-		return originalValue;
-	}
-	/**
-	 * @param originalValue the originalValue to set
-	 */
-	public void setOriginalValue(String originalValue) {
-		this.originalValue = originalValue;
-	}
-
-	/**
-	 * get new value
-	 * @return new value
-	 */
-	public String getNewValue() {
-		return newValue;
-	}
-
-	/**
-	 * set new value
-	 * @param newValue
-	 */
-	public void setNewValue(String newValue) {
-		this.newValue = newValue;
+	public static SystemPolicyProvider getInstance() {
+		return singleton;
 	}
 	
 	/**
-	 * set user name
-	 * @param user
+	 * get the authentication handler 
+	 * @return authentication handler
 	 */
-	abstract public void setUserName(final String user);
+	public IUserPolicy getAuthenticationHandler() {
+		return new IUserPolicy() {
+		};
+	}
 }

@@ -36,6 +36,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
@@ -49,7 +51,7 @@ import chappy.utils.streams.wrappers.WrapperUtils;
  * @author Gabriel Dimitriu
  *
  */
-@Path("rest/transform")
+@Path(IRestPathConstants.PATH_TO_TRANSFORM)
 public class TransformResources {
 
 	@Context
@@ -69,10 +71,11 @@ public class TransformResources {
 	 * @return http response
 	 * @throws Exception 
 	 */
-	@Path("flow")
+	@Path(IRestResourcesConstants.REST_FLOW)
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamFlow(final FormDataMultiPart multipart,
+			@QueryParam("user") final String userName,
 			@Context UriInfo uriInfo) throws Exception {
 		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
@@ -98,7 +101,7 @@ public class TransformResources {
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
 				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
-		runner.createSteps();
+		runner.createSteps(userName);
 		runner.executeSteps(holder);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
@@ -113,7 +116,7 @@ public class TransformResources {
 	 * @return http response
 	 * @throws Exception 
 	 */
-	@Path("digesterFlow")
+	@Path(IRestResourcesConstants.REST_DIGESTER_FLOW)
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamDigesterOneStep(final FormDataMultiPart multipart,
@@ -157,7 +160,7 @@ public class TransformResources {
 	 * @return http response
 	 * @throws Exception 
 	 */
-	@Path("staxon")
+	@Path(IRestResourcesConstants.REST_TRANSFORMER_STAXON)
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON , MediaType.TEXT_XML})
 	@Produces({ MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON , MediaType.TEXT_XML})

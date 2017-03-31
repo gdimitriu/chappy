@@ -39,6 +39,12 @@ public interface IFlowRunner {
 	 * @throws Exception 
 	 */
 	public void createSteps() throws  Exception;
+	
+	/**
+	 * This will create the steps from the configuration for a specific user.
+	 * @throws Exception 
+	 */
+	public void createSteps(final String userName) throws  Exception;
 
 	/**
 	 * execute the flow constructed using the configuration.

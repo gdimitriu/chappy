@@ -20,10 +20,9 @@
 package chappy.tests.rest.transformers.test;
 
 import static org.junit.Assert.assertEquals;
-
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -38,25 +37,29 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
+
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class RestCallsForStaxonTransformationsTest {
+public class RestUserCallsForFlowTransformationsTest {
 	
-	private static final String CONFIGURATION_AUTOPRIMITIVE = "<?xml version=\"1.0\"?><configuration><autoPrimitive>false</autoPrimitive><autoArray>false</autoArray></configuration>";
+	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
 
 	private IServiceServer server = null;
 	
@@ -92,6 +95,7 @@ public class RestCallsForStaxonTransformationsTest {
 			}
 		};
 		thread.start();
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
 	/**
@@ -102,38 +106,49 @@ public class RestCallsForStaxonTransformationsTest {
 		server.stopServer();
 	}
 
+	@SuppressWarnings("resource")
 	@Test
-	public void xml2jsonStepTest() {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON)
-				.queryParam("mode", "xml2json")
-				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE)
-				.request(MediaType.APPLICATION_XML)
-				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
-						MediaType.APPLICATION_XML));
+	public void push3CustomTransformersByUserAndMakeTransformation() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("name", "PreProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		Response response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
+				.queryParam("user", "gdimitriu")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "PostProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
+				.queryParam("user", "gdimitriu")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "ProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
+				.queryParam("user", "gdimitriu")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		multipartEntity = new FormDataMultiPart()
+				.field("data", "blabla");
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
+					.queryParam("user", "gdimitriu")
+					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("xml2json2xml.json"),
-					StreamUtils.toStringFromStream(inputStream));
+			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
+						StreamUtils.toStringFromStream(inputStream));
 		}
 	}
-	
-	@Test
-	public void json2xmlStepTest() {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON)
-				.queryParam("mode", "json2xml")
-				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE)
-				.request(MediaType.APPLICATION_JSON)
-				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.json"),
-						MediaType.APPLICATION_JSON));
-		if (response.getStatus() >= 0) {
-			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("xml2json2xml.xml"),
-					StreamUtils.toStringFromStream(inputStream));
-		}
-	}
-
 }

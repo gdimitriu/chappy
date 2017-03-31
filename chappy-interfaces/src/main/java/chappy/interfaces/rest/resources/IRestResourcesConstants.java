@@ -17,18 +17,35 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.rest.transformers.test;
+package chappy.interfaces.rest.resources;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/**
+ * Constants for base rest paths.
+ * 
+ * @author Gabriel Dimitriu
+ *
+ */
+public interface IRestResourcesConstants {
+	
+	String BASE_REST = "rest";
 
-@RunWith(Suite.class)
-@SuiteClasses({ RestCallsForDigesterTransformationsTest.class,
-		RestCallsForStaxonTransformationsTest.class,
-		RestCallsForFlowTransformationsTest.class,
-		RestUserCallsForFlowTransformationsTest.class,
-		RestTrasactionFlowTransformationsTest.class})
-public class RestCallTransformationsSuiteTest {
+	String REST_TRANSACTION = "transaction";
 
+	String REST_ADD = "add";
+
+	String REST_UPGRADE = "upgrade";
+
+	String REST_FLOW = "flow";
+
+	String REST_DIGESTER_FLOW = "digesterFlow";
+
+	String REST_TRANSFORM = "transform";
+
+	String REST_TRANSFORMER_STAXON = "staxon";
+
+	String REST_TRANSFORMER = "transformer";
+
+	String REST_TRANSFORMER_BY_USER = "transformerByUser";
+	
+	String REST_AUTHENTICATE = "authenticate";
 }
