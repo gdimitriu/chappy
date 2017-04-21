@@ -58,15 +58,19 @@ public class TransformerProvider {
 		String className = "chappy.transformers.json." + name;
 		try {
 			result = Class.forName(className);
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException | NoClassDefFoundError e) {
 			className = "chappy.mappings.xslt." + name;
 			try {
 				result = Class.forName(className);
-			} catch (ClassNotFoundException eCustom) {
+			} catch (ClassNotFoundException | NoClassDefFoundError eCustom) {
 				return CustomTransformerProvider.getInstance().createStep(name);
 			}
 		}
-		return (ITransformerStep) result.newInstance();
+		try {
+			return (ITransformerStep) result.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new Exception("For system transformer " + name + "dependencies are not fullfilled " + e.getLocalizedMessage());
+		}
 	}
 	
 	
@@ -81,7 +85,7 @@ public class TransformerProvider {
 	public ITransformerStep createStep(final String fullName, final String userName) throws Exception {
 		try {
 			return CustomTransformerProvider.getInstance().createStep(fullName, userName);
-		} catch (Exception e) {
+		} catch (Exception | NoClassDefFoundError e) {
 			return createStep(fullName);
 		}
 	}

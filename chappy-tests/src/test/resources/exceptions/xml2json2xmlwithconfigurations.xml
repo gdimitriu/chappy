@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<flow>
+   <steps>
+      <step class="Xml2JsonStep">
+         <disabled>true</disabled>
+         <configuration>
+         	<autoPrimitive>true</autoPrimitive>
+         </configuration>
+         <parameters>
+         	<mode>xml2json</mode>
+         </parameters>
+      </step>
+      <step class="Json2XmlStep">
+         <disabled>false</disabled>
+         <configuration>
+         	<autoPrimitive1>true</autoPrimitive1>
+         	<virtualNode>virtual</virtualNode>
+         	<bla>wrong</bla>
+         </configuration>
+         <parameters>
+         	<mode>json2xml</mode>
+         </parameters>
+      </step>
+   </steps>
+</flow>

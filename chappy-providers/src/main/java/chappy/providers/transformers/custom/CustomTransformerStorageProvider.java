@@ -24,7 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import chappy.absract.bytecode.RemapperValue;
+import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.transformers.ITransformerStep;
+import chappy.providers.exception.ExceptionMappingProvider;
 import chappy.utils.changebytecode.ChangeByteCode;
 import chappy.utils.loaders.JavaClassLoaderSimple;
 
@@ -111,17 +113,39 @@ public class CustomTransformerStorageProvider {
 			try {
 				return (ITransformerStep) loadedTransformers.get(fullName).newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throw new Exception("For transformer " + fullName + "dependencies are not fullfilled " + e.getLocalizedMessage());
+				Exception ex = ExceptionMappingProvider.getInstace().mapException(e);
+				if (ex instanceof IChappyException) {
+					((IChappyException) ex).setLocalizedMessage("For transformer " + fullName + "dependencies are not fullfilled " + e.getLocalizedMessage());
+					throw ex;
+				} else {
+					throw new Exception("For transformer " + fullName + "dependencies are not fullfilled " + e.getLocalizedMessage());
+				}
 			}
 		}
 		if (transformersStorage.containsKey(fullName)) {
 			byte[] classData = transformersStorage.get(fullName);
 			JavaClassLoaderSimple simpleLoader = new JavaClassLoaderSimple(getClass().getClassLoader());
-			Class<?> classDefinition = simpleLoader.loadClass(fullName, classData);
-			loadedTransformers.put(fullName, classDefinition);
-			return (ITransformerStep) classDefinition.newInstance();
+			try {
+				Class<?> classDefinition = simpleLoader.loadClass(fullName, classData);
+				loadedTransformers.put(fullName, classDefinition);
+				return (ITransformerStep) classDefinition.newInstance();
+			} catch (NoClassDefFoundError | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				Exception ex = ExceptionMappingProvider.getInstace().mapException(e);
+				if (ex instanceof IChappyException) {
+					if (e instanceof InstantiationException) {
+						((IChappyException) ex).setLocalizedMessage("For transformer " + fullName 
+								+ "dependencies are not fullfilled " + e.getLocalizedMessage());
+					} else if (e instanceof ClassNotFoundException || e instanceof NoClassDefFoundError) {
+						((IChappyException) ex).setLocalizedMessage("The custom transformer " + fullName 
+								+ "does not exist on server " + e.getLocalizedMessage());
+					}
+					throw ex;
+				}
+			}
 		}
-		return null;
+		Exception ex = ExceptionMappingProvider.getInstace().mapException(new ClassNotFoundException("class does not exist on server " + fullName));
+		((IChappyException) ex).setLocalizedMessage("The custom transformer " + fullName + " does not exist on server ");
+		throw ex;
 	}
 	
 	/**

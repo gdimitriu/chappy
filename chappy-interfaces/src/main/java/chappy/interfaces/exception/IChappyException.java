@@ -17,31 +17,37 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.services.servers.rest;
+package chappy.interfaces.exception;
+
+import java.util.List;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import chappy.interfaces.exception.IChappyException;
 
 /**
- * Exception Mapper which map a throwable to response status.
- * This will be use by rest to send message from throwable to rest.
+ * Exception base class for exception mapping.
  * @author Gabriel Dimitriu
  *
  */
-public class ExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<Throwable> {
+public interface IChappyException {
 
 	/**
-	 * convert the exception which was thrown by transformation into a HTTP response.
-	 * @param throwable which was catched.
-	 * @return http response.
+	 * convert the exception to http response
+	 * @return Response to be send to the customer.
 	 */
-	public Response toResponse(Throwable throwable) {
-		if (throwable instanceof IChappyException) {
-			return ((IChappyException) throwable).toResponse();
-		}
-		return Response.status( Status.INTERNAL_SERVER_ERROR ).entity(throwable.getMessage() ).type( "text/plain" ).build();
+	default public Response toResponse() {
+		return Response.ok().build();
 	}
 
+	/**
+	 * get the wrappers which this implemented
+	 * @return array of classes.
+	 */
+	public List<Class<?>> isWrapperFor();
+	
+	
+	/**
+	 * set the localized message for this exception.
+	 * @param messagess
+	 */
+	public void setLocalizedMessage(final String message);
 }

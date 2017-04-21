@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.authentication;
+package chappy.interfaces.policy;
 
 /**
  * User authentication on the system.
