@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -48,6 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
@@ -86,7 +88,7 @@ public class TransactionResources {
 	 */
 	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
-	public Response authenticate(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
+	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
@@ -103,6 +105,29 @@ public class TransactionResources {
     	byte[] base64json=Base64.getEncoder().encode(json.getBytes());
 		NewCookie cookie = new NewCookie("userData", new String(base64json));
 		return Response.ok().cookie(cookie).build();
+	}
+	
+	/**
+	 * logout from the system.
+	 * @param getStatistics return the statistics if the customer request.
+	 * @param uriInfo
+	 * @param hh
+	 * @return
+	 * @throws Exception
+	 */
+	@Path(IRestResourcesConstants.REST_LOGOUT)
+	@GET
+	public Response logout(@QueryParam("getStatistics") final boolean getStatistics,
+			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get("userData");
+		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
+    	CookieTransactionsToken received = new CookieTransactionsToken();
+    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
+    	received=or.readValue(str);
+    	List<String> listOfTransformers = null;
+    	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
+    	return Response.ok().build();
 	}
 	
 	/**

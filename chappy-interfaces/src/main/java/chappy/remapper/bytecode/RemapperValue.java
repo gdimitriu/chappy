@@ -17,43 +17,58 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.services.servers.rest.resources.transform;
+package chappy.remapper.bytecode;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.objectweb.asm.commons.Remapper;
 
 /**
- * Cookie for transactions.
  * @author Gabriel Dimitriu
  *
  */
+public abstract class RemapperValue extends Remapper {
 
-@XmlRootElement
-public class CookieTransactionsToken {
-
-	/** name of the user */
-	private String userName;
-
+	private String originalValue = null;
+	private String newValue = null;
+	
 	/**
-	 * cookie transaction token constructor
+	 * constructor
 	 */
-	public CookieTransactionsToken() {
+	public RemapperValue() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * get the user name
-	 * @return the user name
+	 * @return the originalValue
 	 */
-	public String getUserName() {
-		return userName;
+	public String getOriginalValue() {
+		return originalValue;
+	}
+	/**
+	 * @param originalValue the originalValue to set
+	 */
+	public void setOriginalValue(String originalValue) {
+		this.originalValue = originalValue;
+	}
+
+	/**
+	 * get new value
+	 * @return new value
+	 */
+	public String getNewValue() {
+		return newValue;
+	}
+
+	/**
+	 * set new value
+	 * @param newValue
+	 */
+	public void setNewValue(String newValue) {
+		this.newValue = newValue;
 	}
 	
 	/**
-	 * set the user Name.
-	 * @param nameUser
+	 * set user name
+	 * @param user
 	 */
-	public void setUserName(String nameUser) {
-		this.userName = nameUser;
-	}
-
+	abstract public void setUserName(final String user);
 }

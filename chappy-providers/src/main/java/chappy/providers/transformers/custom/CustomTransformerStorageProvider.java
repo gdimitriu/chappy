@@ -21,12 +21,13 @@ package chappy.providers.transformers.custom;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import chappy.absract.bytecode.RemapperValue;
 import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.providers.exception.ExceptionMappingProvider;
+import chappy.remapper.bytecode.RemapperValue;
 import chappy.utils.changebytecode.ChangeByteCode;
 import chappy.utils.loaders.JavaClassLoaderSimple;
 
@@ -156,6 +157,17 @@ public class CustomTransformerStorageProvider {
 	 */
 	public ITransformerStep getNewInstance(final String fullName, final String userName) throws Exception {
 		return getNewInstance(CustomUtils.generateStorageName(userName, fullName));
+	}
+
+	/**
+	 * remove transformers from storage.
+	 * @param userName
+	 * @param listOfTransformers
+	 */
+	public void removeTransformers(final String userName, final List<String> listOfTransformers) {
+		for (String fullName : listOfTransformers) {
+			transformersStorage.remove(CustomUtils.generateStorageName(userName, fullName));
+		}
 	}
 	
 }

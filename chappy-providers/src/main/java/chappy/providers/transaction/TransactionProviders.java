@@ -17,37 +17,42 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.transformers.custom;
+package chappy.providers.transaction;
 
-import chappy.remapper.bytecode.RemapperValue;
+import java.util.List;
+import java.util.Map;
+
+import chappy.interfaces.cookies.CookieTransaction;
 
 /**
+ * providers for transactions.
  * @author Gabriel Dimitriu
  *
  */
-public class Remapper extends  RemapperValue {
+public class TransactionProviders {
 
+	/** singleton providers */
+	static private TransactionProviders singleton = new TransactionProviders();
+	
+	private Map<String, List<String>> listOfTransactionData = null;
+	
 	/**
-	 * 
+	 * private because is singleton.
 	 */
-	public Remapper() {
+	private TransactionProviders() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public String mapType(String typeName) {
-		if (typeName.endsWith("Step") && !typeName.contains("AbstractStep")) {
-			setOriginalValue(typeName);
-			String packageName = getClass().getPackage().getName();
-			setNewValue( packageName.replace(".", "/")+ "/" +
-					typeName.substring(typeName.lastIndexOf('/') + 1, typeName.length()));
-			return getNewValue();
-		}
-		return typeName;
+	/**
+	 * get the instance of the singleton.
+	 * @return singleton of the transactions.
+	 */
+	public TransactionProviders getInstance() {
+		return singleton;
 	}
 
-	@Override
-	public void setUserName(String user) {
+	public List<String> getListOfTransformers(final CookieTransaction cookie) {
+		
+		return null;
 	}
-	
 }
