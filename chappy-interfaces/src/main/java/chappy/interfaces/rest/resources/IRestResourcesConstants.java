@@ -47,5 +47,7 @@ public interface IRestResourcesConstants {
 
 	String REST_TRANSFORMER_BY_USER = "transformerByUser";
 	
-	String REST_AUTHENTICATE = "authenticate";
+	String REST_LOGIN = "login";
+	
+	String REST_LOGOUT = "logout";
 }

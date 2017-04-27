@@ -84,7 +84,7 @@ public class TransactionResources {
 	 * @param password password for the user in base64
 	 * @return http response plus cookie
 	 */
-	@Path(IRestResourcesConstants.REST_AUTHENTICATE)
+	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
 	public Response authenticate(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
 		

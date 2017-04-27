@@ -119,7 +119,7 @@ public class RestTrasactionFlowTransformationsTest {
 				.register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_AUTHENTICATE)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
 				.queryParam("user", "gdimitriu")
 				.queryParam("password", "password")
 				.request().get();
