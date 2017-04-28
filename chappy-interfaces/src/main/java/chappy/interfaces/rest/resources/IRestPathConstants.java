@@ -36,10 +36,12 @@ public interface IRestPathConstants {
 			+ IRestResourcesConstants.REST_TRANSFORM + "/" + IRestResourcesConstants.REST_DIGESTER_FLOW;
 	
 	/*
-	 * path for upgrade and update and injection.
+	 * path for upgrade and update and delete of injection.
 	 */
 	String PATH_TO_ADD_TRANSFORMER_TO_FLOW = IRestResourcesConstants.BASE_REST + "/" 
 			+ IRestResourcesConstants.REST_ADD + "/" + IRestResourcesConstants.REST_FLOW;
+	String PATH_TO_DELETE_TRANSFORMER_TO_FLOW = IRestResourcesConstants.BASE_REST + "/" 
+			+ IRestResourcesConstants.REST_DELETE + "/" + IRestResourcesConstants.REST_FLOW;
 	String PATH_TO_TRANSACTION = IRestResourcesConstants.BASE_REST + "/" 
 			+ IRestResourcesConstants.REST_TRANSACTION;
 }

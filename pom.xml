@@ -85,6 +85,7 @@
 		<module>chappy-tests</module>
 		<module>chappy-installer</module>
 		<module>chappy-change-bytecode</module>
+		<module>chappy-transaction</module>
 	</modules>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/cglib/cglib -->

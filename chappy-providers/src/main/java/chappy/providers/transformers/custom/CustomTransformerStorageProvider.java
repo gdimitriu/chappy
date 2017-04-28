@@ -166,8 +166,39 @@ public class CustomTransformerStorageProvider {
 	 */
 	public void removeTransformers(final String userName, final List<String> listOfTransformers) {
 		for (String fullName : listOfTransformers) {
-			transformersStorage.remove(CustomUtils.generateStorageName(userName, fullName));
+			String storageId = CustomUtils.generateStorageName(userName, fullName);
+			if (transformersStorage.containsKey(storageId)) {
+				transformersStorage.remove(storageId);
+			}
 		}
+	}
+
+	/**
+	 * remove a global custom transformer from storage.
+	 * @param transformerName full name
+	 * @return true if it deleted it
+	 */
+	public boolean removeTransformer(String transformerName) {
+		if (transformersStorage.containsKey(transformerName)) {
+			transformersStorage.remove(transformerName);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * remove a custom transformer for storage
+	 * @param userName user who push the transformer
+	 * @param transformerName full name
+	 * @return true if it delete it
+	 */
+	public boolean removeTransformer(String userName, String transformerName) {
+		String storageId = CustomUtils.generateStorageName(userName, transformerName);
+		if (transformersStorage.containsKey(storageId)) {
+			transformersStorage.remove(storageId);
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -55,7 +55,9 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.authentication.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.transaction.base.Transaction;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -95,6 +97,10 @@ public class TransactionResources {
 		}
 		CookieTransactionsToken response = new CookieTransactionsToken();
 		response.setUserName(userName);
+		
+		Transaction transaction = new Transaction();
+		TransactionProviders.getInstance().putTransaction(response, transaction);
+		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     	String json;
 		try {
@@ -125,8 +131,13 @@ public class TransactionResources {
     	CookieTransactionsToken received = new CookieTransactionsToken();
     	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
     	received=or.readValue(str);
-    	List<String> listOfTransformers = null;
+    	
+    	Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
+    	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
     	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
+    	
+    	TransactionProviders.getInstance().removeTransaction(received);
+    	
     	return Response.ok().build();
 	}
 	
@@ -154,6 +165,8 @@ public class TransactionResources {
 		byte[] transformerData = Base64.getDecoder().decode(multipart
 				.getField("data").getValue());
 		
+		Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.addTransformer(transformerName);
 		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(received.getUserName(), transformerName, transformerData);
 		
 		return Response.ok().cookie(new NewCookie(cookie)).build();

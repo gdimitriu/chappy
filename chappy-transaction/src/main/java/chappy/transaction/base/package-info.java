@@ -17,41 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.rest.resources;
-
 /**
- * Constants for base rest paths.
- * 
  * @author Gabriel Dimitriu
  *
  */
-public interface IRestResourcesConstants {
-	
-	String BASE_REST = "rest";
-
-	String REST_TRANSACTION = "transaction";
-
-	String REST_ADD = "add";
-
-	String REST_UPGRADE = "upgrade";
-
-	String REST_FLOW = "flow";
-
-	String REST_DIGESTER_FLOW = "digesterFlow";
-
-	String REST_TRANSFORM = "transform";
-
-	String REST_TRANSFORMER_STAXON = "staxon";
-
-	String REST_TRANSFORMER = "transformer";
-
-	String REST_TRANSFORMER_BY_USER = "transformerByUser";
-	
-	String REST_LOGIN = "login";
-	
-	String REST_LOGOUT = "logout";
-	
-	String REST_LIST_TRASNSFORMRES = "listoftransformers";
-	
-	String REST_DELETE = "delete";
-}
+package chappy.transaction.base;

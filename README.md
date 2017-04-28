@@ -8,7 +8,7 @@ Chappy wish to implement the following characteristics of the long running serve
 - REST server using Jersey and Jetty.
 - Predefined service for transformation using staxon and saxon.
 - Hot-plugin of the transformation steps.
-- Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. (delete or update is not implemented yet)
+- Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. On logout the custom transformers are deleted from system.
 - Hot-plugin of the transformations step with dependencies. (not implemented yet)
 - Persistence of the upgrade/hot-plugin.(not implemented yet)
 - HTTP upgrade service. (not implemented yet)
@@ -19,7 +19,8 @@ Chappy uses the following libraries and technologies:
 - Staxon for json2xml and xml2json transformations.
 - Saxon for xml2xml mapping.
 - Apache Digester for running a flow in one step.
-- JAXB for data-binding.Maven for building.
+- JAXB for data-binding.
+- Maven for building.
 - ASM for bytecode modification
 - reflections library for resource discovery.
 

@@ -19,7 +19,8 @@
  */
 package chappy.tests.rest.transformers.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -29,6 +30,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -257,5 +259,20 @@ public class RestCallsForFlowTransformationsTest {
 			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
+		String transformerName = "ProcessingStep";
+		response = target.path(IRestPathConstants.PATH_TO_DELETE_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER).queryParam("transformer", transformerName)
+				.request().delete();
+		assertEquals("could not delete transformer", response.getStatus(), Status.OK.getStatusCode());
+		transformerName = "PreProcessingStep";
+		response = target.path(IRestPathConstants.PATH_TO_DELETE_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER).queryParam("transformer", transformerName)
+				.request().delete();
+		assertEquals("could not delete transformer", response.getStatus(), Status.OK.getStatusCode());
+		transformerName = "PostProcessingStep";
+		response = target.path(IRestPathConstants.PATH_TO_DELETE_TRANSFORMER_TO_FLOW)
+				.path(IRestResourcesConstants.REST_TRANSFORMER).queryParam("transformer", transformerName)
+				.request().delete();
+		assertEquals("could not delete transformer", response.getStatus(), Status.OK.getStatusCode());
 	}
 }

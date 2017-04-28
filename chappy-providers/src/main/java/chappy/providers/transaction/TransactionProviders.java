@@ -19,10 +19,12 @@
  */
 package chappy.providers.transaction;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.transaction.base.Transaction;
 
 /**
  * providers for transactions.
@@ -34,25 +36,47 @@ public class TransactionProviders {
 	/** singleton providers */
 	static private TransactionProviders singleton = new TransactionProviders();
 	
-	private Map<String, List<String>> listOfTransactionData = null;
+	/** map of transactions */
+	private Map<String, Transaction> mapOfTransactionData = null;
 	
 	/**
 	 * private because is singleton.
 	 */
 	private TransactionProviders() {
-		// TODO Auto-generated constructor stub
+		mapOfTransactionData = new HashMap<String, Transaction>();
 	}
 	
 	/**
 	 * get the instance of the singleton.
 	 * @return singleton of the transactions.
 	 */
-	public TransactionProviders getInstance() {
+	public static TransactionProviders getInstance() {
 		return singleton;
 	}
 
-	public List<String> getListOfTransformers(final CookieTransaction cookie) {
-		
+	/**
+	 * get the transaction.
+	 * @param cookie of the transaction
+	 * @return base transaction.
+	 */
+	public Transaction getTransaction(final CookieTransaction cookie) {
+		if (mapOfTransactionData.containsKey(cookie.generateStorageId())) {
+			return mapOfTransactionData.get(cookie.generateStorageId());
+		}
 		return null;
+	}
+
+	/**
+	 * remove transaction from storage.
+	 * @param cookie of the transaction
+	 */
+	public void removeTransaction(final CookieTransactionsToken cookie) {
+		if (mapOfTransactionData.containsKey(cookie.generateStorageId())) {
+			mapOfTransactionData.remove(cookie.generateStorageId());
+		}
+	}
+	
+	public void putTransaction(final CookieTransaction cookie, final Transaction transaction) {
+		mapOfTransactionData.put(cookie.generateStorageId(), transaction);
 	}
 }

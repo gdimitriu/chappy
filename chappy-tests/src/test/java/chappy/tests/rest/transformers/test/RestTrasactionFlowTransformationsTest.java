@@ -170,5 +170,9 @@ public class RestTrasactionFlowTransformationsTest {
 			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+				
 	}
 }
