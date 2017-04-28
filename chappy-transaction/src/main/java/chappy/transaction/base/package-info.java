@@ -17,37 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.transformers.custom;
-
-import chappy.remapper.bytecode.RemapperValue;
-
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class Remapper extends  RemapperValue {
-
-	/**
-	 * 
-	 */
-	public Remapper() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	public String mapType(String typeName) {
-		if (typeName.endsWith("Step") && !typeName.contains("AbstractStep")) {
-			setOriginalValue(typeName);
-			String packageName = getClass().getPackage().getName();
-			setNewValue( packageName.replace(".", "/")+ "/" +
-					typeName.substring(typeName.lastIndexOf('/') + 1, typeName.length()));
-			return getNewValue();
-		}
-		return typeName;
-	}
-
-	@Override
-	public void setUserName(String user) {
-	}
-	
-}
+package chappy.transaction.base;

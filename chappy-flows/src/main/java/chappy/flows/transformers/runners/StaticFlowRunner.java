@@ -39,6 +39,7 @@ import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.transformers.ITransformerStep;
+import chappy.providers.exception.ExceptionMappingProvider;
 import chappy.providers.transformers.TransformerProvider;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -70,14 +71,18 @@ public class StaticFlowRunner implements IFlowRunner{
 	@Override
 	public void setConfigurations(final InputStream configurationStream,
 			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws JAXBException, SAXException {
-		JAXBContext context = JAXBContext.newInstance(FlowConfiguration.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new StreamSource(
+			final MultivaluedMap<String, String> queryParams) throws Exception {
+		try {
+			JAXBContext context = JAXBContext.newInstance(FlowConfiguration.class);
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			Schema schema = sf.newSchema(new StreamSource(
 				getClass().getClassLoader().getResourceAsStream("flow.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		this.configuration = (FlowConfiguration) unmarshaller.unmarshal(configurationStream); 
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			unmarshaller.setSchema(schema);
+			this.configuration = (FlowConfiguration) unmarshaller.unmarshal(configurationStream); 
+		} catch (JAXBException | SAXException e) {
+			throw ExceptionMappingProvider.getInstace().mapException(e);
+		}
 		this.multipart = multipart;
 		this.queryParams = queryParams;
 	}

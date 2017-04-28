@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -48,12 +49,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.authentication.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.transaction.base.Transaction;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -84,15 +88,19 @@ public class TransactionResources {
 	 * @param password password for the user in base64
 	 * @return http response plus cookie
 	 */
-	@Path(IRestResourcesConstants.REST_AUTHENTICATE)
+	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
-	public Response authenticate(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
+	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
 		CookieTransactionsToken response = new CookieTransactionsToken();
 		response.setUserName(userName);
+		
+		Transaction transaction = new Transaction();
+		TransactionProviders.getInstance().putTransaction(response, transaction);
+		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     	String json;
 		try {
@@ -103,6 +111,34 @@ public class TransactionResources {
     	byte[] base64json=Base64.getEncoder().encode(json.getBytes());
 		NewCookie cookie = new NewCookie("userData", new String(base64json));
 		return Response.ok().cookie(cookie).build();
+	}
+	
+	/**
+	 * logout from the system.
+	 * @param getStatistics return the statistics if the customer request.
+	 * @param uriInfo
+	 * @param hh
+	 * @return
+	 * @throws Exception
+	 */
+	@Path(IRestResourcesConstants.REST_LOGOUT)
+	@GET
+	public Response logout(@QueryParam("getStatistics") final boolean getStatistics,
+			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get("userData");
+		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
+    	CookieTransactionsToken received = new CookieTransactionsToken();
+    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
+    	received=or.readValue(str);
+    	
+    	Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
+    	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
+    	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
+    	
+    	TransactionProviders.getInstance().removeTransaction(received);
+    	
+    	return Response.ok().build();
 	}
 	
 	/**
@@ -129,6 +165,8 @@ public class TransactionResources {
 		byte[] transformerData = Base64.getDecoder().decode(multipart
 				.getField("data").getValue());
 		
+		Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.addTransformer(transformerName);
 		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(received.getUserName(), transformerName, transformerData);
 		
 		return Response.ok().cookie(new NewCookie(cookie)).build();

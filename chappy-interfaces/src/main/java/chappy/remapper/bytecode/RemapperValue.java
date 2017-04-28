@@ -17,37 +17,58 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.transformers.custom;
+package chappy.remapper.bytecode;
 
-import chappy.remapper.bytecode.RemapperValue;
+import org.objectweb.asm.commons.Remapper;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class Remapper extends  RemapperValue {
+public abstract class RemapperValue extends Remapper {
 
+	private String originalValue = null;
+	private String newValue = null;
+	
 	/**
-	 * 
+	 * constructor
 	 */
-	public Remapper() {
+	public RemapperValue() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	@Override
-	public String mapType(String typeName) {
-		if (typeName.endsWith("Step") && !typeName.contains("AbstractStep")) {
-			setOriginalValue(typeName);
-			String packageName = getClass().getPackage().getName();
-			setNewValue( packageName.replace(".", "/")+ "/" +
-					typeName.substring(typeName.lastIndexOf('/') + 1, typeName.length()));
-			return getNewValue();
-		}
-		return typeName;
+
+	/**
+	 * @return the originalValue
+	 */
+	public String getOriginalValue() {
+		return originalValue;
+	}
+	/**
+	 * @param originalValue the originalValue to set
+	 */
+	public void setOriginalValue(String originalValue) {
+		this.originalValue = originalValue;
 	}
 
-	@Override
-	public void setUserName(String user) {
+	/**
+	 * get new value
+	 * @return new value
+	 */
+	public String getNewValue() {
+		return newValue;
+	}
+
+	/**
+	 * set new value
+	 * @param newValue
+	 */
+	public void setNewValue(String newValue) {
+		this.newValue = newValue;
 	}
 	
+	/**
+	 * set user name
+	 * @param user
+	 */
+	abstract public void setUserName(final String user);
 }

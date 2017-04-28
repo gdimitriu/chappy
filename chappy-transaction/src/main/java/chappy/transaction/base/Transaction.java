@@ -17,58 +17,47 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.absract.bytecode;
+package chappy.transaction.base;
 
-import org.objectweb.asm.commons.Remapper;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public abstract class RemapperValue extends Remapper {
-
-	private String originalValue = null;
-	private String newValue = null;
+public class Transaction {
 	
+	private List<String> listOfTansformers = null;
+
 	/**
-	 * constructor
+	 * 
 	 */
-	public RemapperValue() {
-		// TODO Auto-generated constructor stub
+	public Transaction() {
+		listOfTansformers = new ArrayList<String>();
 	}
 
 	/**
-	 * @return the originalValue
+	 * @return the listOfTansformers
 	 */
-	public String getOriginalValue() {
-		return originalValue;
-	}
-	/**
-	 * @param originalValue the originalValue to set
-	 */
-	public void setOriginalValue(String originalValue) {
-		this.originalValue = originalValue;
+	public List<String> getListOfCustomTansformers() {
+		return listOfTansformers;
 	}
 
 	/**
-	 * get new value
-	 * @return new value
+	 * @param listOfTansformers the listOfTansformers to set
 	 */
-	public String getNewValue() {
-		return newValue;
+	public void setListOfTansformers(List<String> listOfTansformers) {
+		this.listOfTansformers = listOfTansformers;
 	}
 
 	/**
-	 * set new value
-	 * @param newValue
+	 * add a transformer.
+	 * @param transformerName name of the transformer.
 	 */
-	public void setNewValue(String newValue) {
-		this.newValue = newValue;
+	public void addTransformer(String transformerName) {
+		this.listOfTansformers.add(transformerName);
 	}
+
 	
-	/**
-	 * set user name
-	 * @param user
-	 */
-	abstract public void setUserName(final String user);
 }

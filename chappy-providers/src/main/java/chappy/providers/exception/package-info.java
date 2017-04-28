@@ -17,22 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.authentication;
-
 /**
- * User authentication on the system.
  * @author Gabriel Dimitriu
  *
  */
-public interface IUserPolicy {
-
-	/**
-	 * is the user Authenticated
-	 * @param userName name of the user
-	 * @param password for the user
-	 * @return true if is authenticate correct
-	 */
-	default boolean isAuthenticate(final String userName, final String password) {
-		return true;
-	}
-}
+package chappy.providers.exception;

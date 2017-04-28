@@ -30,8 +30,9 @@ import javax.xml.bind.JAXBException;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.reflections.Reflections;
 import org.xml.sax.SAXException;
-
+import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.providers.exception.ExceptionMappingProvider;
 
 /**
  * @author Gabriel Dimitriu
@@ -97,12 +98,20 @@ public class TransformersFlowRunnerProvider {
 	public IFlowRunner createFlowRunner(final String name,
 			final InputStream configurationStream,
 			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws JAXBException, SAXException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+			final MultivaluedMap<String, String> queryParams) throws Exception {
 		if (runners == null || !runners.containsKey(name)) {
 			return null;
 		}
-		IFlowRunner runner = runners.get(name).newInstance();
-		runner.setConfigurations(configurationStream, multipart, queryParams);
+		IFlowRunner runner = null;
+		try {
+			runner = runners.get(name).newInstance();
+			runner.setConfigurations(configurationStream, multipart, queryParams);
+		} catch (Exception e) {
+			if (e instanceof IChappyException) {
+				throw e;
+			}
+			throw ExceptionMappingProvider.getInstace().mapException(e);
+		}
 		return runner;
 	}
 }

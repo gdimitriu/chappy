@@ -17,37 +17,37 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.transformers.custom;
+package chappy.interfaces.exception;
 
-import chappy.remapper.bytecode.RemapperValue;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 /**
+ * Exception base class for exception mapping.
  * @author Gabriel Dimitriu
  *
  */
-public class Remapper extends  RemapperValue {
+public interface IChappyException {
 
 	/**
-	 * 
+	 * convert the exception to http response
+	 * @return Response to be send to the customer.
 	 */
-	public Remapper() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	public String mapType(String typeName) {
-		if (typeName.endsWith("Step") && !typeName.contains("AbstractStep")) {
-			setOriginalValue(typeName);
-			String packageName = getClass().getPackage().getName();
-			setNewValue( packageName.replace(".", "/")+ "/" +
-					typeName.substring(typeName.lastIndexOf('/') + 1, typeName.length()));
-			return getNewValue();
-		}
-		return typeName;
+	default public Response toResponse() {
+		return Response.ok().build();
 	}
 
-	@Override
-	public void setUserName(String user) {
-	}
+	/**
+	 * get the wrappers which this implemented
+	 * @return array of classes.
+	 */
+	public List<Class<?>> isWrapperFor();
 	
+	
+	/**
+	 * set the localized message for this exception.
+	 * @param messagess
+	 */
+	public void setLocalizedMessage(final String message);
 }

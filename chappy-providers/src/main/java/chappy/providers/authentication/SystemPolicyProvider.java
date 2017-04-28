@@ -19,7 +19,7 @@
  */
 package chappy.providers.authentication;
 
-import chappy.interfaces.authentication.IUserPolicy;
+import chappy.interfaces.policy.IUserPolicy;
 
 /**
  * provider for the authentication system.

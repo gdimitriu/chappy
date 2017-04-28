@@ -20,8 +20,6 @@
 package chappy.tests.rest.transformers.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -121,7 +119,7 @@ public class RestTrasactionFlowTransformationsTest {
 				.register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_AUTHENTICATE)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
 				.queryParam("user", "gdimitriu")
 				.queryParam("password", "password")
 				.request().get();
@@ -172,5 +170,9 @@ public class RestTrasactionFlowTransformationsTest {
 			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+				
 	}
 }

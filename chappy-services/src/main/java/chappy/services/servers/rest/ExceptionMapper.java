@@ -22,6 +22,8 @@ package chappy.services.servers.rest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import chappy.interfaces.exception.IChappyException;
+
 /**
  * Exception Mapper which map a throwable to response status.
  * This will be use by rest to send message from throwable to rest.
@@ -36,7 +38,10 @@ public class ExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<Throwabl
 	 * @return http response.
 	 */
 	public Response toResponse(Throwable throwable) {
-		return Response.status( Status.INTERNAL_SERVER_ERROR ).entity( throwable.getMessage() ).type( "text/plain" ).build();
+		if (throwable instanceof IChappyException) {
+			return ((IChappyException) throwable).toResponse();
+		}
+		return Response.status( Status.INTERNAL_SERVER_ERROR ).entity(throwable.getMessage() ).type( "text/plain" ).build();
 	}
 
 }

@@ -17,43 +17,22 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.services.servers.rest.resources.transform;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package chappy.interfaces.policy;
 
 /**
- * Cookie for transactions.
+ * User authentication on the system.
  * @author Gabriel Dimitriu
  *
  */
-
-@XmlRootElement
-public class CookieTransactionsToken {
-
-	/** name of the user */
-	private String userName;
+public interface IUserPolicy {
 
 	/**
-	 * cookie transaction token constructor
+	 * is the user Authenticated
+	 * @param userName name of the user
+	 * @param password for the user
+	 * @return true if is authenticate correct
 	 */
-	public CookieTransactionsToken() {
-		// TODO Auto-generated constructor stub
+	default boolean isAuthenticate(final String userName, final String password) {
+		return true;
 	}
-
-	/**
-	 * get the user name
-	 * @return the user name
-	 */
-	public String getUserName() {
-		return userName;
-	}
-	
-	/**
-	 * set the user Name.
-	 * @param nameUser
-	 */
-	public void setUserName(String nameUser) {
-		this.userName = nameUser;
-	}
-
 }

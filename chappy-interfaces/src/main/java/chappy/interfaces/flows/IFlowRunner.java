@@ -73,5 +73,5 @@ public interface IFlowRunner {
 	 */
 	public void setConfigurations(final InputStream configurationStream,
 			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws JAXBException, SAXException;
+			final MultivaluedMap<String, String> queryParams) throws Exception;
 }

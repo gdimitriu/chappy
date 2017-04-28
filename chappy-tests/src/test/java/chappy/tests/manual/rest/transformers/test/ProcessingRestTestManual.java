@@ -46,7 +46,6 @@ import javax.xml.validation.SchemaFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
-import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import chappy.configurations.system.SystemConfiguration;
@@ -308,7 +307,7 @@ public class ProcessingRestTestManual {
 				.register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_AUTHENTICATE)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
 				.queryParam("user", "gdimitriu")
 				.queryParam("password", "password")
 				.request().get();
@@ -360,9 +359,28 @@ public class ProcessingRestTestManual {
 						StreamUtils.toStringFromStream(inputStream));
 		}
 	}
+	
+	public void xml2json2xmlFlowStepsWrongTest() {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+	     .field("data", getClass().getClassLoader().getResourceAsStream("exceptions/xml2json2xml.xml"),
+	    		MediaType.APPLICATION_XML_TYPE)
+	     .field("configuration", StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),
+	    		MediaType.APPLICATION_XML_TYPE);
+		Response response = target.path("rest").path("transform").path("flow")
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			System.out.println(StreamUtils.toStringFromStream(response.readEntity(InputStream.class)));
+		}
+	}
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
-		test.push3CustomTransformersByTransactionAndMakeTransformation();
+		test.xml2json2xmlFlowStepsWrongTest();
 	}
 
 }

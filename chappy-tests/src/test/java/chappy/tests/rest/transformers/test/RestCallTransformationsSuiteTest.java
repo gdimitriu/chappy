@@ -28,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		RestCallsForStaxonTransformationsTest.class,
 		RestCallsForFlowTransformationsTest.class,
 		RestUserCallsForFlowTransformationsTest.class,
-		RestTrasactionFlowTransformationsTest.class})
+		RestTrasactionFlowTransformationsTest.class,
+		RestCallsForFlowTransformationsExceptionsTest.class})
 public class RestCallTransformationsSuiteTest {
 
 }

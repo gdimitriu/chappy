@@ -19,7 +19,7 @@
  */
 package chappy.transformers.custom;
 
-import chappy.absract.bytecode.RemapperValue;
+import chappy.remapper.bytecode.RemapperValue;
 
 /**
  * @author Gabriel Dimitriu
