@@ -40,6 +40,6 @@ public final class CustomUtils {
 	 * @return
 	 */
 	public static String generateStorageName(final String userName, final String fullName) {
-		return userName + ":" + fullName;
+		return userName + "." + fullName;
 	}
 }
