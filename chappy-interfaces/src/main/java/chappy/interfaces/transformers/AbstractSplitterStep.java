@@ -59,4 +59,12 @@ public abstract class AbstractSplitterStep extends AbstractStep implements ISpli
 			throws Exception {
 		
 	}
+
+	public ConfigurationProperties[] getConfigProperties() {
+		return configProperties;
+	}
+
+	public void setConfigProperties(ConfigurationProperties[] configProperties) {
+		this.configProperties = configProperties;
+	}
 }
