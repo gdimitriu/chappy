@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import chappy.configurations.transformers.ConfigurationProperties;
+
 /**
  * This hold the parameters for step.
  * This is spread in digester steps.
@@ -40,6 +42,9 @@ public class StepParameters {
 	
 	@XmlElement(name = "factoryEngine")
 	private String factoryEngine = null;
+	
+	@XmlElement(name = "configProperty")
+	private ConfigurationProperties[] configProperties = null;
 
 	/**
 	 * @param mode the mode to set
@@ -51,14 +56,14 @@ public class StepParameters {
 	/**
 	 * @param mappingName the mappingName to set
 	 */
-	public void setMappingName(String mappingName) {
+	public void setMappingName(final String mappingName) {
 		this.mappingName = mappingName;
 	}
 
 	/**
 	 * @param factoryEngine the factoryEngine to set
 	 */
-	public void setFactoryEngine(String factoryEngine) {
+	public void setFactoryEngine(final String factoryEngine) {
 		this.factoryEngine = factoryEngine;
 	}
 
@@ -88,6 +93,20 @@ public class StepParameters {
 	 */
 	public String getFactoryEngine() {
 		return factoryEngine;
+	}
+
+	/**
+	 * @return the configProperties
+	 */
+	public ConfigurationProperties[] getConfigProperties() {
+		return this.configProperties;
+	}
+
+	/**
+	 * @param configProperties the configProperties to set
+	 */
+	public void setConfigProperties(final ConfigurationProperties[] configProperties) {
+		this.configProperties = configProperties;
 	}
 
 }

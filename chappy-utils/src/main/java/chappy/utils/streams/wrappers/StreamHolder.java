@@ -34,6 +34,12 @@ public class StreamHolder {
 	/** output stream */
 	ByteArrayOutputStreamWrapper outputStream = null;
 	
+	/** it is using orderid */
+	private boolean useOrder = false;
+	
+	/** order id of the message */
+	private int orderId = 0;
+	
 	public StreamHolder() {
 		inputStream = null;
 		outputStream = null;
@@ -110,5 +116,31 @@ public class StreamHolder {
 	 */
 	public byte[] getInputBuffer() {
 		return inputStream.getBuffer();
+	}
+	/**
+	 * @return the useOrder
+	 */
+	public boolean isUseOrder() {
+		return useOrder;
+	}
+	/**
+	 * @param useOrder the useOrder to set
+	 */
+	public void setUseOrder(boolean useOrder) {
+		this.useOrder = useOrder;
+	}
+	
+	/**
+	 * @return the orderId
+	 */
+	public int getOrderId() {
+		return orderId;
+	}
+	
+	/**
+	 * @param orderId the orderId to set
+	 */
+	public void setOrderId(final int orderId) {
+		this.orderId = orderId;
 	}
 }

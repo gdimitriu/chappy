@@ -96,6 +96,7 @@ public class StaticFlowRunner implements IFlowRunner{
 		for (StepConfiguration conf : steps) {
 			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName());
 			step.setDisabled(String.valueOf(conf.isDisabled()));
+			step.setOrder(conf.getOrder());
 			conf.setStageParameters(step);
 			stepList.add(step);
 		}
@@ -115,6 +116,7 @@ public class StaticFlowRunner implements IFlowRunner{
 		for (StepConfiguration conf : steps) {
 			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName(), userName);
 			step.setDisabled(String.valueOf(conf.isDisabled()));
+			step.setOrder(conf.getOrder());
 			conf.setStageParameters(step);
 			stepList.add(step);
 		}

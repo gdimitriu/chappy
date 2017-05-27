@@ -19,69 +19,45 @@
  */
 package chappy.interfaces.transformers;
 
+import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import chappy.configurations.transformers.ConfigurationProperties;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
- * This is the abstract step class, the base of classes uses as transformation step by digester.
+ * This is the abstract class for Enveloper operations.
  * @author Gabriel Dimitriu
  *
  */
+public abstract class AbstractEnveloperStep extends AbstractStep implements IEnveloperStep{
+	
+	/** config properties for enveloper */
+	private ConfigurationProperties[] configProperties = null;
 
-public abstract class AbstractStep implements ITransformerStep {
-
-	/** disable the step */
-	private String disabled = "false";
-	
-	/** the order of input stream */
-	private int order = 0;
-	
-	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#setDisabled(java.lang.String)
-	 */
-	@Override
-	public void setDisabled(final String disabled) {
-		this.disabled = disabled;
-	}
-	
-	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#isDisabled()
-	 */
-	@Override
-	public boolean isDisabled() {
-		return "true".equals(disabled);
-	}
-	
-	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#setOrder(java.lang.int)
-	 */
-	@Override
-	public void setOrder(final int order) {
-		this.order = order;
-	}
-	
-	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#getOrder()
-	 */
-	@Override
-	public int getOrder() {
-		return this.order;
-	}
-	
 	/**
 	 * 
 	 */
-	public AbstractStep() {
+	public AbstractEnveloperStep() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	/* (non-Javadoc)
+	 * @see transformationsEngine.digester.steps.ITransformerStep#execute(java.util.List<transformationsEngine.wrappers.StreamHolder>, org.glassfish.jersey.media.multipart.FormDataMultiPart, javax.ws.rs.core.MultivaluedMap)
+	 */
+	@Override
+	public abstract void execute(final List<StreamHolder> holders, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
+			throws Exception;
 
 	/* (non-Javadoc)
 	 * @see transformationsEngine.digester.steps.ITransformerStep#execute(transformationsEngine.wrappers.StreamHolder, org.glassfish.jersey.media.multipart.FormDataMultiPart, javax.ws.rs.core.MultivaluedMap)
 	 */
 	@Override
-	public abstract void execute(final StreamHolder holder, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
-			throws Exception;
+	public void execute(final StreamHolder holder, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
+			throws Exception {
+		
+	}
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+/**
     Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
@@ -16,23 +15,15 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Chappy.  If not, see <http://www.gnu.org/licenses/>. 
- -->
-<flow>
-   <steps>
-      <step class="Xml2JsonStep">
-         <disabled>true</disabled>
-         <order>0</order>
-         <parameters>
-         	<mode>xml2json</mode>
-         </parameters>
-      </step>
-      <step class="Json2XmlStep">
-         <disabled>false</disabled>
-         <order>1</order>
-         <parameters>
-         	<mode>json2xml</mode>
-         </parameters>
-      </step>
-   </steps>
-</flow>
+    along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package chappy.interfaces.transformers;
+
+/**
+ * This is the marker of splitter operation step.
+ * @author Gabriel Dimitriu
+ *
+ */
+public interface ISplitterStep {
+
+}

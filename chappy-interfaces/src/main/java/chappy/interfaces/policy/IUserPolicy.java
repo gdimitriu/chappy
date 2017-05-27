@@ -35,4 +35,13 @@ public interface IUserPolicy {
 	default boolean isAuthenticate(final String userName, final String password) {
 		return true;
 	}
+	
+	/**
+	 * is the user is allowed to persist
+	 * @param userName name of the user
+	 * @return true if the user has requested persistence
+	 */
+	default boolean isAllowedPersistence(final String userName) {
+		return true;
+	}
 }

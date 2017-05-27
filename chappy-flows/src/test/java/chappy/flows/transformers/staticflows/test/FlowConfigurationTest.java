@@ -91,10 +91,12 @@ public class FlowConfigurationTest {
 		assertEquals("should be two xsl steps", 2, configuration.getSteps().length);
 		assertEquals("Name first step", "Xml2JsonStep", configuration.getSteps()[0].getName());
 		assertEquals("disabled first step", true, configuration.getSteps()[0].isDisabled());
+		assertEquals("order first step", 0, configuration.getSteps()[0].getOrder());
 		StepParameters parameters = configuration.getSteps()[0].getParameters();
 		assertEquals("mode xml2json first step", "xml2json", parameters.getMode());
 		assertEquals("Name first step", "Json2XmlStep", configuration.getSteps()[1].getName());
 		assertEquals("enabled second step", false, configuration.getSteps()[1].isDisabled());
+		assertEquals("order second step", 1, configuration.getSteps()[1].getOrder());
 		parameters = configuration.getSteps()[1].getParameters();
 		assertEquals("mode json2xml second step", "json2xml", parameters.getMode());
 	}

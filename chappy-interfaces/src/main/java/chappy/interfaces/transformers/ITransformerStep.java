@@ -19,6 +19,8 @@
  */
 package chappy.interfaces.transformers;
 
+import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -51,6 +53,22 @@ public interface ITransformerStep {
 	public default boolean isDisabled() {
 		return false;
 	}
+	
+	/**
+	 * set the number corresponding input stream 
+	 * @param order corresponding to the input stream
+	 */
+	public default void setOrder(final int order) {
+		
+	}
+	
+	/**
+	 * get the order corresponding to the input stream.
+	 * @return order corresponding to the input stream.
+	 */
+	public default int getOrder() {
+		return 0;
+	}
 
 	/**
 	 * This is the execute method, this is used to execute the actual transformation.
@@ -64,6 +82,41 @@ public interface ITransformerStep {
 			MultivaluedMap<String, String> queryParams) throws Exception {
 		holder.setOutputStream(
 				WrapperUtils.fromInputStreamToOutputWrapper(holder.getInputStream()));
+	}
+	
+	/**
+	 * This is the execute method, this is used to execute the actual transformation.
+	 * The input is a list of holders in which will be also the return and intermediary values. 
+	 * @param holders List of StreamHolders.
+	 * @param multipart multipart from rest request
+	 * @throws Exception 
+	 */
+	public default void execute(List<StreamHolder> holders,
+			FormDataMultiPart multipart,
+			MultivaluedMap<String, String> queryParams) throws Exception {
+		
+		if(holders.size() == 1) {
+			execute(holders.get(0), multipart, queryParams);
+			return;
+		}
+		holders.get(0).setOutputStream(
+				WrapperUtils.fromInputStreamToOutputWrapper(holders.get(0).getInputStream()));
+	}
+	
+	/**
+	 * get number of input streams. 
+	 * @return number of input streams.
+	 */
+	public default int getNumberOfInputs() {
+		return 1;
+	}
+	
+	/**
+	 * get number of output streams.
+	 * @return number of output streams.
+	 */
+	public default int getNumberOfOutputs() {
+		return 1;
 	}
 
 	/** 

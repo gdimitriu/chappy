@@ -53,6 +53,7 @@ import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.transactions.ITransaction;
 import chappy.providers.authentication.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.transaction.TransactionProviders;
@@ -86,11 +87,13 @@ public class TransactionResources {
 	 * authenticate the user to the system.
 	 * @param userName the user
 	 * @param password password for the user in base64
+	 * @param persist true if the user want's persistence
 	 * @return http response plus cookie
 	 */
 	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
-	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
+	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password, 
+			@QueryParam("persist") final boolean persistence) {
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
@@ -98,7 +101,17 @@ public class TransactionResources {
 		CookieTransactionsToken response = new CookieTransactionsToken();
 		response.setUserName(userName);
 		
-		Transaction transaction = new Transaction();
+		ITransaction transaction = new Transaction();
+		
+		boolean allowedPersistence = SystemPolicyProvider.getInstance().getAuthenticationHandler().isAllowedPersistence(userName);
+		if (persistence != allowedPersistence) {
+			if (persistence) {
+				return Response.status(Status.FORBIDDEN).build();
+			}
+		}
+		
+		transaction.setPersistence(persistence);
+		
 		TransactionProviders.getInstance().putTransaction(response, transaction);
 		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -132,7 +145,7 @@ public class TransactionResources {
     	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
     	received=or.readValue(str);
     	
-    	Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
+    	ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
     	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
     	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
     	
@@ -165,9 +178,8 @@ public class TransactionResources {
 		byte[] transformerData = Base64.getDecoder().decode(multipart
 				.getField("data").getValue());
 		
-		Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
-		transaction.addTransformer(transformerName);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(received.getUserName(), transformerName, transformerData);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.addTransformer(received.getUserName(), transformerName, transformerData);
 		
 		return Response.ok().cookie(new NewCookie(cookie)).build();
 	}

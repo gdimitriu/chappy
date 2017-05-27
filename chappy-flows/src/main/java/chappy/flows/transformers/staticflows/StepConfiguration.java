@@ -52,6 +52,9 @@ public class StepConfiguration {
 	
 	@XmlElement(name = "configuration")
 	private StaxonConfiguration configuration = null;
+	
+	@XmlElement(name = "order")
+	private int order = 0;
 	/**
 	 * 
 	 */
@@ -78,6 +81,14 @@ public class StepConfiguration {
 	 */
 	public StepParameters getParameters() {
 		return parameters;
+	}
+	
+	/**
+	 * 
+	 * @return the order
+	 */
+	public int getOrder() {
+		return order;
 	}
 
 	/**
