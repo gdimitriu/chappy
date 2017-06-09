@@ -20,6 +20,7 @@
 package chappy.flows.transformers.runners;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBException;
@@ -90,14 +91,20 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 	}
 
 	@Override
-	public void setConfigurations(InputStream configurationStream, FormDataMultiPart multipart,
-			MultivaluedMap<String, String> queryParams) throws JAXBException, SAXException {
+	public void setConfigurations(final InputStream configurationStream, final FormDataMultiPart multipart,
+			final MultivaluedMap<String, String> queryParams) throws JAXBException, SAXException {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void createSteps(String userName) throws Exception {
+	public void createSteps(final String userName) throws Exception {
 		//nothing to do for staxon simple flow because this flow could not be overriden
+	}
+
+	@Override
+	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
+		//nothing to transform yet.
+		return null;
 	}
 
 }

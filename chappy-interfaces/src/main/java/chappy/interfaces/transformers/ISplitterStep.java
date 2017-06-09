@@ -25,5 +25,12 @@ package chappy.interfaces.transformers;
  *
  */
 public interface ISplitterStep {
-
+	
+	/**
+	 * get the separator used for enveloping.
+	 * @return separator
+	 */
+	default String getSeparator() {
+		return ":";
+	}
 }

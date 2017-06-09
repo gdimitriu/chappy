@@ -20,6 +20,7 @@
 package chappy.flows.transformers.runners;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.digester3.Digester;
@@ -122,7 +123,13 @@ public class DigesterFlowRunner implements IFlowRunner {
 	}
 
 	@Override
-	public void createSteps(String userName) throws Exception {
+	public void createSteps(final String userName) throws Exception {
 		//nothing to do the the digester flow because this flow could not be overriden
+	}
+
+	@Override
+	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
+		// does not implement it yet
+		return null;
 	}
 }

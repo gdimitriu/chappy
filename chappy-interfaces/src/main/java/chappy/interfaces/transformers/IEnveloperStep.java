@@ -44,5 +44,11 @@ public interface IEnveloperStep {
 		return 1;
 	}
 	
-	
+	/**
+	 * get the separator used for enveloping.
+	 * @return separator
+	 */
+	default String getSeparator() {
+		return ":";
+	}
 }

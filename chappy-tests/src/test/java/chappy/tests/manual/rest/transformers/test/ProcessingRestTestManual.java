@@ -378,9 +378,113 @@ public class ProcessingRestTestManual {
 			System.out.println(StreamUtils.toStringFromStream(response.readEntity(InputStream.class)));
 		}
 	}
+	
+	@SuppressWarnings("resource")
+	public void pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam("user", "gdimitriu")
+				.queryParam("password", "password")
+				.request().get();
+		
+		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get("userData");
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("name", "EnveloperStep")
+				.field("data", new ClassUtils().getClassAsString("EnveloperStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		multipartEntity = new FormDataMultiPart()
+				.field("data", StreamUtils.getStringFromResource("firstMessage.txt"))
+				.field("data", StreamUtils.getStringFromResource("secondMessage.txt"));
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_INTEGRATION)
+					.path(IRestResourcesConstants.REST_FLOW)
+					.queryParam("configuration", StreamUtils.getStringFromResource("basicEnveloperStep.xml"))
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResource("enveloperStepResponse.txt"),
+						StreamUtils.toStringFromStream(inputStream));
+		}
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+				
+	}
+	
+	@SuppressWarnings("resource")
+	public void pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam("user", "gdimitriu")
+				.queryParam("password", "password")
+				.request().get();
+		
+		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get("userData");
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("name", "EnveloperStep")
+				.field("data", new ClassUtils().getClassAsString("EnveloperStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "SplitterStep")
+				.field("data", new ClassUtils().getClassAsString("SplitterStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		multipartEntity = new FormDataMultiPart()
+				.field("data", StreamUtils.getStringFromResource("enveloperStepResponse.txt"));
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_INTEGRATION)
+					.path(IRestResourcesConstants.REST_FLOW)
+					.queryParam("configuration", StreamUtils.getStringFromResource("basicSplitterEnveloperStep.xml"))
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResource("enveloperStepResponse.txt"),
+						StreamUtils.toStringFromStream(inputStream));
+		}
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+				
+	}
+	
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
-		test.xml2json2xmlFlowStepsWrongTest();
+		//test.push3CustomTransformersByTransactionAndMakeTransformation();
+		test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
 	}
 
 }

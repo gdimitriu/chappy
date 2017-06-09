@@ -195,7 +195,7 @@ public class TransactionResources {
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamFlow(final FormDataMultiPart multipart,
-			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");

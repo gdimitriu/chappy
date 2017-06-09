@@ -51,7 +51,11 @@ public interface IRestResourcesConstants {
 	
 	String REST_LOGOUT = "logout";
 	
-	String REST_LIST_TRASNSFORMRES = "listoftransformers";
+	String REST_LIST_TRANSFORMERS = "listoftransformers";
 	
 	String REST_DELETE = "delete";
+	
+	String REST_INTEGRATION = "integration";
+	
+	String REST_RUN = "run";
 }

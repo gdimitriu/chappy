@@ -26,6 +26,7 @@ package chappy.interfaces.rest.resources;
  */
 public interface IRestPathConstants {
 
+	
 	String PATH_TO_TRANSFORM_FLOW = IRestResourcesConstants.BASE_REST + "/" 
 			+ IRestResourcesConstants.REST_TRANSFORM + "/" + IRestResourcesConstants.REST_FLOW;
 	String PATH_TO_TRANSFORM = IRestResourcesConstants.BASE_REST + "/" 
@@ -44,4 +45,12 @@ public interface IRestPathConstants {
 			+ IRestResourcesConstants.REST_DELETE + "/" + IRestResourcesConstants.REST_FLOW;
 	String PATH_TO_TRANSACTION = IRestResourcesConstants.BASE_REST + "/" 
 			+ IRestResourcesConstants.REST_TRANSACTION;
+	
+	/*
+	 * path for integration broker.
+	 */
+	String PATH_TO_INTEGRATION = IRestResourcesConstants.BASE_REST + "/"
+			+ IRestResourcesConstants.REST_TRANSACTION + "/"
+			+ IRestResourcesConstants.REST_INTEGRATION;
+	String PATH_TO_RUN_INTEGRATION = PATH_TO_INTEGRATION + "/" + IRestResourcesConstants.REST_RUN;
 }

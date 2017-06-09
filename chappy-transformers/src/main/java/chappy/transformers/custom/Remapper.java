@@ -36,7 +36,10 @@ public class Remapper extends  RemapperValue {
 	
 	@Override
 	public String mapType(String typeName) {
-		if (typeName.endsWith("Step") && !typeName.contains("AbstractStep")) {
+		if (typeName.endsWith("Step") 
+				&& !typeName.contains("AbstractStep") 
+				&& !typeName.contains("AbstractEnveloperStep") 
+				&& !typeName.contains("AbstractSplitterStep")) {
 			setOriginalValue(typeName);
 			String packageName = getClass().getPackage().getName();
 			setNewValue( packageName.replace(".", "/")+ "/" +
