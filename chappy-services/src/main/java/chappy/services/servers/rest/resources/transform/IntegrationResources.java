@@ -19,18 +19,20 @@
  */
 package chappy.services.servers.rest.resources.transform;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
@@ -51,6 +53,7 @@ import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.utils.streams.StreamUtils;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -83,7 +86,6 @@ public class IntegrationResources {
 	@Path(IRestResourcesConstants.REST_FLOW)
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response runFlowIntegration(final FormDataMultiPart multipart,
 			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		
@@ -128,6 +130,14 @@ public class IntegrationResources {
 				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
 		runner.createSteps(received.getUserName());
 		runner.executeSteps(holders);
+		if (holders.size() > 1) {
+			FormDataMultiPart multipartEntity = new FormDataMultiPart();
+			for (StreamHolder holder : holders) {
+				multipartEntity = multipartEntity.field("data",
+						StreamUtils.toStringFromStream(holder.getInputStream()));
+			}
+			return Response.ok().entity(multipartEntity).cookie(new NewCookie(cookie)).build();
+		}
 		
 		ByteArrayInputStreamWrapper inputStream = holders.get(0).getInputStream();
 		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());

@@ -24,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.client.Client;
@@ -43,6 +45,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
@@ -53,6 +56,7 @@ import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.tests.rest.transformers.test.ClassUtils;
+import chappy.tests.utils.TestUtils;
 import chappy.utils.streams.StreamUtils;
 /**
  * This is test class for REST server with digeser.
@@ -481,10 +485,64 @@ public class ProcessingRestTestManual {
 				
 	}
 	
+	@SuppressWarnings("resource")
+	public void pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam("user", "gdimitriu")
+				.queryParam("password", "password")
+				.request().get();
+		
+		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get("userData");
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("name", "SplitterStep")
+				.field("data", new ClassUtils().getClassAsString("SplitterStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		multipartEntity = new FormDataMultiPart()
+				.field("data", StreamUtils.getStringFromResource("enveloperStepResponse.txt"));
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_INTEGRATION)
+					.path(IRestResourcesConstants.REST_FLOW)
+					.queryParam("configuration", StreamUtils.getStringFromResource("basicSplitterStep.xml"))
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			multipartEntity = response.readEntity(FormDataMultiPart.class);
+			List<FormDataBodyPart> bodyParts = multipartEntity.getFields("data");
+	    	List<InputStream> actual = new ArrayList<InputStream>();
+	    	for (FormDataBodyPart bodyPart : bodyParts) {
+	    		actual.add(bodyPart.getEntityAs(InputStream.class));
+	    	}
+	    	List<InputStream> expected = new ArrayList<InputStream>();
+	    	expected.add(StreamUtils.toStreamFromResource("firstMEssage.txt"));
+	    	expected.add(StreamUtils.toStreamFromResource("secondMessage.txt"));
+	    	TestUtils.compareTwoListOfStreams(expected, actual);
+			
+		}
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+				
+	}
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
 		//test.push3CustomTransformersByTransactionAndMakeTransformation();
-		test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
+		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
+		test.pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs();
 	}
 
 }
