@@ -19,6 +19,7 @@
  */
 package chappy.transformers.custom;
 
+import chappy.providers.transformers.DefaultStepProvider;
 import chappy.remapper.bytecode.RemapperValue;
 
 /**
@@ -38,7 +39,8 @@ public class RemapperUser extends  RemapperValue {
 	
 	@Override
 	public String mapType(String typeName) {
-		if (typeName.endsWith("Step") && !typeName.contains("AbstractStep")) {
+		if (typeName.endsWith("Step") 
+				&& !DefaultStepProvider.getInstance().isDefaultStep(typeName)) {
 			setOriginalValue(typeName);
 			String packageName = getClass().getPackage().getName();
 			setNewValue( packageName.replace(".", "/")+ "/" + userName + "/" +
