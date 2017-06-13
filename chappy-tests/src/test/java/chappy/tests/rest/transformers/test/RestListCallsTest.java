@@ -36,8 +36,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
@@ -119,12 +117,8 @@ public class RestListCallsTest {
 					.path(IRestResourcesConstants.REST_DEFAULT)
 					.request().get();
 		if (response.getStatus() >= 0) {
-			FormDataMultiPart multipartEntity = response.readEntity(FormDataMultiPart.class);
-			List<FormDataBodyPart> bodyParts = multipartEntity.getFields("data");
-	    	List<String> actual = new ArrayList<String>();
-	    	for (FormDataBodyPart bodyPart : bodyParts) {
-	    		actual.add(bodyPart.getEntityAs(String.class));
-	    	}
+			@SuppressWarnings("unchecked")
+			List<String> actual = response.readEntity(new ArrayList<String>().getClass());
 	    	List<String> expected = new ArrayList<String>();
 	    	expected.add("XslStep");
 	    	expected.add("Json2XmlStep");

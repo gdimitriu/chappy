@@ -20,6 +20,7 @@
 package chappy.tests.rest.transformers.test;
 
 import static org.junit.Assert.assertEquals;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -43,7 +44,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
@@ -322,16 +322,12 @@ public class RestTrasactionFlowTransformationsTest {
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
-			multipartEntity = response.readEntity(FormDataMultiPart.class);
-			List<FormDataBodyPart> bodyParts = multipartEntity.getFields("data");
-	    	List<InputStream> actual = new ArrayList<InputStream>();
-	    	for (FormDataBodyPart bodyPart : bodyParts) {
-	    		actual.add(bodyPart.getEntityAs(InputStream.class));
-	    	}
-	    	List<InputStream> expected = new ArrayList<InputStream>();
-	    	expected.add(StreamUtils.toStreamFromResource("firstMEssage.txt"));
-	    	expected.add(StreamUtils.toStreamFromResource("secondMessage.txt"));
-	    	TestUtils.compareTwoListOfStreams(expected, actual);
+	    	@SuppressWarnings("unchecked")
+			List<String> actual = response.readEntity(new ArrayList<String>().getClass());
+	    	List<String> expected = new ArrayList<String>();
+	    	expected.add(StreamUtils.getStringFromResource("firstMEssage.txt"));
+	    	expected.add(StreamUtils.getStringFromResource("secondMessage.txt"));
+	    	TestUtils.compareTwoListOfStrings(expected, actual);
 			
 		}
 		

@@ -32,6 +32,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -128,18 +129,12 @@ public class IntegrationResources {
 		runner.createSteps(received.getUserName());
 		runner.executeSteps(holders);
 		if (holders.size() > 1) {
-			FormDataMultiPart multipartEntity = new FormDataMultiPart();
+			List<String> retList = new ArrayList<String>();
 			for (StreamHolder holder : holders) {
-				multipartEntity = multipartEntity.field("data",
-						StreamUtils.toStringFromStream(holder.getInputStream()));
+				retList.add(StreamUtils.toStringFromStream(holder.getInputStream()));
 			}
-			return Response.ok().entity(multipartEntity).cookie(new NewCookie(cookie)).build();
-//			List<ByteArrayInputStream> retList = new ArrayList<ByteArrayInputStream>();
-//			for (StreamHolder holder : holders) {
-//				retList.add(holder.getInputStream());
-//			}
-//			GenericEntity<List<ByteArrayInputStream>> returnList = new GenericEntity<List<ByteArrayInputStream>>(retList){};
-//			return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();
+			GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(retList){};
+			return Response.ok().type(MediaType.APPLICATION_JSON).entity(returnList).cookie(new NewCookie(cookie)).build();
 		}
 		
 		ByteArrayInputStreamWrapper inputStream = holders.get(0).getInputStream();

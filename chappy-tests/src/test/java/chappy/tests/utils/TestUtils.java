@@ -57,6 +57,20 @@ public final class TestUtils {
 	}
 	
 	/**
+	 * compare with order two list of strings.
+	 * @param expected list of strings
+	 * @param actual list of strings
+	 */
+	public static void compareTwoListOfStrings(final List<String> expected, final List<String> actual) {
+		if (expected.size() != actual.size()) {
+			fail("nr of messages from both lists are not equal");
+		}
+		for (int i = 0 ;i < expected.size(); i++) {
+			assertEquals("at position " + i, expected.get(i),actual.get(i));
+		}
+	}
+	
+	/**
 	 * compare without order two list of elements
 	 * @param expected list
 	 * @param actual list

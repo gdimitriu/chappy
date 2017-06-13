@@ -30,8 +30,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.transformers.DefaultStepProvider;
@@ -59,18 +57,18 @@ public class ListOperationResources {
 	 * @return list of provided steps
 	 */
 	@Path(IRestResourcesConstants.REST_DEFAULT)
-	@Produces(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response listDefaultTransformers(@Context UriInfo uriInfo) {
 		List<String> listOfSteps = DefaultStepProvider.getInstance().getDefaultSteps();
-//		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
-//		return Response.ok().entity(returnList).build();
-		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart();
-		for (String step : listOfSteps) {
-			multipartEntity = multipartEntity.field("data", step);
-		}
-		return Response.ok().entity(multipartEntity).build();
+//		@SuppressWarnings("resource")
+//		FormDataMultiPart multipartEntity = new FormDataMultiPart();
+//		for (String step : listOfSteps) {
+//			multipartEntity = multipartEntity.field("data", step);
+//		}
+//		return Response.ok().entity(multipartEntity).build();
+		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
+		return Response.ok().entity(returnList).build();
 	}
 	
 	/**
