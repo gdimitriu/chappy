@@ -42,6 +42,8 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
@@ -102,6 +104,7 @@ public class RestListCallsTest {
 		server.stopServer();
 	}
 
+	@Test
 	public void getTheListOfDefaultTransformers() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
