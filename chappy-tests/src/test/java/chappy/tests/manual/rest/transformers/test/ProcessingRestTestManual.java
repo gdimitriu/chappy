@@ -55,7 +55,7 @@ import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
-import chappy.tests.rest.transformers.test.ClassUtils;
+import chappy.tests.utils.ClassUtils;
 import chappy.tests.utils.TestUtils;
 import chappy.utils.streams.StreamUtils;
 /**
@@ -538,11 +538,40 @@ public class ProcessingRestTestManual {
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 				
 	}
+	
+	public void getTheListOfDefaultTransformers() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = null;
+		
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestResourcesConstants.BASE_REST)
+					.path(IRestResourcesConstants.REST_LIST)
+					.path(IRestResourcesConstants.REST_DEFAULT)
+					.request().get();
+		if (response.getStatus() >= 0) {
+			FormDataMultiPart multipartEntity = response.readEntity(FormDataMultiPart.class);
+			List<FormDataBodyPart> bodyParts = multipartEntity.getFields("data");
+	    	List<String> actual = new ArrayList<String>();
+	    	for (FormDataBodyPart bodyPart : bodyParts) {
+	    		actual.add(bodyPart.getEntityAs(String.class));
+	    	}
+	    	List<String> expected = new ArrayList<String>();
+	    	expected.add("XslStep");
+	    	expected.add("Json2XmlStep");
+	    	expected.add("Xml2JsonStep");
+	    	TestUtils.compareTwoListWithoutOrder(expected, actual);
+		}
+	}
+	
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
 		//test.push3CustomTransformersByTransactionAndMakeTransformation();
 		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
-		test.pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs();
+		test.getTheListOfDefaultTransformers();
 	}
 
 }

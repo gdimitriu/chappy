@@ -19,6 +19,7 @@
  */
 package chappy.providers.transformers;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class DefaultStepProvider {
 	private List<String> defaultStepsList = null;
 	
 	private DefaultStepProvider() {
-		defaultStepsList = getDefaultSteps();
+		defaultStepsList = getAllDefaultSteps();
 	}
 	/**
 	 * get the singleton instance.
@@ -54,10 +55,10 @@ public class DefaultStepProvider {
 	}
 	
 	/**
-	 * get the default steps.
+	 * get all default steps.
 	 * @return list of steps names.
 	 */
-	public List<String> getDefaultSteps() {
+	public List<String> getAllDefaultSteps() {
 		Reflections reflections = new Reflections("chappy.interfaces");
 		List<String> steps = new ArrayList<String>();
 		steps.add("ITransformerStep");
@@ -73,6 +74,41 @@ public class DefaultStepProvider {
 		steps.add("ISplitterStep");
 		Set<Class<? extends ISplitterStep>> splitterResources = reflections.getSubTypesOf(ISplitterStep.class);
 		for (Class<? extends ISplitterStep> current : splitterResources) {
+			steps.add(current.getSimpleName());
+		}
+		reflections = new Reflections("chappy.transformers");
+		stepResources = reflections.getSubTypesOf(ITransformerStep.class);
+		for (Class<? extends ITransformerStep> current : stepResources) {
+			steps.add(current.getSimpleName());
+		}
+		reflections = new Reflections("chappy.mappings");
+		stepResources = reflections.getSubTypesOf(ITransformerStep.class);
+		for (Class<? extends ITransformerStep> current : stepResources) {
+			steps.add(current.getSimpleName());
+		}
+		steps = steps.stream().distinct().collect(Collectors.toList());
+		return steps;
+	}
+	/**
+	 * get default implementation steps.
+	 * @return list of steps names.
+	 */
+	public List<String> getDefaultSteps() {
+		Reflections reflections =  new Reflections("chappy.transformers");
+		Set<Class<? extends ITransformerStep>> stepResources = reflections.getSubTypesOf(ITransformerStep.class);
+		List<String> steps = new ArrayList<String>();
+		for (Class<? extends ITransformerStep> current : stepResources) {
+			if (Modifier.isAbstract(current.getModifiers())) {
+				continue;
+			}
+			steps.add(current.getSimpleName());
+		}
+		reflections = new Reflections("chappy.mappings");
+		stepResources = reflections.getSubTypesOf(ITransformerStep.class);
+		for (Class<? extends ITransformerStep> current : stepResources) {
+			if (Modifier.isAbstract(current.getModifiers())) {
+				continue;
+			}
 			steps.add(current.getSimpleName());
 		}
 		steps = steps.stream().distinct().collect(Collectors.toList());

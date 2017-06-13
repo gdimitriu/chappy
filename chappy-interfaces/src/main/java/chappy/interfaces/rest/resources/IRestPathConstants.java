@@ -35,6 +35,8 @@ public interface IRestPathConstants {
 			+ IRestResourcesConstants.REST_TRANSFORM + "/" + IRestResourcesConstants.REST_TRANSFORMER_STAXON;
 	String PATH_TO_TRANSFORM_DIGESTER = IRestResourcesConstants.BASE_REST + "/" 
 			+ IRestResourcesConstants.REST_TRANSFORM + "/" + IRestResourcesConstants.REST_DIGESTER_FLOW;
+	String PATH_TO_LIST_SYSTEM_STEPS = IRestResourcesConstants.BASE_REST + "/"
+			+ IRestResourcesConstants.REST_LIST;
 	
 	/*
 	 * path for upgrade and update and delete of injection.

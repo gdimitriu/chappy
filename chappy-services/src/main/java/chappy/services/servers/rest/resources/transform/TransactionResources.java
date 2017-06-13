@@ -235,4 +235,17 @@ public class TransactionResources {
 		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
 		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
 	}
+	
+	/**
+	 * get the list of added steps in this transaction.
+	 * @param uriInfo
+	 * @param hh
+	 * @return list of added step in this transaction
+	 */
+	@Path(IRestResourcesConstants.REST_LIST)
+	@GET
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) {
+		return Response.ok().build();
+	}
 }

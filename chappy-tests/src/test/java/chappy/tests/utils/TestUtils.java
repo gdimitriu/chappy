@@ -41,6 +41,11 @@ public final class TestUtils {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * compare with order two list of streams.
+	 * @param expected list of streams
+	 * @param actual list of streams
+	 */
 	public static void compareTwoListOfStreams(final List<InputStream> expected, final List<InputStream> actual) {
 		if (expected.size() != actual.size()) {
 			fail("nr of messages from both lists are not equal");
@@ -48,6 +53,31 @@ public final class TestUtils {
 		for (int i = 0 ;i < expected.size(); i++) {
 			assertEquals("at position " + i, StreamUtils.toStringFromStream(expected.get(i)),
 					StreamUtils.toStringFromStream(actual.get(i)));
+		}
+	}
+	
+	/**
+	 * compare without order two list of elements
+	 * @param expected list
+	 * @param actual list
+	 */
+	public static void compareTwoListWithoutOrder(final List<?> expected, final List<?> actual) {
+		if (expected.size() != actual.size()) {
+			fail("nr of messages from both lists are not equal");
+		}
+		boolean found = false;
+		for (int i = 0; i < expected.size(); i++) {
+			Object o = expected.get(i);
+			found = false;
+			for (int j = 0 ; j < actual.size(); j++) {
+				if (o.equals(actual.get(j))) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				fail("the message " + o+ " does not exist");
+			}
 		}
 	}
 }
