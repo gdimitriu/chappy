@@ -18,6 +18,8 @@
 					<additionalClasspathElements>
 						<additionalClasspathElement>${project.basedir}/src/test/resources/</additionalClasspathElement>
 						<additionalClasspathElement>${project.basedir}/src/test/resources/exceptions/</additionalClasspathElement>
+						<additionalClasspathElement>${project.basedir}/src/test/resources/transaction/dynamic/multipleinputoutput/</additionalClasspathElement>
+						<additionalClasspathElement>${project.basedir}/src/test/resources/transaction/dynamic/dummytransformers/</additionalClasspathElement>
 						<additionalClasspathElement>${basedir}/../chappy-interfaces/src/main/resources/</additionalClasspathElement>
 					</additionalClasspathElements>
 				</configuration>

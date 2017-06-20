@@ -167,12 +167,12 @@ public class RestTrasactionFlowTransformationsTest {
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 					.path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW)
-					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
+					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
 		
@@ -210,17 +210,17 @@ public class RestTrasactionFlowTransformationsTest {
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
-				.field("data", StreamUtils.getStringFromResource("firstMessage.txt"))
-				.field("data", StreamUtils.getStringFromResource("secondMessage.txt"));
+				.field("data", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/firstMessage.txt"))
+				.field("data", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/secondMessage.txt"));
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_INTEGRATION)
 					.path(IRestResourcesConstants.REST_FLOW)
-					.queryParam("configuration", StreamUtils.getStringFromResource("basicEnveloperStep.xml"))
+					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicEnveloperStep.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResource("enveloperStepResponse.txt"),
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
 		
@@ -267,16 +267,16 @@ public class RestTrasactionFlowTransformationsTest {
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
-				.field("data", StreamUtils.getStringFromResource("enveloperStepResponse.txt"));
+				.field("data", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"));
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_INTEGRATION)
 					.path(IRestResourcesConstants.REST_FLOW)
-					.queryParam("configuration", StreamUtils.getStringFromResource("basicSplitterEnveloperStep.xml"))
+					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterEnveloperStep.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResource("enveloperStepResponse.txt"),
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
 		
@@ -314,19 +314,19 @@ public class RestTrasactionFlowTransformationsTest {
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
-				.field("data", StreamUtils.getStringFromResource("enveloperStepResponse.txt"));
+				.field("data", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"));
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_INTEGRATION)
 					.path(IRestResourcesConstants.REST_FLOW)
-					.queryParam("configuration", StreamUtils.getStringFromResource("basicSplitterStep.xml"))
+					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterStep.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 	    	@SuppressWarnings("unchecked")
 			List<String> actual = response.readEntity(new ArrayList<String>().getClass());
 	    	List<String> expected = new ArrayList<String>();
-	    	expected.add(StreamUtils.getStringFromResource("firstMEssage.txt"));
-	    	expected.add(StreamUtils.getStringFromResource("secondMessage.txt"));
+	    	expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/firstMEssage.txt"));
+	    	expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/secondMessage.txt"));
 	    	TestUtils.compareTwoListOfStrings(expected, actual);
 			
 		}
