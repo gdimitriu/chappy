@@ -69,8 +69,6 @@ import chappy.utils.streams.StreamUtils;
  */
 public class RestTrasactionFlowTransformationsTest {
 	
-	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
-
 	private IServiceServer server = null;
 	
 	private int port = 0;
@@ -135,34 +133,9 @@ public class RestTrasactionFlowTransformationsTest {
 		
 		NewCookie cookie = cookies.get("userData");
 		
+		response = RestCallsUtils.addPrePostProcessingSteps(target, cookie);
+		cookie = response.getCookies().get("userData");
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("name", "PreProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
-				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
-		cookie = response.getCookies().get("userData");
-		multipartEntity = new FormDataMultiPart()
-				.field("name", "PostProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
-				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
-		cookie = response.getCookies().get("userData");
-		multipartEntity = new FormDataMultiPart()
-				.field("name", "ProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
-		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
-				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
-		cookie = response.getCookies().get("userData");
-		multipartEntity = new FormDataMultiPart()
 				.field("data", "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
@@ -170,6 +143,8 @@ public class RestTrasactionFlowTransformationsTest {
 					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		cookie = response.getCookies().get("userData");
+		
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
@@ -180,6 +155,8 @@ public class RestTrasactionFlowTransformationsTest {
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 				
 	}
+
+
 	
 	@SuppressWarnings("resource")
 	@Test
@@ -202,7 +179,7 @@ public class RestTrasactionFlowTransformationsTest {
 		
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field("name", "EnveloperStep")
-				.field("data", new ClassUtils().getClassAsString("EnveloperStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("EnveloperStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
@@ -218,6 +195,8 @@ public class RestTrasactionFlowTransformationsTest {
 					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicEnveloperStep.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		cookie = response.getCookies().get("userData");
+		
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -250,7 +229,7 @@ public class RestTrasactionFlowTransformationsTest {
 		
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field("name", "EnveloperStep")
-				.field("data", new ClassUtils().getClassAsString("EnveloperStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("EnveloperStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
@@ -259,7 +238,7 @@ public class RestTrasactionFlowTransformationsTest {
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "SplitterStep")
-				.field("data", new ClassUtils().getClassAsString("SplitterStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("SplitterStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
@@ -274,6 +253,8 @@ public class RestTrasactionFlowTransformationsTest {
 					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterEnveloperStep.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		cookie = response.getCookies().get("userData");
+		
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -306,7 +287,7 @@ public class RestTrasactionFlowTransformationsTest {
 		
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field("name", "SplitterStep")
-				.field("data", new ClassUtils().getClassAsString("SplitterStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field("data", new ClassUtils().getClassAsString("SplitterStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
@@ -321,6 +302,8 @@ public class RestTrasactionFlowTransformationsTest {
 					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterStep.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		cookie = response.getCookies().get("userData");
+		
 		if (response.getStatus() >= 0) {
 	    	@SuppressWarnings("unchecked")
 			List<String> actual = response.readEntity(new ArrayList<String>().getClass());

@@ -46,7 +46,6 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import chappy.interfaces.cookies.CookieTransactionsToken;
@@ -58,6 +57,7 @@ import chappy.providers.authentication.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.services.servers.rest.cookies.CookieUtils;
 import chappy.transaction.base.Transaction;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
@@ -140,10 +140,7 @@ public class TransactionResources {
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
     	ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
     	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
@@ -169,10 +166,7 @@ public class TransactionResources {
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
 		String transformerName = multipart.getField("name").getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
@@ -199,10 +193,7 @@ public class TransactionResources {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
 		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
@@ -244,8 +235,11 @@ public class TransactionResources {
 	 */
 	@Path(IRestResourcesConstants.REST_LIST)
 	@GET
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) {
-		return Response.ok().build();
+	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get("userData");
+		
+		return Response.ok().cookie(new NewCookie(cookie)).build();
 	}
+	
 }

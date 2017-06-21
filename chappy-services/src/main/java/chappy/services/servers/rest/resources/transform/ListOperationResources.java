@@ -61,12 +61,6 @@ public class ListOperationResources {
 	@GET
 	public Response listDefaultTransformers(@Context UriInfo uriInfo) {
 		List<String> listOfSteps = DefaultStepProvider.getInstance().getDefaultSteps();
-//		@SuppressWarnings("resource")
-//		FormDataMultiPart multipartEntity = new FormDataMultiPart();
-//		for (String step : listOfSteps) {
-//			multipartEntity = multipartEntity.field("data", step);
-//		}
-//		return Response.ok().entity(multipartEntity).build();
 		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
 		return Response.ok().entity(returnList).build();
 	}

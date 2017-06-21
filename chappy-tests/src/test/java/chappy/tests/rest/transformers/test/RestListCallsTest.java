@@ -19,16 +19,21 @@
  */
 package chappy.tests.rest.transformers.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -44,6 +49,7 @@ import org.junit.Test;
 
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
@@ -125,5 +131,48 @@ public class RestListCallsTest {
 	    	expected.add("Xml2JsonStep");
 	    	TestUtils.compareTwoListWithoutOrder(expected, actual);
 		}
+	}
+	
+	@Test
+	public void getTheListOfTransactionTransformers() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam("user", "gdimitriu")
+				.queryParam("password", "password")
+				.request().get();
+		
+		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get("userData");
+		
+		response = RestCallsUtils.addPrePostProcessingSteps(target, cookie);
+		
+		cookie = response.getCookies().get("userData");
+		
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+					.path(IRestResourcesConstants.REST_LIST)
+					.request().cookie(cookie).get();
+		
+		cookie = response.getCookies().get("userData");
+		
+		if (response.getStatus() >= 0) {
+			@SuppressWarnings("unchecked")
+			List<String> actual = response.readEntity(new ArrayList<String>().getClass());
+	    	List<String> expected = new ArrayList<String>();
+	    	expected.add("PreProcessingStep");
+	    	expected.add("PostProcessingStep");
+	    	expected.add("ProcessingStep");
+	    	TestUtils.compareTwoListWithoutOrder(expected, actual);
+		}
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 	}
 }
