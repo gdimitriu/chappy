@@ -31,9 +31,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -235,11 +237,15 @@ public class TransactionResources {
 	 */
 	@Path(IRestResourcesConstants.REST_LIST)
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		
-		return Response.ok().cookie(new NewCookie(cookie)).build();
+		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(receivedCookie);
+		List<String> listOfSteps = transaction.getListOfCustomTansformers();
+		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
+		return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();
 	}
 	
 }
