@@ -31,9 +31,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -46,17 +48,18 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.transactions.ITransaction;
 import chappy.providers.authentication.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.services.servers.rest.cookies.CookieUtils;
 import chappy.transaction.base.Transaction;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
@@ -86,11 +89,13 @@ public class TransactionResources {
 	 * authenticate the user to the system.
 	 * @param userName the user
 	 * @param password password for the user in base64
+	 * @param persist true if the user want's persistence
 	 * @return http response plus cookie
 	 */
 	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
-	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password) {
+	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password, 
+			@QueryParam("persist") final boolean persistence) {
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
@@ -98,7 +103,17 @@ public class TransactionResources {
 		CookieTransactionsToken response = new CookieTransactionsToken();
 		response.setUserName(userName);
 		
-		Transaction transaction = new Transaction();
+		ITransaction transaction = new Transaction();
+		
+		boolean allowedPersistence = SystemPolicyProvider.getInstance().getAuthenticationHandler().isAllowedPersistence(userName);
+		if (persistence != allowedPersistence) {
+			if (persistence) {
+				return Response.status(Status.FORBIDDEN).build();
+			}
+		}
+		
+		transaction.setPersistence(persistence);
+		
 		TransactionProviders.getInstance().putTransaction(response, transaction);
 		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -127,12 +142,9 @@ public class TransactionResources {
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
-    	Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
+    	ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
     	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
     	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
     	
@@ -156,18 +168,14 @@ public class TransactionResources {
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
 		String transformerName = multipart.getField("name").getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
 				.getField("data").getValue());
 		
-		Transaction transaction = TransactionProviders.getInstance().getTransaction(received);
-		transaction.addTransformer(transformerName);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(received.getUserName(), transformerName, transformerData);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.addTransformer(received.getUserName(), transformerName, transformerData);
 		
 		return Response.ok().cookie(new NewCookie(cookie)).build();
 	}
@@ -183,14 +191,11 @@ public class TransactionResources {
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamFlow(final FormDataMultiPart multipart,
-			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
 		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
@@ -223,4 +228,24 @@ public class TransactionResources {
 		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
 		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
 	}
+	
+	/**
+	 * get the list of added steps in this transaction.
+	 * @param uriInfo
+	 * @param hh
+	 * @return list of added step in this transaction
+	 */
+	@Path(IRestResourcesConstants.REST_LIST)
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get("userData");
+		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(receivedCookie);
+		List<String> listOfSteps = transaction.getListOfCustomTansformers();
+		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
+		return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();
+	}
+	
 }

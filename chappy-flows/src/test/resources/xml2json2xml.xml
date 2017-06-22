@@ -22,12 +22,14 @@
    <steps>
       <step class="Xml2JsonStep">
          <disabled>true</disabled>
+         <order>0</order>
          <parameters>
          	<mode>xml2json</mode>
          </parameters>
       </step>
       <step class="Json2XmlStep">
          <disabled>false</disabled>
+         <order>1</order>
          <parameters>
          	<mode>json2xml</mode>
          </parameters>

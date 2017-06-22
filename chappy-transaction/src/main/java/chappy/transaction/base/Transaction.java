@@ -19,16 +19,24 @@
  */
 package chappy.transaction.base;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import chappy.interfaces.transactions.ITransaction;
+import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class Transaction {
+public class Transaction implements ITransaction {
 	
+	/** list of transformers used by this transaction */
 	private List<String> listOfTansformers = null;
+	
+	/** true if it has to be persist */
+	private boolean persistence = false;
 
 	/**
 	 * 
@@ -37,26 +45,45 @@ public class Transaction {
 		listOfTansformers = new ArrayList<String>();
 	}
 
-	/**
-	 * @return the listOfTansformers
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#getListOfCustomTansformers()
 	 */
+	@Override
 	public List<String> getListOfCustomTansformers() {
 		return listOfTansformers;
 	}
 
-	/**
-	 * @param listOfTansformers the listOfTansformers to set
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#setListOfTansformers(java.util.List)
 	 */
-	public void setListOfTansformers(List<String> listOfTansformers) {
+	@Override
+	public void setListOfTansformers(final List<String> listOfTansformers) {
 		this.listOfTansformers = listOfTansformers;
 	}
 
-	/**
-	 * add a transformer.
-	 * @param transformerName name of the transformer.
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
 	 */
-	public void addTransformer(String transformerName) {
-		this.listOfTansformers.add(transformerName);
+	@Override
+	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
+		this.listOfTansformers.add(fullName);
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, persistence);
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#isPersistence()
+	 */
+	@Override
+	public boolean isPersistence() {
+		return persistence;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#setPersistence(boolean)
+	 */
+	@Override
+	public void setPersistence(final boolean persistence) {
+		this.persistence = persistence;
 	}
 
 	

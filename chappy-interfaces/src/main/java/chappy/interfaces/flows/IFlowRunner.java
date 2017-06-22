@@ -20,6 +20,7 @@
 package chappy.interfaces.flows;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBException;
@@ -55,6 +56,14 @@ public interface IFlowRunner {
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception;
 	
 	/**
+	 * execute the flow constructed using the configuration.
+	 * @param list of holder input/output holders
+	 * @return list of holder input/output holders
+	 * @throws Exception
+	 */
+	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception;
+	
+	/**
 	 * configure the flow.
 	 * This should be call the simple flow.
 	 * @param mode 
@@ -74,4 +83,5 @@ public interface IFlowRunner {
 	public void setConfigurations(final InputStream configurationStream,
 			final FormDataMultiPart multipart,
 			final MultivaluedMap<String, String> queryParams) throws Exception;
+
 }

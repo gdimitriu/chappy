@@ -24,7 +24,7 @@ import java.util.Map;
 
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.cookies.CookieTransactionsToken;
-import chappy.transaction.base.Transaction;
+import chappy.interfaces.transactions.ITransaction;
 
 /**
  * providers for transactions.
@@ -37,13 +37,13 @@ public class TransactionProviders {
 	static private TransactionProviders singleton = new TransactionProviders();
 	
 	/** map of transactions */
-	private Map<String, Transaction> mapOfTransactionData = null;
+	private Map<String, ITransaction> mapOfTransactionData = null;
 	
 	/**
 	 * private because is singleton.
 	 */
 	private TransactionProviders() {
-		mapOfTransactionData = new HashMap<String, Transaction>();
+		mapOfTransactionData = new HashMap<String, ITransaction>();
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class TransactionProviders {
 	 * @param cookie of the transaction
 	 * @return base transaction.
 	 */
-	public Transaction getTransaction(final CookieTransaction cookie) {
+	public ITransaction getTransaction(final CookieTransaction cookie) {
 		if (mapOfTransactionData.containsKey(cookie.generateStorageId())) {
 			return mapOfTransactionData.get(cookie.generateStorageId());
 		}
@@ -76,7 +76,7 @@ public class TransactionProviders {
 		}
 	}
 	
-	public void putTransaction(final CookieTransaction cookie, final Transaction transaction) {
+	public void putTransaction(final CookieTransaction cookie, final ITransaction transaction) {
 		mapOfTransactionData.put(cookie.generateStorageId(), transaction);
 	}
 }

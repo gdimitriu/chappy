@@ -3,6 +3,8 @@
 	<name>chappy-transaction</name>
 	<comment></comment>
 	<projects>
+		<project>chappy-interfaces</project>
+		<project>chappy-providers</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

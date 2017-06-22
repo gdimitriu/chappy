@@ -52,6 +52,7 @@ import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
+import chappy.tests.utils.ClassUtils;
 import chappy.utils.streams.StreamUtils;
 
 
@@ -251,12 +252,12 @@ public class RestCallsForFlowTransformationsTest {
 				.field("data", "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
-					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
+					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA})
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
 		String transformerName = "ProcessingStep";

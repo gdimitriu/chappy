@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow >
+   <steps>
+      <step class="SplitterStep">
+         <disabled>false</disabled>
+         <parameters>
+         	<configProperty property="separator" value="::"/>
+         </parameters>
+      </step>
+   </steps>
+</flow>

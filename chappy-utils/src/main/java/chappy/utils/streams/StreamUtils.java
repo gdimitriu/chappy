@@ -38,19 +38,43 @@ public final class StreamUtils {
 		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * get the String from the resource.
+	 * @param resourceFile resource file
+	 * @return the String from the resource
+	 */
 	static public String getStringFromResource(final String resourceFile) {
 		return  new BufferedReader(new InputStreamReader(
 				StreamUtils.class.getClassLoader().getResourceAsStream(resourceFile)))
 		  .lines().collect(Collectors.joining("\n"));
 	}
 	
+	/**
+	 * get the String from the resource without the spaces.
+	 * @param resourceFile resource file
+	 * @return the String from the resource
+	 */
 	static public String getStringFromResourceWithoutSpaces(final String resourceFile) {
 		return  new BufferedReader(new InputStreamReader(
 				StreamUtils.class.getClassLoader().getResourceAsStream(resourceFile)))
 		  .lines().map(s -> s.trim()).collect(Collectors.joining(""));
 	}
 	
+	/**
+	 * transform the InputStream into a String.
+	 * @param stream
+	 * @return String
+	 */
 	static public String toStringFromStream(final InputStream stream) {
 		return new BufferedReader(new InputStreamReader(stream)).lines().collect(Collectors.joining("\n"));
+	}
+	
+	/**
+	 * get the InputStream from the resource.
+	 * @param resourceFile resource file
+	 * @return the InputStream from the resource
+	 */
+	static public InputStream toStreamFromResource(final String resourceFile) {
+		return StreamUtils.class.getClassLoader().getResourceAsStream(resourceFile);
 	}
 }

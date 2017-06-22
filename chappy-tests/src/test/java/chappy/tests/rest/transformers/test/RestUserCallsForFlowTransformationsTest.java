@@ -50,6 +50,7 @@ import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
+import chappy.tests.utils.ClassUtils;
 import chappy.utils.streams.StreamUtils;
 
 

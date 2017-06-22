@@ -14,10 +14,12 @@
 				<version>2.19.1</version>
 				<configuration>
 					<useSystemClassLoader>true</useSystemClassLoader>
-					<dependenciesToScan>com.github.gdimitriu.chappy:chappy-providers, com.github.gdimitriu.chappy:chappy-services, com.github.gdimitriu.chappy:chappy-flows, com.github.gdimitriu.chappy:chappy-interfaces, com.github.gdimitriu.chappy:chappy-configurations, com.github.gdimitriu.chappy:chappy-transformers</dependenciesToScan>
+					<dependenciesToScan>com.github.gdimitriu.chappy:chappy-providers, com.github.gdimitriu.chappy:chappy-services, com.github.gdimitriu.chappy:chappy-flows, com.github.gdimitriu.chappy:chappy-interfaces, com.github.gdimitriu.chappy:chappy-configurations, com.github.gdimitriu.chappy:chappy-transformers, com.github.gdimitriu.chappy:chappy-transaction</dependenciesToScan>
 					<additionalClasspathElements>
 						<additionalClasspathElement>${project.basedir}/src/test/resources/</additionalClasspathElement>
 						<additionalClasspathElement>${project.basedir}/src/test/resources/exceptions/</additionalClasspathElement>
+						<additionalClasspathElement>${project.basedir}/src/test/resources/transaction/dynamic/multipleinputoutput/</additionalClasspathElement>
+						<additionalClasspathElement>${project.basedir}/src/test/resources/transaction/dynamic/dummytransformers/</additionalClasspathElement>
 						<additionalClasspathElement>${basedir}/../chappy-interfaces/src/main/resources/</additionalClasspathElement>
 					</additionalClasspathElements>
 				</configuration>

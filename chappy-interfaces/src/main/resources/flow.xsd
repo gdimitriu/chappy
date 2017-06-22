@@ -36,6 +36,7 @@
 <xs:complexType name = "stepDefinition">
 	<xs:sequence>
 		<xs:element name = "disabled" type = "xs:string" minOccurs="1" maxOccurs="1"/>
+		<xs:element name = "order" type = "xs:int" minOccurs="0" maxOccurs="1"/>
 		<xs:element	name = "configuration" type = "configurationDef" minOccurs="0" maxOccurs="1"/>
 		<xs:element name = "parameters" type = "parametersDef" minOccurs="0" maxOccurs="1"/>
 	</xs:sequence>
@@ -64,6 +65,7 @@
 			<xs:element name = "mappingName" type = "xs:string" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 		<xs:element name = "mode" type = "xs:string" minOccurs="0" maxOccurs="1"/>
+		<xs:element name = "configProperty" type = "propertyDef" minOccurs="0" maxOccurs="unbounded"/>
 	</xs:choice>
 </xs:complexType>
 </xs:schema>

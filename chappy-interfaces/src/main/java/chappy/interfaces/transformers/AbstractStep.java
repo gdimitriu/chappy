@@ -36,6 +36,9 @@ public abstract class AbstractStep implements ITransformerStep {
 	/** disable the step */
 	private String disabled = "false";
 	
+	/** the order of input stream */
+	private int order = 0;
+	
 	/* (non-Javadoc)
 	 * @see transformationsEngine.digester.steps.ITransformerStep#setDisabled(java.lang.String)
 	 */
@@ -51,6 +54,23 @@ public abstract class AbstractStep implements ITransformerStep {
 	public boolean isDisabled() {
 		return "true".equals(disabled);
 	}
+	
+	/* (non-Javadoc)
+	 * @see transformationsEngine.digester.steps.ITransformerStep#setOrder(java.lang.int)
+	 */
+	@Override
+	public void setOrder(final int order) {
+		this.order = order;
+	}
+	
+	/* (non-Javadoc)
+	 * @see transformationsEngine.digester.steps.ITransformerStep#getOrder()
+	 */
+	@Override
+	public int getOrder() {
+		return this.order;
+	}
+	
 	/**
 	 * 
 	 */

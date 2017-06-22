@@ -40,8 +40,11 @@ public class CustomTransformerStorageProvider {
 	/** singleton instance */
 	private static CustomTransformerStorageProvider singleton = new CustomTransformerStorageProvider();
 	
-	/** hash storage */
+	/** hash storage for notPersistance transformers*/
 	private Map<String, byte[]> transformersStorage = null;
+	
+	/** hash storage for Persistence transformers */
+	private Map<String, byte[]> persistenceTransformersStorage = null;
 	
 	private Map<String, Class<?>> loadedTransformers = null; 
 	/**
@@ -49,6 +52,7 @@ public class CustomTransformerStorageProvider {
 	 */
 	private CustomTransformerStorageProvider() {
 		transformersStorage = new HashMap<String, byte[]>();
+		persistenceTransformersStorage = new HashMap<String, byte[]>();
 		loadedTransformers = new HashMap<String, Class<?>>();
 	}
 	
@@ -57,6 +61,7 @@ public class CustomTransformerStorageProvider {
 	 */
 	public void cleanRepository() {
 		transformersStorage = new HashMap<String, byte[]>();
+		persistenceTransformersStorage = new HashMap<String, byte[]>();
 		loadedTransformers = new HashMap<String, Class<?>>();
 	}
 	
@@ -96,11 +101,30 @@ public class CustomTransformerStorageProvider {
 	 */
 	public void pushNewUserTransformer(final String userName, final String fullName, final byte[] originalByteCode) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+		pushNewUserTransformer(userName, fullName, originalByteCode, false);
+	}
+	/**
+	 * push new transformer defined in one class.
+	 * @param userName
+	 * @param fullName
+	 * @param remappedBytecode
+	 * @param persistence true if is persisted
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws IOException 
+	 */
+	public void pushNewUserTransformer(final String userName, final String fullName, final byte[] originalByteCode , final boolean persistence) 
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 		RemapperValue remapper = (RemapperValue) getClass().getClassLoader()
 					.loadClass("chappy.transformers.custom.Remapper").newInstance();
 		remapper.setUserName(userName);
 		byte[] remappedBytecode = new ChangeByteCode().remapByteCode(originalByteCode, remapper);
-		transformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
+		if (persistence) {
+			persistenceTransformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
+		} else {
+			transformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
+		}
 	}
 	
 	/**
@@ -125,28 +149,43 @@ public class CustomTransformerStorageProvider {
 		}
 		if (transformersStorage.containsKey(fullName)) {
 			byte[] classData = transformersStorage.get(fullName);
-			JavaClassLoaderSimple simpleLoader = new JavaClassLoaderSimple(getClass().getClassLoader());
-			try {
-				Class<?> classDefinition = simpleLoader.loadClass(fullName, classData);
-				loadedTransformers.put(fullName, classDefinition);
-				return (ITransformerStep) classDefinition.newInstance();
-			} catch (NoClassDefFoundError | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				Exception ex = ExceptionMappingProvider.getInstace().mapException(e);
-				if (ex instanceof IChappyException) {
-					if (e instanceof InstantiationException) {
-						((IChappyException) ex).setLocalizedMessage("For transformer " + fullName 
-								+ "dependencies are not fullfilled " + e.getLocalizedMessage());
-					} else if (e instanceof ClassNotFoundException || e instanceof NoClassDefFoundError) {
-						((IChappyException) ex).setLocalizedMessage("The custom transformer " + fullName 
-								+ "does not exist on server " + e.getLocalizedMessage());
-					}
-					throw ex;
-				}
-			}
+			return createTransformerStep(fullName, classData);
+		} else if (persistenceTransformersStorage.containsKey(fullName)) {
+			byte[] classData = persistenceTransformersStorage.get(fullName);
+			return createTransformerStep(fullName, classData);
 		}
 		Exception ex = ExceptionMappingProvider.getInstace().mapException(new ClassNotFoundException("class does not exist on server " + fullName));
 		((IChappyException) ex).setLocalizedMessage("The custom transformer " + fullName + " does not exist on server ");
 		throw ex;
+	}
+
+	/**
+	 * create the transformer step.
+	 * @param fullName
+	 * @param classData
+	 * @return transformer step
+	 * @throws Exception
+	 */
+	private ITransformerStep createTransformerStep(final String fullName, byte[] classData) throws Exception {
+		JavaClassLoaderSimple simpleLoader = new JavaClassLoaderSimple(getClass().getClassLoader());
+		try {
+			Class<?> classDefinition = simpleLoader.loadClass(fullName, classData);
+			loadedTransformers.put(fullName, classDefinition);
+			return (ITransformerStep) classDefinition.newInstance();
+		} catch (NoClassDefFoundError | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			Exception ex = ExceptionMappingProvider.getInstace().mapException(e);
+			if (ex instanceof IChappyException) {
+				if (e instanceof InstantiationException) {
+					((IChappyException) ex).setLocalizedMessage("For transformer " + fullName 
+							+ "dependencies are not fullfilled " + e.getLocalizedMessage());
+				} else if (e instanceof ClassNotFoundException || e instanceof NoClassDefFoundError) {
+					((IChappyException) ex).setLocalizedMessage("The custom transformer " + fullName 
+							+ "does not exist on server " + e.getLocalizedMessage());
+				}
+				throw ex;
+			}
+		}
+		return null;
 	}
 	
 	/**
