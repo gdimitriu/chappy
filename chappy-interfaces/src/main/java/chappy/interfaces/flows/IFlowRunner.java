@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.xml.sax.SAXException;
 
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
@@ -45,7 +46,7 @@ public interface IFlowRunner {
 	 * This will create the steps from the configuration for a specific user.
 	 * @throws Exception 
 	 */
-	public void createSteps(final String userName) throws  Exception;
+	public void createSteps(final CookieTransaction cookie) throws  Exception;
 
 	/**
 	 * execute the flow constructed using the configuration.

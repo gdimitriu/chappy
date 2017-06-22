@@ -37,6 +37,7 @@ import org.xml.sax.SAXException;
 
 import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.providers.exception.ExceptionMappingProvider;
@@ -60,7 +61,9 @@ public class StaticFlowRunner implements IFlowRunner{
 	private MultivaluedMap<String, String> queryParams;
 	/** list of steps to be executed */
 	private List<ITransformerStep> stepList = new ArrayList<ITransformerStep>();
-
+	
+	/** cookie of the  transaction */
+	private CookieTransaction transactionCookie = null;
 	/**
 	 * constructor need for reflection.
 	 */
@@ -107,14 +110,15 @@ public class StaticFlowRunner implements IFlowRunner{
 	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
 	 */
 	@Override
-	public void createSteps(final String userName) throws Exception {
-		if (userName == null || userName.equals("")) {
+	public void createSteps(final CookieTransaction cookie) throws Exception {
+		transactionCookie = cookie;
+		if (cookie.getUserName() == null || cookie.getUserName().equals("")) {
 			createSteps();
 			return;
 		}
 		StepConfiguration[] steps = configuration.getSteps();
 		for (StepConfiguration conf : steps) {
-			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName(), userName);
+			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName(), cookie.getUserName());
 			step.setDisabled(String.valueOf(conf.isDisabled()));
 			step.setOrder(conf.getOrder());
 			conf.setStageParameters(step);

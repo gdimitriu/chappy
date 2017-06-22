@@ -221,7 +221,7 @@ public class TransactionResources {
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
 				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
-		runner.createSteps(received.getUserName());
+		runner.createSteps(received);
 		runner.executeSteps(holder);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
