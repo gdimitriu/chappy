@@ -28,5 +28,10 @@
   		<artifactId>chappy-interfaces</artifactId>
   		<version>${chappy.version}</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.github.gdimitriu.chappy</groupId>
+  		<artifactId>chappy-policy</artifactId>
+  		<version>1.0.0-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
 </project>

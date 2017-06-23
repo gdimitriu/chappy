@@ -20,7 +20,9 @@
 package chappy.statistics;
 
 import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.policy.IUserPolicy;
 import chappy.interfaces.statisticslogs.IStatistics;
+import chappy.policy.provider.SystemPolicyProvider;
 
 /**
  * @author Gabriel Dimitriu
@@ -45,12 +47,16 @@ public class StatisticsFactory {
 	}
 
 	/**
-	 * create the new instance of the statistics based on the user perferences
+	 * create the new instance of the statistics based on the user preferences
 	 * @param cookie
 	 * @return statistics instance
 	 */
 	public IStatistics newInstance(final CookieTransaction cookie) {
-		SystemPolicyProvider policy = null;
+		IUserPolicy policy = SystemPolicyProvider.getInstance().getAuthenticationHandler();
+		return newInstance(policy.statisticsType(cookie.getUserName()));
+	}
+	
+	private IStatistics newInstance(final String type) {
 		return null;
 	}
 }

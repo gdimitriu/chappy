@@ -17,41 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.authentication;
-
-import chappy.interfaces.policy.IUserPolicy;
-
 /**
- * provider for the authentication system.
  * @author Gabriel Dimitriu
  *
  */
-public class SystemPolicyProvider {
-
-	/** singleton */
-	private static SystemPolicyProvider singleton = new SystemPolicyProvider();
-	
-	/**
-	 * constructor for singleton.
-	 */
-	private SystemPolicyProvider() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * get the singleton instance.
-	 * @return singleton.
-	 */
-	public static SystemPolicyProvider getInstance() {
-		return singleton;
-	}
-	
-	/**
-	 * get the authentication handler 
-	 * @return authentication handler
-	 */
-	public IUserPolicy getAuthenticationHandler() {
-		return new IUserPolicy() {
-		};
-	}
-}
+package chappy.statistics.implementations;

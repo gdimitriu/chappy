@@ -17,38 +17,41 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.policy;
+package chappy.policy.provider;
 
-import chappy.interfaces.statisticslogs.IStatisticsLogsConstants;
+import chappy.interfaces.policy.IUserPolicy;
 
 /**
- * User authentication on the system.
+ * provider for the authentication system.
  * @author Gabriel Dimitriu
  *
  */
-public interface IUserPolicy {
+public class SystemPolicyProvider {
+
+	/** singleton */
+	private static SystemPolicyProvider singleton = new SystemPolicyProvider();
+	
+	/**
+	 * constructor for singleton.
+	 */
+	private SystemPolicyProvider() {
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
-	 * is the user Authenticated
-	 * @param userName name of the user
-	 * @param password for the user
-	 * @return true if is authenticate correct
+	 * get the singleton instance.
+	 * @return singleton.
 	 */
-	default boolean isAuthenticate(final String userName, final String password) {
-		return true;
+	public static SystemPolicyProvider getInstance() {
+		return singleton;
 	}
 	
 	/**
-	 * is the user is allowed to persist
-	 * @param userName name of the user
-	 * @return true if the user has requested persistence
+	 * get the authentication handler 
+	 * @return authentication handler
 	 */
-	default boolean isAllowedPersistence(final String userName) {
-		return true;
-	}
-	
-	
-	default String statisticsType(final String userName) {
-		return IStatisticsLogsConstants.MEMORY_VOLATILE;
+	public IUserPolicy getAuthenticationHandler() {
+		return new IUserPolicy() {
+		};
 	}
 }

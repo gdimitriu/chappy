@@ -17,38 +17,12 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.policy;
-
-import chappy.interfaces.statisticslogs.IStatisticsLogsConstants;
+package chappy.statistics.implementations;
 
 /**
- * User authentication on the system.
  * @author Gabriel Dimitriu
  *
  */
-public interface IUserPolicy {
+public class MemoryVolatile {
 
-	/**
-	 * is the user Authenticated
-	 * @param userName name of the user
-	 * @param password for the user
-	 * @return true if is authenticate correct
-	 */
-	default boolean isAuthenticate(final String userName, final String password) {
-		return true;
-	}
-	
-	/**
-	 * is the user is allowed to persist
-	 * @param userName name of the user
-	 * @return true if the user has requested persistence
-	 */
-	default boolean isAllowedPersistence(final String userName) {
-		return true;
-	}
-	
-	
-	default String statisticsType(final String userName) {
-		return IStatisticsLogsConstants.MEMORY_VOLATILE;
-	}
 }
