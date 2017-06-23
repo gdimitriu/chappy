@@ -39,8 +39,11 @@ import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.statisticslogs.ILogs;
+import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.providers.exception.ExceptionMappingProvider;
+import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transformers.TransformerProvider;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -139,6 +142,8 @@ public class StaticFlowRunner implements IFlowRunner{
     
     @Override
    	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
+    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+    	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
    		for (ITransformerStep step : stepList) {
    			step.execute(holders, multipart, queryParams);
    		}

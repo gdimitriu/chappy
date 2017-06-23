@@ -86,6 +86,7 @@
 		<module>chappy-installer</module>
 		<module>chappy-change-bytecode</module>
 		<module>chappy-transaction</module>
+		<module>chappy-statistics-logs</module>
 	</modules>
 	<dependencies>
 		<!-- jackson -->
