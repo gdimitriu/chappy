@@ -19,6 +19,10 @@
  */
 package chappy.statistics;
 
+import java.util.Set;
+
+import org.reflections.Reflections;
+
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.policy.IUserPolicy;
 import chappy.interfaces.statisticslogs.IStatistics;
@@ -50,13 +54,29 @@ public class StatisticsFactory {
 	 * create the new instance of the statistics based on the user preferences
 	 * @param cookie
 	 * @return statistics instance
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public IStatistics newInstance(final CookieTransaction cookie) {
+	public IStatistics newInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
 		IUserPolicy policy = SystemPolicyProvider.getInstance().getAuthenticationHandler();
 		return newInstance(policy.statisticsType(cookie.getUserName()));
 	}
 	
-	private IStatistics newInstance(final String type) {
+	/**
+	 * create a new instance of the statistics based on the type.
+	 * @param type of the statistics
+	 * @return instance of statistics
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	private IStatistics newInstance(final String type) throws InstantiationException, IllegalAccessException {
+		Reflections reflection = new Reflections("chappy.statistics");
+		Set<Class<? extends IStatistics>> availableImplementations = reflection.getSubTypesOf(IStatistics.class);
+		for (Class<? extends IStatistics> data : availableImplementations) {
+			if (data.getSimpleName().equals(type)) {
+				return data.newInstance();
+			}
+		}
 		return null;
 	}
 }

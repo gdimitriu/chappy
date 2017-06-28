@@ -19,8 +19,14 @@
  */
 package chappy.logs;
 
+import java.util.Set;
+
+import org.reflections.Reflections;
+
 import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.policy.IUserPolicy;
 import chappy.interfaces.statisticslogs.ILogs;
+import chappy.policy.provider.SystemPolicyProvider;
 
 /**
  * @author Gabriel Dimitriu
@@ -45,11 +51,32 @@ public class LogsFactory {
 	}
 	
 	/**
-	 * get the new instance of the log 
+	 * create the new instance of the logs based on the user preferences
 	 * @param cookie
-	 * @return
+	 * @return statistics instance
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public ILogs newInstance(final CookieTransaction cookie) {
+	public ILogs newInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+		IUserPolicy policy = SystemPolicyProvider.getInstance().getAuthenticationHandler();
+		return newInstance(policy.statisticsType(cookie.getUserName()));
+	}
+	
+	/**
+	 * get the new instance of the log base on type.
+	 * @param type of the logs
+	 * @return instance of the log.
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	public ILogs  newInstance(final String type) throws InstantiationException, IllegalAccessException {
+		Reflections reflection = new Reflections("chappy.logs");
+		Set<Class<? extends ILogs>> availableImplementations = reflection.getSubTypesOf(ILogs.class);
+		for (Class<? extends ILogs> data : availableImplementations) {
+			if (data.getSimpleName().equals(type)) {
+				return data.newInstance();
+			}
+		}
 		return null;
 	}
 }

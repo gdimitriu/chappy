@@ -19,10 +19,58 @@
  */
 package chappy.statistics.implementations;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import chappy.interfaces.statisticslogs.IStatistics;
+import chappy.interfaces.statisticslogs.StatisticLog;
+
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class MemoryVolatile {
+public class MemoryVolatile implements IStatistics {
+	
+	/** list that hold the statistics */
+	private List<StatisticLog> statisticHolder = new ArrayList<StatisticLog>();
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(java.lang.String, java.time.LocalDateTime, java.time.LocalDateTime)
+	 */
+	@Override
+	public void putStatistic(final String stepName, final LocalDateTime start, final LocalDateTime stop) {
+		statisticHolder.add(new StatisticLog(stepName, start, stop));
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(chappy.interfaces.statisticslogs.StatisticLog)
+	 */
+	@Override
+	public void putStatistic(final StatisticLog data) {
+		statisticHolder.add(data);
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.statisticslogs.IStatistics#getStatisticsForStep(java.lang.String)
+	 */
+	@Override
+	public List<StatisticLog> getStatisticsForStep(final String stepName) {
+		List<StatisticLog> ret = new ArrayList<StatisticLog>();
+		for (StatisticLog stat : statisticHolder) {
+			if (stat.getStepName().equals(stepName)) {
+				ret.add(stat);
+			}
+		}
+		return ret;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.statisticslogs.IStatistics#getAllStatistics()
+	 */
+	@Override
+	public List<StatisticLog> getAllStatistics() {
+		return this.statisticHolder;
+	}
 
 }

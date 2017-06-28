@@ -62,4 +62,8 @@ public interface IRestResourcesConstants {
 	String REST_DEFAULT = "default";
 	
 	String REST_ALL = "all";
+	
+	String REST_STATISTICS = "statistics";
+	
+	String REST_LOGS = "logs";
 }

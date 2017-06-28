@@ -19,10 +19,39 @@
  */
 package chappy.interfaces.statisticslogs;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * @author Gabriel Dimitriu
  *
  */
 public interface ILogs {
 
+	/**
+	 * put a log information
+	 * @param data contained statistic/log
+	 */
+	void putLog(final StatisticLog data);
+	
+	/**
+	 * put a log information
+	 * @param stepName step for log
+	 * @param time of the log
+	 * @param message logging
+	 */
+	void putLog(final String stepName, final LocalDateTime time, final String message);
+
+	/**
+	 * get the logs for a step
+	 * @param stepName
+	 * @return list of logs
+	 */
+	List<StatisticLog> getLogsFroStep(final String stepName);
+	
+	/**
+	 * get all logs for this transaction.
+	 * @return list of logs.
+	 */
+	List<StatisticLog> getAllLogs();
 }

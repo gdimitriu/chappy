@@ -20,6 +20,8 @@
 package chappy.flows.transformers.runners;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,8 +136,23 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
     @Override
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception {
-		for (ITransformerStep step : stepList) {
+    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+    	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+    	LocalDateTime startTime = null;
+    	LocalDateTime finishTime = null;
+    	for (ITransformerStep step : stepList) {
+			startTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+			}
 			step.execute(holder, multipart, queryParams);
+			finishTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+			}
+			if (statistics != null) {
+				statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+			}
 		}
 		return holder;
 	}
@@ -144,8 +161,21 @@ public class StaticFlowRunner implements IFlowRunner{
    	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
     	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
     	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+    	LocalDateTime startTime = null;
+    	LocalDateTime finishTime = null;
    		for (ITransformerStep step : stepList) {
+			startTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+			}
    			step.execute(holders, multipart, queryParams);
+			finishTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+			}
+			if (statistics != null) {
+				statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+			}
    		}
    		return holders;
    	}

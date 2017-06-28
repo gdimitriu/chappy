@@ -63,8 +63,13 @@ public class StatisticsLogsProvider {
 	 * get the statistics holder for this transaction
 	 * @param cookie
 	 * @return statistics for this transaction.
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public IStatistics getStatistics(final CookieTransaction cookie) {
+	public IStatistics getStatistics(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+		if (cookie == null) {
+			return null;
+		}
 		if (statisticsMap.containsKey(cookie.getTransactionId())) {
 			return statisticsMap.get(cookie.getTransactionId());
 		}
@@ -75,8 +80,13 @@ public class StatisticsLogsProvider {
 	 * get the logs holder for this transaction
 	 * @param cookie
 	 * @return logs for this transaction
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public ILogs getLogs(final CookieTransaction cookie) {
+	public ILogs getLogs(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+		if (cookie == null) {
+			return null;
+		}
 		if (logsMap.containsKey(cookie.getTransactionId())) {
 			return logsMap.get(cookie.getTransactionId());
 		}
