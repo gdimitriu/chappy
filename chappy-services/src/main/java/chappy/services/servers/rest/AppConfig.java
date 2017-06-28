@@ -25,6 +25,9 @@ import java.util.List;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+
+import chappy.interfaces.rest.ObjectMapperContextResolver;
 import chappy.interfaces.rest.resources.IRestResourceProvider;
 import chappy.providers.rest.resources.RestResourcesProvider;
 
@@ -51,6 +54,8 @@ public class AppConfig extends ResourceConfig {
 	private static void registerBasicRest() {
 		registeredClasses.add(MultiPartFeature.class);
 		registeredClasses.add(ExceptionMapper.class);
+		registeredClasses.add(JacksonJaxbJsonProvider.class);
+		registeredClasses.add(ObjectMapperContextResolver.class);
 	}
 	
 	public AppConfig() {

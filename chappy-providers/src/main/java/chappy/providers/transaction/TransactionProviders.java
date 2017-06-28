@@ -76,7 +76,23 @@ public class TransactionProviders {
 		}
 	}
 	
+	/**
+	 * put the transaction in storage.
+	 * @param cookie
+	 * @param transaction
+	 */
 	public void putTransaction(final CookieTransaction cookie, final ITransaction transaction) {
 		mapOfTransactionData.put(cookie.generateStorageId(), transaction);
 	}
+	
+	/**
+	 * generate the transactionId for a user.
+	 * @param cookie
+	 * @return
+	 */
+	public String generateId(final CookieTransaction cookie) {
+		//TODO: hardcoded now
+		return cookie.getUserName();
+	}
+	
 }

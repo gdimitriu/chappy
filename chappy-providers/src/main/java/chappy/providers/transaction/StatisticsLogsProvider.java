@@ -73,7 +73,9 @@ public class StatisticsLogsProvider {
 		if (statisticsMap.containsKey(cookie.getTransactionId())) {
 			return statisticsMap.get(cookie.getTransactionId());
 		}
-		return StatisticsFactory.getInstance().newInstance(cookie);
+		IStatistics stat = StatisticsFactory.getInstance().newInstance(cookie);
+		statisticsMap.put(cookie.getTransactionId(), stat);
+		return stat;
 	}
 	
 	/**
@@ -90,6 +92,8 @@ public class StatisticsLogsProvider {
 		if (logsMap.containsKey(cookie.getTransactionId())) {
 			return logsMap.get(cookie.getTransactionId());
 		}
-		return LogsFactory.getInstance().newInstance(cookie);
+		ILogs logs = LogsFactory.getInstance().newInstance(cookie);
+		logsMap.put(cookie.getTransactionId(), logs);
+		return logs;
 	}
 }

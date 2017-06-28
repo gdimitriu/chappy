@@ -54,9 +54,12 @@ import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.statisticslogs.IStatistics;
+import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.policy.provider.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.cookies.CookieUtils;
@@ -113,6 +116,8 @@ public class TransactionResources {
 		}
 		
 		transaction.setPersistence(persistence);
+		transaction.setTransactionId(TransactionProviders.getInstance().generateId(response));
+		response.setTransactionId(transaction.getTransactionId());
 		
 		TransactionProviders.getInstance().putTransaction(response, transaction);
 		
@@ -247,5 +252,24 @@ public class TransactionResources {
 		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
 		return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();
 	}
-	
+
+	/**
+	 * get the list of statistics of this transaction.
+	 * @param uriInfo
+	 * @param hh
+	 * @return list of statistics of this transaction
+	 */
+	@Path(IRestResourcesConstants.REST_STATISTICS)
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getStatistics(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get("userData");
+		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
+		IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(receivedCookie);
+		
+		List<StatisticLog> listOfStatistics = statistics.getAllStatistics();
+		GenericEntity<List<StatisticLog>> returnList = new GenericEntity<List<StatisticLog>>(listOfStatistics){};
+		return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();
+	}
 }

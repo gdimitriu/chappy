@@ -21,11 +21,14 @@ package chappy.interfaces.statisticslogs;
 
 import java.time.LocalDateTime;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Statistic or log holder.
  * @author Gabriel Dimitriu
  *
  */
+@XmlRootElement
 public class StatisticLog {
 
 	/** step name */
@@ -110,6 +113,4 @@ public class StatisticLog {
 	public void setMessage(final String message) {
 		this.message = message;
 	}
-	
-	
 }
