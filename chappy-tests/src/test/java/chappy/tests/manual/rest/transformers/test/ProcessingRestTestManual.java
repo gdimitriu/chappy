@@ -58,7 +58,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
-import chappy.interfaces.rest.ObjectMapperContextResolver;
+import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.statisticslogs.StatisticLog;
@@ -347,7 +347,7 @@ public class ProcessingRestTestManual {
 				.register(MultiPartFeature.class)
 				.register(MultiPartWriter.class)
 				.register(JacksonJaxbJsonProvider.class)
-				.register(ObjectMapperContextResolver.class);
+				.register(LocalDateTimeContextResolver.class);
 		WebTarget target = client.target(baseUri);
 		
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)

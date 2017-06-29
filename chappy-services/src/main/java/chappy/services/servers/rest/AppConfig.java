@@ -27,7 +27,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
-import chappy.interfaces.rest.ObjectMapperContextResolver;
+import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestResourceProvider;
 import chappy.providers.rest.resources.RestResourcesProvider;
 
@@ -55,7 +55,7 @@ public class AppConfig extends ResourceConfig {
 		registeredClasses.add(MultiPartFeature.class);
 		registeredClasses.add(ExceptionMapper.class);
 		registeredClasses.add(JacksonJaxbJsonProvider.class);
-		registeredClasses.add(ObjectMapperContextResolver.class);
+		registeredClasses.add(LocalDateTimeContextResolver.class);
 	}
 	
 	public AppConfig() {
