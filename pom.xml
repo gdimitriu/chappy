@@ -86,6 +86,8 @@
 		<module>chappy-installer</module>
 		<module>chappy-change-bytecode</module>
 		<module>chappy-transaction</module>
+		<module>chappy-statistics-logs</module>
+		<module>chappy-policy</module>
 	</modules>
 	<dependencies>
 		<!-- jackson -->
@@ -120,6 +122,18 @@
 			<artifactId>jackson-jaxrs-providers</artifactId>
 			<version>${jackson.version}</version>
 			<type>pom</type>
+		</dependency>
+		<dependency>
+	    	<groupId>com.fasterxml.jackson.jaxrs</groupId>
+    		<artifactId>jackson-jaxrs-json-provider</artifactId>
+    		<version>${jackson.version}</version>
+    		<type>pom</type>
+		</dependency>
+		<dependency>
+    	<groupId>com.fasterxml.jackson.datatype</groupId>
+    		<artifactId>jackson-datatype-jsr310</artifactId>
+    		<version>${jackson.version}</version>
+    		<type>pom</type>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/cglib/cglib -->
 		<dependency>
@@ -207,13 +221,5 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.11</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.8.7</version>
-		</dependency>
-
 	</dependencies>
 </project>

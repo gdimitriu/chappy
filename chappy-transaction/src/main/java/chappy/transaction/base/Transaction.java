@@ -37,6 +37,9 @@ public class Transaction implements ITransaction {
 	
 	/** true if it has to be persist */
 	private boolean persistence = false;
+	
+	/** transactionID */
+	private String transactionId;
 
 	/**
 	 * 
@@ -86,5 +89,19 @@ public class Transaction implements ITransaction {
 		this.persistence = persistence;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setTransactionId(java.lang.String)
+	 */
+	@Override
+	public void setTransactionId(final String id) {
+		this.transactionId = id;
+	}
 	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getTransactionId()
+	 */
+	@Override
+	public String getTransactionId() {
+		return this.transactionId;
+	}
 }

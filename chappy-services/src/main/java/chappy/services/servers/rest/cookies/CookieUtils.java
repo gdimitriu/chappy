@@ -47,7 +47,7 @@ public final class CookieUtils {
 	 * @throws JsonProcessingException
 	 */
 	public static CookieTransactionsToken decodeCookie(Cookie cookie) throws IOException, JsonProcessingException {
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
+		ObjectReader or = new ObjectMapper().readerFor(CookieTransactionsToken.class);
     	CookieTransactionsToken received = new CookieTransactionsToken();
     	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
     	received=or.readValue(str);

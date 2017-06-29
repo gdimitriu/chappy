@@ -26,6 +26,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.configurations.transformers.StaxonConfiguration;
+import chappy.interfaces.statisticslogs.ILogs;
 import chappy.utils.streams.wrappers.StreamHolder;
 import chappy.utils.streams.wrappers.WrapperUtils;
 
@@ -135,4 +136,17 @@ public interface ITransformerStep {
 	public default void setSerializedConfiguration(final String config) {
 		
 	}
+	
+	/**
+	 * This will set the log provider.
+	 * With the log provider the user could add logs to the system.
+	 * @param logProvider
+	 */
+	public void setLogProvider(final ILogs logProvider);
+	
+	/**
+	 * This will return the log provider.
+	 * @return log provider
+	 */
+	public ILogs getLog();
 }

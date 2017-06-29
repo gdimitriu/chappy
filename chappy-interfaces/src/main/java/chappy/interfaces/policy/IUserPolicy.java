@@ -19,6 +19,8 @@
  */
 package chappy.interfaces.policy;
 
+import chappy.interfaces.statisticslogs.IStatisticsLogsConstants;
+
 /**
  * User authentication on the system.
  * @author Gabriel Dimitriu
@@ -43,5 +45,10 @@ public interface IUserPolicy {
 	 */
 	default boolean isAllowedPersistence(final String userName) {
 		return true;
+	}
+	
+	
+	default String statisticsType(final String userName) {
+		return IStatisticsLogsConstants.MEMORY_VOLATILE;
 	}
 }

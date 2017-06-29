@@ -54,5 +54,16 @@ public interface ITransaction {
 	 * @param persistance the persistence to set
 	 */
 	void setPersistence(boolean persistence);
-
+	
+	/**
+	 * set the transaction id.
+	 * @param id of the transaction.
+	 */
+	void setTransactionId(final String id);
+	
+	/**
+	 * get the transaction id.
+	 * @return transaction id
+	 */
+	String getTransactionId();
 }

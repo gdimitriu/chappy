@@ -23,6 +23,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import chappy.interfaces.statisticslogs.ILogs;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
@@ -38,6 +39,9 @@ public abstract class AbstractStep implements ITransformerStep {
 	
 	/** the order of input stream */
 	private int order = 0;
+	
+	/** logProvider */
+	private ILogs logProvider = null;
 	
 	/* (non-Javadoc)
 	 * @see transformationsEngine.digester.steps.ITransformerStep#setDisabled(java.lang.String)
@@ -84,4 +88,21 @@ public abstract class AbstractStep implements ITransformerStep {
 	@Override
 	public abstract void execute(final StreamHolder holder, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
 			throws Exception;
+	
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transformers.ITransformerStep#setLogProvider(chappy.interfaces.statisticslogs.ILogs)
+	 */
+	@Override
+	public void setLogProvider(final ILogs logProvider) {
+		this.logProvider = logProvider;
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transformers.ITransformerStep#getLog()
+	 */
+	@Override
+	public ILogs getLog() {
+		return this.logProvider;
+	}
 }

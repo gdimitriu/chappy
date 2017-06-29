@@ -126,7 +126,7 @@ public class IntegrationResources {
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
 				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
-		runner.createSteps(received.getUserName());
+		runner.createSteps(received);
 		runner.executeSteps(holders);
 		if (holders.size() > 1) {
 			List<String> retList = new ArrayList<String>();

@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.xml.sax.SAXException;
 
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.providers.transformers.TransformerProvider;
@@ -97,7 +98,7 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 	}
 
 	@Override
-	public void createSteps(final String userName) throws Exception {
+	public void createSteps(final CookieTransaction cookie) throws Exception {
 		//nothing to do for staxon simple flow because this flow could not be overriden
 	}
 

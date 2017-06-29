@@ -34,7 +34,11 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+
+import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
@@ -101,7 +105,9 @@ public class TransformResources {
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
 				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
-		runner.createSteps(userName);
+		CookieTransaction cookie = new CookieTransactionsToken();
+		cookie.setUserName(userName);
+		runner.createSteps(cookie);
 		runner.executeSteps(holder);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();

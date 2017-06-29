@@ -23,12 +23,14 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.commons.digester3.Digester;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.configurations.transformers.StaxonConfiguration;
 import chappy.flows.transformers.dynamicflows.DigesterStepsFactory;
 import chappy.flows.transformers.dynamicflows.MapOfStepsParametersFactory;
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -123,7 +125,7 @@ public class DigesterFlowRunner implements IFlowRunner {
 	}
 
 	@Override
-	public void createSteps(final String userName) throws Exception {
+	public void createSteps(final CookieTransaction cookie) throws Exception {
 		//nothing to do the the digester flow because this flow could not be overriden
 	}
 

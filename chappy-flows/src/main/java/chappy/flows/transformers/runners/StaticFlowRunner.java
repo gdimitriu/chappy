@@ -20,6 +20,7 @@
 package chappy.flows.transformers.runners;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,9 +38,13 @@ import org.xml.sax.SAXException;
 
 import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.statisticslogs.ILogs;
+import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.providers.exception.ExceptionMappingProvider;
+import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transformers.TransformerProvider;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -60,7 +65,9 @@ public class StaticFlowRunner implements IFlowRunner{
 	private MultivaluedMap<String, String> queryParams;
 	/** list of steps to be executed */
 	private List<ITransformerStep> stepList = new ArrayList<ITransformerStep>();
-
+	
+	/** cookie of the  transaction */
+	private CookieTransaction transactionCookie = null;
 	/**
 	 * constructor need for reflection.
 	 */
@@ -107,14 +114,15 @@ public class StaticFlowRunner implements IFlowRunner{
 	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
 	 */
 	@Override
-	public void createSteps(final String userName) throws Exception {
-		if (userName == null || userName.equals("")) {
+	public void createSteps(final CookieTransaction cookie) throws Exception {
+		transactionCookie = cookie;
+		if (cookie.getUserName() == null || cookie.getUserName().equals("")) {
 			createSteps();
 			return;
 		}
 		StepConfiguration[] steps = configuration.getSteps();
 		for (StepConfiguration conf : steps) {
-			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName(), userName);
+			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName(), cookie.getUserName());
 			step.setDisabled(String.valueOf(conf.isDisabled()));
 			step.setOrder(conf.getOrder());
 			conf.setStageParameters(step);
@@ -127,16 +135,46 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
     @Override
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception {
-		for (ITransformerStep step : stepList) {
+    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+    	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+    	LocalDateTime startTime = null;
+    	LocalDateTime finishTime = null;
+    	for (ITransformerStep step : stepList) {
+			startTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+			}
 			step.execute(holder, multipart, queryParams);
+			finishTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+			}
+			if (statistics != null) {
+				statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+			}
 		}
 		return holder;
 	}
     
     @Override
    	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
+    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+    	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+    	LocalDateTime startTime = null;
+    	LocalDateTime finishTime = null;
    		for (ITransformerStep step : stepList) {
+			startTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+			}
    			step.execute(holders, multipart, queryParams);
+			finishTime = LocalDateTime.now();
+			if (logs != null) {
+				logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+			}
+			if (statistics != null) {
+				statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+			}
    		}
    		return holders;
    	}
