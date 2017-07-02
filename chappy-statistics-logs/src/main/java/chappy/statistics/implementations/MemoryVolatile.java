@@ -33,7 +33,7 @@ import chappy.interfaces.statisticslogs.StatisticLog;
 public class MemoryVolatile implements IStatistics {
 	
 	/** list that hold the statistics */
-	private List<StatisticLog> statisticHolder = new ArrayList<StatisticLog>();
+	protected List<StatisticLog> statisticHolder = new ArrayList<StatisticLog>();
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(java.lang.String, java.time.LocalDateTime, java.time.LocalDateTime)

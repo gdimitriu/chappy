@@ -31,13 +31,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
@@ -46,9 +39,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import chappy.configurations.system.SystemConfiguration;
-import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
 
@@ -57,9 +50,9 @@ import chappy.utils.streams.StreamUtils;
  *
  */
 public class RestCallsForDigesterTransformationsTest {
-	
+
 	private IServiceServer server = null;
-	
+
 	private int port = 0;
 
 	private URI baseUri;
@@ -69,17 +62,12 @@ public class RestCallsForDigesterTransformationsTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		JAXBContext context = JAXBContext.newInstance(SystemConfigurations.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new StreamSource(
-				getClass().getClassLoader().getResourceAsStream("SystemConfiguration.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		SystemConfiguration configuration = ((SystemConfigurations) unmarshaller
-				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml")))
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(
+				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
-		baseUri = UriBuilder.fromUri("{arg}").build(new String[]{"http://localhost:"+ port + "/"},false);
+		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);
 		Thread thread = new Thread() {
 			public void run() {
@@ -104,18 +92,15 @@ public class RestCallsForDigesterTransformationsTest {
 
 	@Test
 	public void xml2json2xmlStepsTest() {
-		Client client = ClientBuilder.newClient()
-				.register(MultiPartFeature.class)
-				.register(MultiPartWriter.class);
+		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("configuration", StreamUtils.getStringFromResource("xml2json2xml.xml"),
-	    		MediaType.APPLICATION_XML_TYPE);
+		FormDataMultiPart multipartEntity = new FormDataMultiPart().field("data",
+				getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"), MediaType.APPLICATION_XML_TYPE)
+				.field("configuration", StreamUtils.getStringFromResource("xml2json2xml.xml"),
+						MediaType.APPLICATION_XML_TYPE);
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
@@ -123,18 +108,17 @@ public class RestCallsForDigesterTransformationsTest {
 					StreamUtils.toStringFromStream(inputStream));
 		}
 	}
-	
+
 	@Test
 	public void xml2json2xmlStepsWithConfigurationTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-	     .field("data", getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
-	    		MediaType.APPLICATION_XML_TYPE);
+		FormDataMultiPart multipartEntity = new FormDataMultiPart().field("data",
+				getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"), MediaType.APPLICATION_XML_TYPE);
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.queryParam("configuration", StreamUtils.getStringFromResource("xml2json2xmlwithconfigurations.xml"))
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
@@ -142,21 +126,21 @@ public class RestCallsForDigesterTransformationsTest {
 					StreamUtils.toStringFromStream(inputStream));
 		}
 	}
-	
+
 	@Test
 	public void xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("configuration", StreamUtils.getStringFromResource("processingOneStepXsl.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
-	    		MediaType.APPLICATION_XML_TYPE);
+				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXsl.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
+						MediaType.APPLICATION_XML_TYPE);
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
@@ -164,23 +148,23 @@ public class RestCallsForDigesterTransformationsTest {
 					StreamUtils.toStringFromStream(inputStream));
 		}
 	}
-	
+
 	@Test
 	public void xml2xml2xmlXsltOneStepTest() {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("configuration", StreamUtils.getStringFromResource("processingTwoStepsXsl.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("processingMap1.xsl", getClass().getClassLoader().getResourceAsStream("processingMap1.xsl"),
-	    		MediaType.APPLICATION_XML_TYPE);
+				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("configuration", StreamUtils.getStringFromResource("processingTwoStepsXsl.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("processingMap1.xsl", getClass().getClassLoader().getResourceAsStream("processingMap1.xsl"),
+						MediaType.APPLICATION_XML_TYPE);
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
@@ -195,16 +179,15 @@ public class RestCallsForDigesterTransformationsTest {
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-	     .field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("configuration", StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
-	    		MediaType.APPLICATION_XML_TYPE)
-	     .field("processingMapParameters.xsl", getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
-	    		MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
-				.queryParam("param1", "buru")
-				.queryParam("param2", "-1000")
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("processingMapParameters.xsl",
+						getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
+						MediaType.APPLICATION_XML_TYPE);
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER).queryParam("param1", "buru")
+				.queryParam("param2", "-1000").request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);

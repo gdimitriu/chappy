@@ -30,13 +30,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
@@ -44,26 +37,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import chappy.configurations.system.SystemConfiguration;
-import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.utils.ClassUtils;
 import chappy.utils.streams.StreamUtils;
-
 
 /**
  * @author Gabriel Dimitriu
  *
  */
 public class RestUserCallsForFlowTransformationsTest {
-	
+
 	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
 
 	private IServiceServer server = null;
-	
+
 	private int port = 0;
 
 	private URI baseUri;
@@ -73,17 +65,12 @@ public class RestUserCallsForFlowTransformationsTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		JAXBContext context = JAXBContext.newInstance(SystemConfigurations.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new StreamSource(
-				getClass().getClassLoader().getResourceAsStream("SystemConfiguration.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		SystemConfiguration configuration = ((SystemConfigurations) unmarshaller
-				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml")))
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(
+				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
-		baseUri = UriBuilder.fromUri("{arg}").build(new String[]{"http://localhost:"+ port + "/"},false);
+		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);
 		Thread thread = new Thread() {
 			public void run() {
@@ -110,46 +97,36 @@ public class RestUserCallsForFlowTransformationsTest {
 	@SuppressWarnings("resource")
 	@Test
 	public void push3CustomTransformersByUserAndMakeTransformation() throws FileNotFoundException {
-		Client client = ClientBuilder.newClient()
-				.register(MultiPartFeature.class)
-				.register(MultiPartWriter.class);
+		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
-		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("name", "PreProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		FormDataMultiPart multipartEntity = new FormDataMultiPart().field("name", "PreProcessingStep").field("data",
+				new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		Response response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
-				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
-				.queryParam("user", "gdimitriu")
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam("user", "gdimitriu")
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		multipartEntity = new FormDataMultiPart()
-				.field("name", "PostProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		multipartEntity = new FormDataMultiPart().field("name", "PostProcessingStep").field("data",
+				new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
-				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
-				.queryParam("user", "gdimitriu")
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam("user", "gdimitriu")
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		multipartEntity = new FormDataMultiPart()
-				.field("name", "ProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		multipartEntity = new FormDataMultiPart().field("name", "ProcessingStep").field("data",
+				new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
-				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
-				.queryParam("user", "gdimitriu")
-				.request(new String[]{MediaType.MULTIPART_FORM_DATA})
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam("user", "gdimitriu")
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		multipartEntity = new FormDataMultiPart()
-				.field("data", "blabla");
+		multipartEntity = new FormDataMultiPart().field("data", "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
-		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW)
-					.queryParam("user", "gdimitriu")
-					.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
-					.request(new String[]{MediaType.MULTIPART_FORM_DATA})
-					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam("user", "gdimitriu")
+				.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
+				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
 			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
-						StreamUtils.toStringFromStream(inputStream));
+					StreamUtils.toStringFromStream(inputStream));
 		}
 	}
 }

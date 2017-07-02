@@ -31,14 +31,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class StatisticLog {
 
+	/** field needs to be protected because they will be enhanced by persistence */
 	/** step name */
-	private String stepName;
+	protected String stepName;
 	/** start time */
-	private LocalDateTime startTime;
+	protected LocalDateTime startTime;
 	/** end time */
-	private LocalDateTime stopTime;
+	protected LocalDateTime stopTime;
 	/** log message */
-	private String message;
+	protected String message;
 	
 	public StatisticLog() {
 		

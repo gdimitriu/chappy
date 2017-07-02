@@ -32,13 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
@@ -47,10 +40,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import chappy.configurations.system.SystemConfiguration;
-import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.utils.ClassUtils;
@@ -75,15 +68,10 @@ public class RestCallsForFlowTransformationsExceptionsTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		JAXBContext context = JAXBContext.newInstance(SystemConfigurations.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(
-				new StreamSource(getClass().getClassLoader().getResourceAsStream("SystemConfiguration.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		SystemConfiguration configuration = ((SystemConfigurations) unmarshaller
-				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml")))
-						.getFirstConfiguration();
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(
+				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
+				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
 		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);

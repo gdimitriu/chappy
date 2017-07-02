@@ -24,25 +24,34 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * This hold the configuration for the system.
+ * this hold the persistence feature.
  * @author Gabriel Dimitriu
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class SystemConfiguration {
 
-	@XmlElement(name = "name")
-	private String name;
+@XmlAccessorType(XmlAccessType.FIELD)
+public class FeaturePersistenceConfiguration {
+
+	@XmlElement(name = "plugin")
+	private String plugin;
 	
 	@XmlElement(name = "property")
 	private PropertyConfiguration[] property;
+	
 	/**
-	 * dummy constructor
+	 * 
 	 */
-	public SystemConfiguration() {
+	public FeaturePersistenceConfiguration() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
+	/**
+	 * get the feature name.
+	 * @return name of the feature
+	 */
+	public String getPlugin() {
+		return this.plugin;
+	}
 	/**
 	 * get the property.
 	 * @return property
@@ -62,13 +71,4 @@ public class SystemConfiguration {
 	public PropertyConfiguration getProperty(final int i) {
 		return property[i];
 	}
-	
-	/**
-	 * get the name of the service.
-	 * @return name of the service.
-	 */
-	public String getName() {
-		return name;
-	}
-
 }

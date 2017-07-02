@@ -36,6 +36,8 @@ public class SystemConfigurations {
 	private SystemConfiguration systemConfiguration;
 	@XmlElement(name = "configuration")
 	private SystemConfiguration[] servicesConfigurations;
+	@XmlElement(name = "persistence")
+	private PersistenceConfiguration[] persistenceConfigurations;
 
 	/**
 	 * 
@@ -70,6 +72,21 @@ public class SystemConfigurations {
 	 */
 	public SystemConfiguration getSystemConfiguration() {
 		return systemConfiguration;
+	}
+
+	/** get the persistence configurations
+	 * @return the persistenceConfigurations
+	 */
+	public PersistenceConfiguration[] getPersistenceConfigurations() {
+		return persistenceConfigurations;
+	}
+
+	/**
+	 * set the persistence configurations
+	 * @param persistenceConfigurations the persistenceConfigurations to set
+	 */
+	public void setPersistenceConfigurations(PersistenceConfiguration[] persistenceConfigurations) {
+		this.persistenceConfigurations = persistenceConfigurations;
 	}
 
 }

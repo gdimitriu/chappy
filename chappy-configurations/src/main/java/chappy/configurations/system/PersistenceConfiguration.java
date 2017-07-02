@@ -24,51 +24,55 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * This hold the configuration for the system.
+ * this hold the persistence configuration module. 
  * @author Gabriel Dimitriu
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class SystemConfiguration {
 
-	@XmlElement(name = "name")
-	private String name;
+@XmlAccessorType(XmlAccessType.FIELD)
+public class PersistenceConfiguration {
+
+	@XmlElement( name = "framework")
+	private String framework;
 	
-	@XmlElement(name = "property")
-	private PropertyConfiguration[] property;
+	@XmlElement( name = "feature")
+	private FeaturePersistenceConfiguration[] features;
+	
 	/**
 	 * dummy constructor
 	 */
-	public SystemConfiguration() {
+	public PersistenceConfiguration() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	/**
-	 * get the property.
-	 * @return property
+	/**get the persistence framework
+	 * @return the framework
 	 */
-	public String getProperty() {
-		if (property != null) {
-			return property[0].getValue();
-		}
-		return null;
+	public String getFramework() {
+		return framework;
 	}
-	
 	/**
-	 * get the property by nr.
-	 * @param i
-	 * @return property at i
+	 * set the persistence framework
+	 * @param framework the framework to set
 	 */
-	public PropertyConfiguration getProperty(final int i) {
-		return property[i];
+	public void setFramework(final String framework) {
+		this.framework = framework;
 	}
-	
+
 	/**
-	 * get the name of the service.
-	 * @return name of the service.
+	 * get the persistence framework plugin feature
+	 * @return the features
 	 */
-	public String getName() {
-		return name;
+	public FeaturePersistenceConfiguration[] getFeatures() {
+		return features;
+	}
+
+	/**
+	 * set the persistence framework plugin feature
+	 * @param features the features to set
+	 */
+	public void setFeatures(final FeaturePersistenceConfiguration[] features) {
+		this.features = features;
 	}
 
 }

@@ -20,6 +20,25 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.datanucleus</groupId>
+                <artifactId>datanucleus-maven-plugin</artifactId>
+                <version>5.0.0-release</version>
+                <configuration>
+                    <api>JDO</api>
+                    <persistenceUnitName>Tutorial</persistenceUnitName>
+                    <log4jConfiguration>src/main/resources/log4j.properties</log4jConfiguration>
+                    <verbose>false</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>enhance</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
   <dependencies>
@@ -31,7 +50,12 @@
   	<dependency>
   		<groupId>com.github.gdimitriu.chappy</groupId>
   		<artifactId>chappy-policy</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
+  		<version>${chappy.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.github.gdimitriu.chappy</groupId>
+  		<artifactId>chappy-persistence</artifactId>
+  		<version>${chappy.version}</version>
   	</dependency>
   </dependencies>
 </project>

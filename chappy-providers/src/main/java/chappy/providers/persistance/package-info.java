@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/**
     Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
@@ -16,25 +15,10 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Chappy.  If not, see <http://www.gnu.org/licenses/>. 
- -->
-<configurations>
-	<configuration>
-  		<name>rest</name>
-  		<property>
-  			<name>port</name>
-  			<value>8100</value>
-  		</property>
-	</configuration>
-	<persistence>
-		<feature>ODF</feature>
-		<property>
-			<name>javax.jdo.option.ConnectionURL</name>
-			<value>odf:file:d:\chappy.ods</value>
-		</property>
-		<property>
-			<name>javax.jdo.option.Mapping</name>
-			<value>odf</value>
-		</property>
-	</persistence>
-</configurations>
+    along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * @author Gabriel Dimitriu
+ *
+ */
+package chappy.providers.persistance;

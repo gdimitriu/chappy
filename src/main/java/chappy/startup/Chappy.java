@@ -19,26 +19,14 @@
  */
 package chappy.startup;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.xml.sax.SAXException;
 
 import chappy.configurations.system.SystemConfiguration;
-import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.providers.services.ServicesProvider;
 
 /**
@@ -50,9 +38,6 @@ public class Chappy {
 	
 	/** list of services */
 	private List<IServiceServer> listOfInstanceOfServers = null;
-	
-
-	private SystemConfigurations systemConfigurations;
 
 	/**
 	 * 
@@ -76,9 +61,9 @@ public class Chappy {
 		Chappy system = new Chappy();
 		try {
 			if (args.length > 0) {
-				system.readSystemConfiguration(args[0]);
+				SystemConfigurationProvider.getInstance().readExternalSystemConfiguration(args[0]);
 			} else {
-				system.readSystemConfiguration();
+				SystemConfigurationProvider.getInstance().readSystemConfiguration();
 			}
 			system.configurureAllServices();
 			system.startAllServices();
@@ -90,7 +75,8 @@ public class Chappy {
 	}
 	
 	private void configurureAllServices() {
-		SystemConfiguration[] configurations = systemConfigurations.getServicesConfigurations();
+		SystemConfiguration[] configurations = SystemConfigurationProvider.getInstance()
+				.getSystemConfiguration().getServicesConfigurations();
 		for (int i = 0; i < configurations.length; i++)
 			for (IServiceServer server : listOfInstanceOfServers) {
 				if (server.getName().equals(configurations[i].getName())) {
@@ -103,32 +89,4 @@ public class Chappy {
 			server.startServer();
 		}
 	}
-	
-	private void readSystemConfiguration() throws JAXBException, SAXException {
-		readSystemConfiguration(null);
-	}
-	private void readSystemConfiguration(final String fileName) throws JAXBException, SAXException {
-		JAXBContext context = JAXBContext.newInstance(SystemConfigurations.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new StreamSource(
-				ClassLoader.getSystemResourceAsStream("SystemConfiguration.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		InputStream is = null;
-		try {
-			if (fileName != null) {
-				is = new BufferedInputStream(new FileInputStream(new File(fileName)));
-			} else {
-				System.err.println("Chappy goes to the default system configuration.");
-			}
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getLocalizedMessage());
-			System.err.println("Chappy goes to the default system configuration.");
-		}
-		if (is == null) {
-			is = ClassLoader.getSystemResourceAsStream("DefaultSystemConfiguration.xml");
-		}
-		systemConfigurations = (SystemConfigurations) unmarshaller.unmarshal(is);
-	}
-
 }

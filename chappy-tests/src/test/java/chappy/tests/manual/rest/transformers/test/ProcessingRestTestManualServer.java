@@ -19,46 +19,35 @@
  */
 package chappy.tests.manual.rest.transformers.test;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.xml.sax.SAXException;
 
 import chappy.configurations.system.SystemConfiguration;
-import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.services.IServiceServer;
+import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.services.servers.rest.ServerJetty;
 
 /**
  * Server class for manual tests.
+ * 
  * @author Gabriel Dimitriu
  *
  */
 public class ProcessingRestTestManualServer {
 
 	private int port = 0;
-	
+
 	private IServiceServer server = null;
 
 	/**
-	 * @throws JAXBException 
-	 * @throws SAXException 
+	 * @throws JAXBException
+	 * @throws SAXException
 	 * 
 	 */
 	public ProcessingRestTestManualServer() throws JAXBException, SAXException {
-		JAXBContext context = JAXBContext.newInstance(SystemConfigurations.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new StreamSource(
-				getClass().getClassLoader().getResourceAsStream("SystemConfiguration.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		SystemConfiguration configuration = ((SystemConfigurations) unmarshaller
-				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml")))
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(
+				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
 		server = new ServerJetty(port);
@@ -77,8 +66,8 @@ public class ProcessingRestTestManualServer {
 
 	/**
 	 * @param args
-	 * @throws SAXException 
-	 * @throws JAXBException 
+	 * @throws SAXException
+	 * @throws JAXBException
 	 */
 	public static void main(String[] args) throws JAXBException, SAXException {
 		new ProcessingRestTestManualServer();
