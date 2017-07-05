@@ -52,6 +52,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.statisticslogs.IStatistics;
@@ -59,6 +60,7 @@ import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.policy.provider.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.providers.persistence.PersistenceProvider;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
@@ -94,11 +96,13 @@ public class TransactionResources {
 	 * @param password password for the user in base64
 	 * @param persist true if the user want's persistence
 	 * @return http response plus cookie
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
 	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password, 
-			@QueryParam("persist") final boolean persistence) {
+			@QueryParam("persist") final boolean persistence){
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
@@ -118,7 +122,18 @@ public class TransactionResources {
 		transaction.setPersistence(persistence);
 		transaction.setTransactionId(TransactionProviders.getInstance().generateId(response));
 		response.setTransactionId(transaction.getTransactionId());
-		
+		if (persistence) {
+			try {
+				IPersistence persistenceImpl = PersistenceProvider.getInstance().getPersistenceInstance(response);
+				if (persistenceImpl == null) {
+					return Response.status(Status.FORBIDDEN).build();
+				}
+				transaction.setPersistenceImpl(persistenceImpl);
+			} catch (InstantiationException | IllegalAccessException e) {				
+				e.printStackTrace();
+				return Response.status(Status.FORBIDDEN).build();
+			}
+		}
 		TransactionProviders.getInstance().putTransaction(response, transaction);
 		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();

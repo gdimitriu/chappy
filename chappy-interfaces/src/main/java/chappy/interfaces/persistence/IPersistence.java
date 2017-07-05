@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/**
     Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
@@ -16,29 +15,30 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Chappy.  If not, see <http://www.gnu.org/licenses/>. 
- -->
- <configurations>
-	<configuration>
-  		<name>rest</name>
-  		<property>
-  			<name>port</name>
-  			<value>8099</value>
-  		</property>
-	</configuration>
-	<persistence>
-		<framework>datanucleus</framework>
-		<feature>
-			<persistenceUnit>default</persistenceUnit>
-			<plugin>ODF</plugin>
-			<property>
-				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:d:\chappy.ods</value>
-			</property>
-			<property>
-				<name>javax.jdo.option.Mapping</name>
-				<value>odf</value>
-			</property>
-		</feature>
-	</persistence>
-</configurations>
+    along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package chappy.interfaces.persistence;
+
+import chappy.configurations.system.PersistenceConfiguration;
+
+/**
+ * @author Gabriel Dimitriu
+ *
+ */
+public interface IPersistence {
+	
+	/** configure the persistence */
+	void configure(final PersistenceConfiguration configuration);
+	
+	/**
+	 * get the implementation type of persistence
+	 * @return name of the framework as string
+	 */
+	String getFramework();
+	
+	/**
+	 * get the framework features which is implemented by this instance.
+	 * @return array of string as feature list.
+	 */
+	String[] getFeatures();
+}

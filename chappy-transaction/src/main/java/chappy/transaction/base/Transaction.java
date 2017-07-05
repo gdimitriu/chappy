@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 
@@ -40,6 +41,9 @@ public class Transaction implements ITransaction {
 	
 	/** transactionID */
 	private String transactionId;
+	
+	/** persistence implementation */
+	private IPersistence persistenceImpl = null;
 
 	/**
 	 * 
@@ -103,5 +107,21 @@ public class Transaction implements ITransaction {
 	@Override
 	public String getTransactionId() {
 		return this.transactionId;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setPersistenceImpl(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setPersistenceImpl(final IPersistence persistence) {
+		this.persistenceImpl = persistence;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getPersistenceImpl()
+	 */
+	@Override
+	public IPersistence getPersistenceImpl() {
+		return this.persistenceImpl;
 	}
 }

@@ -85,8 +85,29 @@ public class SystemConfigurations {
 	 * set the persistence configurations
 	 * @param persistenceConfigurations the persistenceConfigurations to set
 	 */
-	public void setPersistenceConfigurations(PersistenceConfiguration[] persistenceConfigurations) {
+	public void setPersistenceConfigurations(final PersistenceConfiguration[] persistenceConfigurations) {
 		this.persistenceConfigurations = persistenceConfigurations;
+	}
+
+	/**
+	 * get the persistence configuration for the specific unit.
+	 * @param frameworkName the framework name
+	 * @param persistenceUnit the unit persistence name
+	 * @param feature name
+	 * @return configuration for the persistence.
+	 */
+	public PersistenceConfiguration getPersistenceConfiguration(final String persistenceUnit, final String frameworkName, 
+			final String featureName) {
+		for (PersistenceConfiguration conf : persistenceConfigurations) {
+			if (conf.getFramework().equals(frameworkName) && conf.getPersistenceUnit().equals(persistenceUnit)) {
+				for (FeaturePersistenceConfiguration feature : conf.getFeatures()) {
+					if (feature.equals(featureName)) {
+						return conf;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

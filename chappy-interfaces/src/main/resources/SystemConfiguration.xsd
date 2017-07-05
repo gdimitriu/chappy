@@ -40,6 +40,7 @@
 	</xs:complexType>
 	<xs:complexType name="persistence">
 		<xs:sequence>
+			<xs:element name="persistenceUnit" type = "xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="framework" type="xs:string" minOccurs="1"
 				maxOccurs="1" />
 			<xs:element name="feature" type="feature" minOccurs="0"

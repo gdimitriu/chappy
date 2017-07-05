@@ -31,7 +31,10 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PersistenceConfiguration {
-
+	
+	@XmlElement( name = "persistenceUnit")
+	private String persistenceUnit;
+	
 	@XmlElement( name = "framework")
 	private String framework;
 	
@@ -73,6 +76,20 @@ public class PersistenceConfiguration {
 	 */
 	public void setFeatures(final FeaturePersistenceConfiguration[] features) {
 		this.features = features;
+	}
+
+	/**
+	 * @return the persistenceUnit
+	 */
+	public String getPersistenceUnit() {
+		return persistenceUnit;
+	}
+
+	/**
+	 * @param persistenceUnit the persistenceUnit to set
+	 */
+	public void setPersistenceUnit(final String persistenceUnit) {
+		this.persistenceUnit = persistenceUnit;
 	}
 
 }

@@ -21,4 +21,4 @@
  * @author Gabriel Dimitriu
  *
  */
-package chappy.providers.persistance;
+package chappy.providers.persistence;

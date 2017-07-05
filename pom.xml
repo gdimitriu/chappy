@@ -15,7 +15,7 @@
 		<asm.version>5.2</asm.version>
 		<chappy.version>1.0.0-SNAPSHOT</chappy.version>
 		<jackson.version>2.8.7</jackson.version>
-		<JAVA_HOME>C:\Program Files\Java\jdk1.8.0_72</JAVA_HOME>
+		<JAVA_HOME>C:\Program Files\Java\jdk1.8.0_91</JAVA_HOME>
 	</properties>
 	<build>
 		<pluginManagement>

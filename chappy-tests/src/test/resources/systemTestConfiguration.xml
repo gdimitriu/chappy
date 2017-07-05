@@ -26,4 +26,34 @@
   			<value>8099</value>
   		</property>
 	</configuration>
+	<persistence>
+		<persistenceUnit>default</persistenceUnit>
+		<framework>datanucleus</framework>
+		<feature>
+			<plugin>ODF</plugin>
+			<property>
+				<name>javax.jdo.option.ConnectionURL</name>
+				<value>odf:file:d:\chappy.ods</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.Mapping</name>
+				<value>odf</value>
+			</property>
+		</feature>
+	</persistence>
+	<persistence>
+		<persistenceUnit>system</persistenceUnit>
+		<framework>datanucleus</framework>
+		<feature>
+			<plugin>ODF</plugin>
+			<property>
+				<name>javax.jdo.option.ConnectionURL</name>
+				<value>odf:file:d:\chappy.ods</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.Mapping</name>
+				<value>odf</value>
+			</property>
+		</feature>
+	</persistence>
 </configurations>

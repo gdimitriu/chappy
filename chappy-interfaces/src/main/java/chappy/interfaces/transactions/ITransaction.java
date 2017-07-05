@@ -22,6 +22,8 @@ package chappy.interfaces.transactions;
 import java.io.IOException;
 import java.util.List;
 
+import chappy.interfaces.persistence.IPersistence;
+
 /**
  * This is the transaction interface the base interface for transaction support.
  * @author Gabriel Dimitriu
@@ -53,7 +55,7 @@ public interface ITransaction {
 	/**
 	 * @param persistance the persistence to set
 	 */
-	void setPersistence(boolean persistence);
+	void setPersistence(final boolean persistence);
 	
 	/**
 	 * set the transaction id.
@@ -66,4 +68,17 @@ public interface ITransaction {
 	 * @return transaction id
 	 */
 	String getTransactionId();
+	
+	
+	/**
+	 * set the persistence implementation for this transaction.
+	 * @param persistenceImpl
+	 */
+	void setPersistenceImpl(final IPersistence persistenceImpl);
+	
+	/**
+	 * get the persistence implementation for this transaction.
+	 * @return persistenceImpl
+	 */
+	IPersistence getPersistenceImpl();
 }

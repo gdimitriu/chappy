@@ -17,20 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.persistance;
-
 /**
- * This is the provider for the persistence.
  * @author Gabriel Dimitriu
  *
  */
-public class PersistanceProvider {
-
-	/**
-	 * 
-	 */
-	public PersistanceProvider() {
-		// TODO Auto-generated constructor stub
-	}
-
-}
+package chappy.interfaces.persistence;
