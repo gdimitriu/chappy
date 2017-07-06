@@ -71,4 +71,12 @@ public class FeaturePersistenceConfiguration {
 	public PropertyConfiguration getProperty(final int i) {
 		return property[i];
 	}
+	
+	/**
+	 * get all properties defined in this feature.
+	 * @return all properties defined in this feature
+	 */
+	public PropertyConfiguration[] getAllProperties() {
+		return property;
+	}
 }

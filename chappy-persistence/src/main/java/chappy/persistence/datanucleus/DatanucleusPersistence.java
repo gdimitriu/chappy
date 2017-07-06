@@ -19,7 +19,11 @@
  */
 package chappy.persistence.datanucleus;
 
+import org.datanucleus.metadata.PersistenceUnitMetaData;
+
+import chappy.configurations.system.FeaturePersistenceConfiguration;
 import chappy.configurations.system.PersistenceConfiguration;
+import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
 
 /**
@@ -29,13 +33,22 @@ import chappy.interfaces.persistence.IPersistence;
  */
 public class DatanucleusPersistence implements IPersistence {
 
+	private PersistenceUnitMetaData persistenceUnit = null; 
+
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.persistence.IPersistence#configure(chappy.configurations.system.PersistenceConfiguration)
 	 */
 	@Override
 	public void configure(final PersistenceConfiguration configuration) {
-		// TODO Auto-generated method stub
-
+		persistenceUnit = new PersistenceUnitMetaData(configuration.getPersistenceUnit(), "RESOURCE_LOCAL", null);
+		FeaturePersistenceConfiguration[] features = configuration.getFeatures();
+		//add discovery classes
+		persistenceUnit.setExcludeUnlistedClasses();
+		for (FeaturePersistenceConfiguration feature : features) {
+			for (PropertyConfiguration propery : feature.getAllProperties()) {
+				persistenceUnit.addProperty(propery.getName(), propery.getValue());
+			}
+		}
 	}
 
 	/* (non-Javadoc)
