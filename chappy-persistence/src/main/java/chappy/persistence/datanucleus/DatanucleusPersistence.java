@@ -25,6 +25,7 @@ import chappy.configurations.system.FeaturePersistenceConfiguration;
 import chappy.configurations.system.PersistenceConfiguration;
 import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
+import chappy.persistence.discovery.PersistenceCapableProvider;
 
 /**
  * This is the specialization of the persistence for the framework Datanucleus.
@@ -43,6 +44,7 @@ public class DatanucleusPersistence implements IPersistence {
 		persistenceUnit = new PersistenceUnitMetaData(configuration.getPersistenceUnit(), "RESOURCE_LOCAL", null);
 		FeaturePersistenceConfiguration[] features = configuration.getFeatures();
 		//add discovery classes
+		PersistenceCapableProvider.getAllPersistenceCapableClasses().stream().forEach(a -> persistenceUnit.addClassName(a));
 		persistenceUnit.setExcludeUnlistedClasses();
 		for (FeaturePersistenceConfiguration feature : features) {
 			for (PropertyConfiguration propery : feature.getAllProperties()) {

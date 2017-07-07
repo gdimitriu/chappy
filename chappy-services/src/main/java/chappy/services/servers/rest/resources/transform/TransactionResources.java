@@ -136,6 +136,13 @@ public class TransactionResources {
 		}
 		TransactionProviders.getInstance().putTransaction(response, transaction);
 		
+		try {
+			IPersistence systemPersistence = PersistenceProvider.getInstance().getSystemPersistence();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			return Response.status(Status.FORBIDDEN).build();
+		}
+		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     	String json;
 		try {

@@ -122,12 +122,12 @@ public class PersistenceProvider {
 		}
 		
 		int featureIndex = type.indexOf("/");
-		String frameworkName = type.substring(featureIndex, type.lastIndexOf("/"));
+		String frameworkName = type.substring(featureIndex + 1, type.lastIndexOf("/"));
 		String persistenceUnit = type.substring(0, featureIndex);
 		if (persistenceUnit.equals(SYSTEM_PERSISTENCE)) {
 			return null;
 		}
-		String feature = type.substring(type.lastIndexOf("/"), type.length());
+		String feature = type.substring(type.lastIndexOf("/") + 1, type.length());
 		Reflections reflection = new Reflections(PERSISTENCE_PACKAGE + "." + frameworkName);
 		Set<Class<? extends IPersistence>> frameworks = reflection.getSubTypesOf(IPersistence.class);
 		for (Class<? extends IPersistence> framework : frameworks) {

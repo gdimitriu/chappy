@@ -101,7 +101,7 @@ public class SystemConfigurations {
 		for (PersistenceConfiguration conf : persistenceConfigurations) {
 			if (conf.getFramework().equals(frameworkName) && conf.getPersistenceUnit().equals(persistenceUnit)) {
 				for (FeaturePersistenceConfiguration feature : conf.getFeatures()) {
-					if (feature.equals(featureName)) {
+					if (feature.getPlugin().equals(featureName)) {
 						return conf;
 					}
 				}
