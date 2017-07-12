@@ -93,6 +93,7 @@ public class PersistenceProvider {
 								IPersistence persistence = framework.newInstance();
 								if (conf.getFramework().equals(persistence.getFramework())) {
 									persistence.configure(conf);
+									systemPersistence = persistence;
 									return systemPersistence;
 								}
 							}
@@ -112,8 +113,8 @@ public class PersistenceProvider {
 	 * @throws InstantiationException 
 	 */
 	synchronized public IPersistence getPersistenceInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
-		
-		String type = SystemPolicyProvider.getInstance().getAuthenticationHandler().persistenceType(cookie.getUserName());
+		//TODO only system persistance is allowed.
+/*		String type = SystemPolicyProvider.getInstance().getAuthenticationHandler().persistenceType(cookie.getUserName());
 		String cacheUnitPersistence = createCacheUnit(type, cookie.getUserName());
 		IPersistence persistence = null;
 		//first check in cache
@@ -143,7 +144,7 @@ public class PersistenceProvider {
 					 }
 				 }
 			}
-		}
+		} */
 		return null;
 	}
 	

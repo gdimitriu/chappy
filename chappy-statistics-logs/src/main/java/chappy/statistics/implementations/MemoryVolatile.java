@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 
@@ -39,8 +40,10 @@ public class MemoryVolatile implements IStatistics {
 	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(java.lang.String, java.time.LocalDateTime, java.time.LocalDateTime)
 	 */
 	@Override
-	public void putStatistic(final String stepName, final LocalDateTime start, final LocalDateTime stop) {
-		statisticHolder.add(new StatisticLog(stepName, start, stop));
+	public StatisticLog putStatistic(final String stepName, final LocalDateTime start, final LocalDateTime stop) {
+		StatisticLog stat = new StatisticLog(stepName, start, stop);
+		statisticHolder.add(stat);
+		return stat;
 	}
 
 	/* (non-Javadoc)
@@ -71,6 +74,12 @@ public class MemoryVolatile implements IStatistics {
 	@Override
 	public List<StatisticLog> getAllStatistics() {
 		return this.statisticHolder;
+	}
+
+	@Override
+	public void persist(IPersistence persistence) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -20,16 +20,13 @@
 package chappy.logs.implementations;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class DatanucleusMemory implements IStatistics {
+public class DatanucleusMemory extends MemoryVolatile {
 
 	/**
 	 * 
@@ -39,39 +36,13 @@ public class DatanucleusMemory implements IStatistics {
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(java.lang.String, java.time.LocalDateTime, java.time.LocalDateTime)
+	 * @see chappy.interfaces.statisticslogs.ILogs#putLog(java.lang.String, java.time.LocalDateTime, java.lang.String)
 	 */
 	@Override
-	public void putStatistic(String stepName, LocalDateTime start, LocalDateTime stop) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(chappy.interfaces.statisticslogs.StatisticLog)
-	 */
-	@Override
-	public void putStatistic(StatisticLog data) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.statisticslogs.IStatistics#getStatisticsForStep(java.lang.String)
-	 */
-	@Override
-	public List<StatisticLog> getStatisticsForStep(String stepName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.statisticslogs.IStatistics#getAllStatistics()
-	 */
-	@Override
-	public List<StatisticLog> getAllStatistics() {
-		// TODO Auto-generated method stub
-		return null;
+	public StatisticLog putLog(String stepName, LocalDateTime time, String message) {
+		StatisticLog log = new PersistenceDatanucleusStatisticsLog(stepName, time, message);
+		putLog(log);
+		return log; 
 	}
 
 }

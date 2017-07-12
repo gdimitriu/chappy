@@ -20,6 +20,7 @@
 package chappy.interfaces.persistence;
 
 import chappy.configurations.system.PersistenceConfiguration;
+import chappy.interfaces.transactions.ITransaction;
 
 /**
  * @author Gabriel Dimitriu
@@ -41,4 +42,17 @@ public interface IPersistence {
 	 * @return array of string as feature list.
 	 */
 	String[] getFeatures();
+	
+	/**
+	 * get the factory for the persistence.
+	 * @return factory for persistence
+	 */
+	Object getFactory();
+	
+	
+	/**
+	 * create the transaction based on the type of persistence.
+	 * @return transaction.
+	 */
+	ITransaction createTransaction();
 }

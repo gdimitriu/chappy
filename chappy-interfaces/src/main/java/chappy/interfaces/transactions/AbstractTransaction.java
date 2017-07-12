@@ -17,22 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.transaction.base;
+package chappy.interfaces.transactions;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import chappy.interfaces.persistence.IPersistence;
-import chappy.interfaces.transactions.ITransaction;
-import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class Transaction implements ITransaction {
-	
+public abstract class AbstractTransaction implements ITransaction {
 	/** list of transformers used by this transaction */
 	private List<String> listOfTansformers = null;
 	
@@ -44,11 +41,14 @@ public class Transaction implements ITransaction {
 	
 	/** persistence implementation */
 	private IPersistence persistenceImpl = null;
-
+	
+	/** system persistence implementation */
+	private IPersistence systemPersistenceImpl = null;
+	
 	/**
 	 * 
 	 */
-	public Transaction() {
+	public AbstractTransaction() {
 		listOfTansformers = new ArrayList<String>();
 	}
 
@@ -67,16 +67,7 @@ public class Transaction implements ITransaction {
 	public void setListOfTansformers(final List<String> listOfTansformers) {
 		this.listOfTansformers = listOfTansformers;
 	}
-
-	/* (non-Javadoc)
-	 * @see chappy.transaction.base.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
-	 */
-	@Override
-	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
-		this.listOfTansformers.add(fullName);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, persistence);
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see chappy.transaction.base.ITransaction#isPersistence()
 	 */
@@ -108,7 +99,7 @@ public class Transaction implements ITransaction {
 	public String getTransactionId() {
 		return this.transactionId;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.transactions.ITransaction#setPersistenceImpl(chappy.interfaces.persistence.IPersistence)
 	 */
@@ -123,5 +114,29 @@ public class Transaction implements ITransaction {
 	@Override
 	public IPersistence getPersistenceImpl() {
 		return this.persistenceImpl;
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
+	 */
+	@Override
+	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
+		this.listOfTansformers.add(fullName);
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemPeristence(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setSystemPeristence(IPersistence persistenceImpl) {
+		this.systemPersistenceImpl = persistenceImpl;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemPersistence()
+	 */
+	@Override
+	public IPersistence getSystemPersistence() {
+		return this.systemPersistenceImpl;
 	}
 }

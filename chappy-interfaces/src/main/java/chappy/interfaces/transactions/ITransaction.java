@@ -81,4 +81,38 @@ public interface ITransaction {
 	 * @return persistenceImpl
 	 */
 	IPersistence getPersistenceImpl();
+	
+	
+	/**
+	 * start a transaction.
+	 */
+	void start();
+	
+	/**
+	 *  commit the transaction.
+	 */
+	void commit();
+	
+	/**
+	 *  rollback the transaction.
+	 */
+	void rollback();
+	
+	/**
+	 * persist the object.
+	 * @param object to be persisted
+	 */
+	void makePersistent(final Object obj);
+	
+	/**
+	 * set the system persistence
+	 * @param persistenceImpl
+	 */
+	void setSystemPeristence(final IPersistence persistenceImpl);
+	
+	/**
+	 * get the system persistence.
+	 * @return system persistence
+	 */
+	IPersistence getSystemPersistence();
 }

@@ -29,4 +29,7 @@ public interface IStatisticsLogsConstants {
 	/** store data only in memory */
 	String MEMORY_VOLATILE = "MemoryVolatile";
 	
+	/** store data in datanucleus and memory */
+	String DATANUCLEUS_MEMORY = "DatanucleusMemory";
+	
 }

@@ -120,12 +120,12 @@ public class RestUserCallsForFlowTransformationsTest {
 		multipartEntity = new FormDataMultiPart().field("data", "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
 		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam("user", "gdimitriu")
-				.queryParam("configuration", StreamUtils.getStringFromResource("dummySteps.xml"))
+				.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
 			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResource("dummyStepsResponse.txt"),
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 					StreamUtils.toStringFromStream(inputStream));
 		}
 	}

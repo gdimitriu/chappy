@@ -17,49 +17,33 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.statisticslogs;
+package chappy.statistics.implementations;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import chappy.interfaces.persistence.IPersistence;
+import chappy.interfaces.statisticslogs.StatisticLog;
+import chappy.logs.implementations.PersistenceDatanucleusStatisticsLog;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface ILogs {
+public class DatanucleusMemory extends MemoryVolatile {
 
 	/**
-	 * put a log information
-	 * @param data contained statistic/log
+	 * 
 	 */
-	void putLog(final StatisticLog data);
-	
-	/**
-	 * put a log information
-	 * @param stepName step for log
-	 * @param time of the log
-	 * @param message logging
-	 */
-	StatisticLog putLog(final String stepName, final LocalDateTime time, final String message);
+	public DatanucleusMemory() {
+		// TODO Auto-generated constructor stub
+	}
 
-	/**
-	 * get the logs for a step
-	 * @param stepName
-	 * @return list of logs
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.statisticslogs.IStatistics#putStatistic(java.lang.String, java.time.LocalDateTime, java.time.LocalDateTime)
 	 */
-	List<StatisticLog> getLogsFroStep(final String stepName);
-	
-	/**
-	 * get all logs for this transaction.
-	 * @return list of logs.
-	 */
-	List<StatisticLog> getAllLogs();
-	
-	/**
-	 * persist the logs to specified persistence.
-	 * @param persistence the persistence factory.
-	 */
-	void persist(IPersistence persistence);
+	@Override
+	public StatisticLog putStatistic(final String stepName, final LocalDateTime start, final LocalDateTime stop) {
+		StatisticLog stat = new PersistenceDatanucleusStatisticsLog(stepName, start, stop);
+		super.putStatistic(stat);
+		return stat;
+	}
 }

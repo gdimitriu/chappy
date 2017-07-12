@@ -19,12 +19,19 @@
  */
 package chappy.persistence.datanucleus;
 
+import java.util.List;
+
+import javax.jdo.PersistenceManagerFactory;
+
+import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
+import org.datanucleus.enhancer.DataNucleusEnhancer;
 import org.datanucleus.metadata.PersistenceUnitMetaData;
 
 import chappy.configurations.system.FeaturePersistenceConfiguration;
 import chappy.configurations.system.PersistenceConfiguration;
 import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
+import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.discovery.PersistenceCapableProvider;
 
 /**
@@ -34,23 +41,40 @@ import chappy.persistence.discovery.PersistenceCapableProvider;
  */
 public class DatanucleusPersistence implements IPersistence {
 
-	private PersistenceUnitMetaData persistenceUnit = null; 
+	private PersistenceUnitMetaData persistenceUnit = null;
+	
+	private PersistenceManagerFactory persistenceManagerFactory = null;
+	
+	
+	
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.persistence.IPersistence#configure(chappy.configurations.system.PersistenceConfiguration)
 	 */
 	@Override
 	public void configure(final PersistenceConfiguration configuration) {
-		persistenceUnit = new PersistenceUnitMetaData(configuration.getPersistenceUnit(), "RESOURCE_LOCAL", null);
-		FeaturePersistenceConfiguration[] features = configuration.getFeatures();
 		//add discovery classes
-		PersistenceCapableProvider.getAllPersistenceCapableClasses().stream().forEach(a -> persistenceUnit.addClassName(a));
+		List<String> classes = PersistenceCapableProvider.getAllPersistenceCapableClasses();
+		persistenceUnit = new PersistenceUnitMetaData(configuration.getPersistenceUnit(), "RESOURCE_LOCAL", null);
+		classes.stream().forEach(a -> persistenceUnit.addClassName(a));
+		FeaturePersistenceConfiguration[] features = configuration.getFeatures();
 		persistenceUnit.setExcludeUnlistedClasses();
 		for (FeaturePersistenceConfiguration feature : features) {
 			for (PropertyConfiguration propery : feature.getAllProperties()) {
 				persistenceUnit.addProperty(propery.getName(), propery.getValue());
 			}
 		}
+		//enhance classes
+		DataNucleusEnhancer enhancer = new DataNucleusEnhancer("JDO", null);
+		enhancer.setVerbose(true);
+		enhancer.addPersistenceUnit(persistenceUnit);
+//		enhancer.addPersistenceUnit(configuration.getPersistenceUnit());
+//		classes.stream().forEach(a -> enhancer.addClasses(a));
+		enhancer.addClasses(classes.toArray(new String[1]));
+		enhancer.enhance();
+		//create manager factory
+		persistenceManagerFactory = new JDOPersistenceManagerFactory(persistenceUnit, null);
+		
 	}
 
 	/* (non-Javadoc)
@@ -71,4 +95,19 @@ public class DatanucleusPersistence implements IPersistence {
 		return ret;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.persistence.IPersistence#getFactory()
+	 */
+	@Override
+	public Object getFactory() {
+		return persistenceManagerFactory;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.persistence.IPersistence#createTransaction()
+	 */
+	@Override
+	public ITransaction createTransaction() {
+		return new DatanucleusTransaction();
+	}
 }

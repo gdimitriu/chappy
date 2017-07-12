@@ -24,7 +24,10 @@ import java.util.Map;
 
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.interfaces.exception.ForbiddenException;
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
+import chappy.providers.persistence.PersistenceProvider;
 
 /**
  * providers for transactions.
@@ -93,6 +96,54 @@ public class TransactionProviders {
 	public String generateId(final CookieTransaction cookie) {
 		//TODO: hardcoded now
 		return cookie.getUserName();
+	}
+	
+	
+	
+	/**
+	 * start a new transaction.
+	 * @param cookie that is identified
+	 * @param persistence true if it has persistence.
+	 * @return the transaction.
+	 * @throws ForbiddenException in case of transaction problem for persistence
+	 */
+	public ITransaction startTransaction(final CookieTransaction cookie, final boolean persistence) throws ForbiddenException {
+		ITransaction transaction;
+		if (!persistence) {
+			transaction = new ChappyTransaction();
+		} else {
+			try {
+				transaction = PersistenceProvider.getInstance().getSystemPersistence().createTransaction();//.getPersistenceInstance(cookie).createTransaction();
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
+			}
+		}
+		transaction.setPersistence(persistence);
+		transaction.setTransactionId(TransactionProviders.getInstance().generateId(cookie));
+		cookie.setTransactionId(transaction.getTransactionId());
+		if (persistence) {
+//TODO DISABLED
+//			try {
+//				IPersistence persistenceImpl = PersistenceProvider.getInstance().getPersistenceInstance(cookie);
+//				if (persistenceImpl == null) {
+//					throw new ForbiddenException("persistence not allowed");
+//				}
+//				transaction.setPersistenceImpl(persistenceImpl);
+//			} catch (InstantiationException | IllegalAccessException e) {				
+//				e.printStackTrace();
+//				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
+//			}
+			try {
+				IPersistence systemPersistence = PersistenceProvider.getInstance().getSystemPersistence();
+				transaction.setSystemPeristence(systemPersistence);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
+			}
+		}		
+		TransactionProviders.getInstance().putTransaction(cookie, transaction);
+		return transaction;
 	}
 	
 }

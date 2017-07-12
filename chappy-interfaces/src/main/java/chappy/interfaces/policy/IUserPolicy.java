@@ -54,7 +54,7 @@ public interface IUserPolicy {
 	 * @return statistics/log type
 	 */
 	default String statisticsType(final String userName) {
-		return IStatisticsLogsConstants.MEMORY_VOLATILE;
+		return IStatisticsLogsConstants.DATANUCLEUS_MEMORY;
 	}
 	
 	/**

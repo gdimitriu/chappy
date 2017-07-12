@@ -54,6 +54,18 @@
 				<name>javax.jdo.option.Mapping</name>
 				<value>odf</value>
 			</property>
+			<property>
+				<name>datanucleus.autoCreateSchema</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>datanucleus.autoCreateTables</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>datanucleus.autoCreateColumns</name>
+				<value>true</value>
+			</property>
 		</feature>
 	</persistence>
 </configurations>

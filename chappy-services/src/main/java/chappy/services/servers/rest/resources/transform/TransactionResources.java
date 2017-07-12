@@ -51,8 +51,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.flows.IFlowRunner;
-import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.statisticslogs.IStatistics;
@@ -60,12 +60,10 @@ import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.policy.provider.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
-import chappy.providers.persistence.PersistenceProvider;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.cookies.CookieUtils;
-import chappy.transaction.base.Transaction;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -110,8 +108,6 @@ public class TransactionResources {
 		CookieTransactionsToken response = new CookieTransactionsToken();
 		response.setUserName(userName);
 		
-		ITransaction transaction = new Transaction();
-		
 		boolean allowedPersistence = SystemPolicyProvider.getInstance().getAuthenticationHandler().isAllowedPersistence(userName);
 		if (persistence != allowedPersistence) {
 			if (persistence) {
@@ -119,29 +115,13 @@ public class TransactionResources {
 			}
 		}
 		
-		transaction.setPersistence(persistence);
-		transaction.setTransactionId(TransactionProviders.getInstance().generateId(response));
-		response.setTransactionId(transaction.getTransactionId());
-		if (persistence) {
-			try {
-				IPersistence persistenceImpl = PersistenceProvider.getInstance().getPersistenceInstance(response);
-				if (persistenceImpl == null) {
-					return Response.status(Status.FORBIDDEN).build();
-				}
-				transaction.setPersistenceImpl(persistenceImpl);
-			} catch (InstantiationException | IllegalAccessException e) {				
-				e.printStackTrace();
-				return Response.status(Status.FORBIDDEN).build();
-			}
-		}
-		TransactionProviders.getInstance().putTransaction(response, transaction);
-		
 		try {
-			IPersistence systemPersistence = PersistenceProvider.getInstance().getSystemPersistence();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			 TransactionProviders.getInstance().startTransaction(response, persistence);
+		} catch (ForbiddenException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 			return Response.status(Status.FORBIDDEN).build();
-		}
+		}		
 		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     	String json;
@@ -203,6 +183,8 @@ public class TransactionResources {
 		
 		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
 		transaction.addTransformer(received.getUserName(), transformerName, transformerData);
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(received.getUserName(), transformerName, transformerData, transaction.isPersistence());
+
 		
 		return Response.ok().cookie(new NewCookie(cookie)).build();
 	}
@@ -289,9 +271,13 @@ public class TransactionResources {
 		Cookie cookie = cookies.get("userData");
 		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
 		IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(receivedCookie);
-		
-		List<StatisticLog> listOfStatistics = statistics.getAllStatistics();
-		GenericEntity<List<StatisticLog>> returnList = new GenericEntity<List<StatisticLog>>(listOfStatistics){};
-		return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();
+		if (statistics != null) {
+			List<StatisticLog> listOfStatistics = statistics.getAllStatistics();
+			GenericEntity<List<StatisticLog>> returnList = new GenericEntity<List<StatisticLog>>(listOfStatistics){};
+			return Response.ok().entity(returnList).cookie(new NewCookie(cookie)).build();			
+		} else {
+			return Response.ok().cookie(new NewCookie(cookie)).build();
+		}
+
 	}
 }
