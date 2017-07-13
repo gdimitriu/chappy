@@ -138,12 +138,18 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
     @Override
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception {
-    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
-    	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+    	IStatistics statistics = null; 
+    	ILogs logs = null;
+    	ITransaction transaction = null;
     	LocalDateTime startTime = null;
     	LocalDateTime finishTime = null;
-    	ITransaction transaction = TransactionProviders.getInstance().getTransaction(transactionCookie);
-    	transaction.start();
+    	if (transactionCookie.getTransactionId() != null) {
+    		statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+    		logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+        	transaction = TransactionProviders.getInstance().getTransaction(transactionCookie);
+        	transaction.start();
+    	}
+
     	for (ITransformerStep step : stepList) {
 			startTime = LocalDateTime.now();
 			if (logs != null) {
@@ -160,7 +166,9 @@ public class StaticFlowRunner implements IFlowRunner{
 				transaction.makePersistent(stat);
 			}
 		}
-    	transaction.commit();
+    	if (transaction != null) {
+    		transaction.commit();
+    	}
 		return holder;
 	}
     
