@@ -28,7 +28,7 @@ import org.reflections.Reflections;
 import chappy.configurations.system.PersistenceConfiguration;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.persistence.IPersistence;
-import chappy.policy.provider.SystemPolicyProvider;
+import chappy.interfaces.persistence.IPersistenceConstants;
 import chappy.providers.configurations.SystemConfigurationProvider;
 
 /**
@@ -41,12 +41,6 @@ public class PersistenceProvider {
 	/** singleton instance */
 	static private PersistenceProvider singleton = new PersistenceProvider();
 
-	/** system persistence keyword */
-	private static final String SYSTEM_PERSISTENCE = "system";
-
-	/** persistence package */
-	private static String PERSISTENCE_PACKAGE = "chappy.persistence";
-	
 	/** cache map for persistenceUnit names */
 	private Map<String, IPersistence> persistenceCache = new HashMap<String, IPersistence>();
 	
@@ -55,6 +49,12 @@ public class PersistenceProvider {
 	 * there is only one system persistence unit.
 	 */
 	private static IPersistence systemPersistence = null;
+	
+	/**
+	 * cache for upgrade persistence
+	 * there is only one upgrade persistence unit.
+	 */
+	private static IPersistence systemUpgradePersistence = null;
 	
 	/**
 	 * private for singleton.
@@ -82,27 +82,57 @@ public class PersistenceProvider {
 		if (systemPersistence == null) {
 			synchronized (this) {
 				if (systemPersistence == null) {
-					PersistenceConfiguration[] configurations = SystemConfigurationProvider.getInstance()
-							.getSystemConfiguration().getPersistenceConfigurations();
-					for (PersistenceConfiguration conf : configurations) {
-						if (conf.getPersistenceUnit().equals(SYSTEM_PERSISTENCE)) {
-							Reflections reflection = new Reflections(PERSISTENCE_PACKAGE + "." + conf.getFramework());
-							Set<Class<? extends IPersistence>> frameworks = reflection
-									.getSubTypesOf(IPersistence.class);
-							for (Class<? extends IPersistence> framework : frameworks) {
-								IPersistence persistence = framework.newInstance();
-								if (conf.getFramework().equals(persistence.getFramework())) {
-									persistence.configure(conf);
-									systemPersistence = persistence;
-									return systemPersistence;
-								}
-							}
-						}
-					}
+					systemPersistence = getPersistenceByType(IPersistenceConstants.SYSTEM_PERSISTENCE);
+					return systemPersistence;
 				}
 			}
 		}
 		return systemPersistence;
+	}
+	
+	
+	/**
+	 * @param type of persistence /system/upgrade etc
+	 * @return persistence instance
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	private IPersistence getPersistenceByType(final String type) throws InstantiationException, IllegalAccessException {
+		PersistenceConfiguration[] configurations = SystemConfigurationProvider.getInstance()
+				.getSystemConfiguration().getPersistenceConfigurations();
+		for (PersistenceConfiguration conf : configurations) {
+			if (conf.getPersistenceUnit().equals(type)) {
+				Reflections reflection = new Reflections(IPersistenceConstants.PERSISTENCE_PACKAGE + "." + conf.getFramework());
+				Set<Class<? extends IPersistence>> frameworks = reflection
+						.getSubTypesOf(IPersistence.class);
+				for (Class<? extends IPersistence> framework : frameworks) {
+					IPersistence persistence = framework.newInstance();
+					if (conf.getFramework().equals(persistence.getFramework())) {
+						persistence.configure(conf, type);
+						return persistence;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * get the system upgrade
+	 * @return instance
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public IPersistence getSystemUpgradePersistence() throws InstantiationException, IllegalAccessException {
+		if (systemUpgradePersistence == null) {
+			synchronized (this) {
+				if (systemUpgradePersistence == null) {
+					systemUpgradePersistence = getPersistenceByType(IPersistenceConstants.SYSTEM_UPGRADE_PERSISTENCE);
+					return systemUpgradePersistence;
+				}
+			}
+		}
+		return systemUpgradePersistence;
 	}
 	
 	/**

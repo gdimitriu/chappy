@@ -44,19 +44,13 @@ public class DatanucleusPersistence implements IPersistence {
 	private PersistenceUnitMetaData persistenceUnit = null;
 	
 	private PersistenceManagerFactory persistenceManagerFactory = null;
-	
-	
-	
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.persistence.IPersistence#configure(chappy.configurations.system.PersistenceConfiguration)
 	 */
 	@Override
-	public void configure(final PersistenceConfiguration configuration) {
-		//add discovery classes
-		List<String> classes = PersistenceCapableProvider.getAllPersistenceCapableClasses();
+	public void configure(final PersistenceConfiguration configuration, final String type) {
 		persistenceUnit = new PersistenceUnitMetaData(configuration.getPersistenceUnit(), "RESOURCE_LOCAL", null);
-		classes.stream().forEach(a -> persistenceUnit.addClassName(a));
 		FeaturePersistenceConfiguration[] features = configuration.getFeatures();
 		persistenceUnit.setExcludeUnlistedClasses();
 		for (FeaturePersistenceConfiguration feature : features) {
@@ -68,9 +62,15 @@ public class DatanucleusPersistence implements IPersistence {
 		DataNucleusEnhancer enhancer = new DataNucleusEnhancer("JDO", null);
 		enhancer.setVerbose(true);
 		enhancer.addPersistenceUnit(persistenceUnit);
-//		enhancer.addPersistenceUnit(configuration.getPersistenceUnit());
-//		classes.stream().forEach(a -> enhancer.addClasses(a));
-		enhancer.addClasses(classes.toArray(new String[1]));
+		try {
+			//add discovery classes
+			List<String> classes = PersistenceCapableProvider.getPersistenceType(type);
+			classes.stream().forEach(a -> persistenceUnit.addClassName(a));
+			classes.stream().forEach(a -> enhancer.addClasses(a));
+//			enhancer.addClasses(classes.toArray(new String[1]));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		enhancer.enhance();
 		//create manager factory
 		persistenceManagerFactory = new JDOPersistenceManagerFactory(persistenceUnit, null);

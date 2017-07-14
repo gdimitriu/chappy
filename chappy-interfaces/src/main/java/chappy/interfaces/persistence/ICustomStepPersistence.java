@@ -19,43 +19,35 @@
  */
 package chappy.interfaces.persistence;
 
-import chappy.configurations.system.PersistenceConfiguration;
-import chappy.interfaces.transactions.ITransaction;
-
 /**
+ * Interface for persistence of custom transformers.
+ * This is used to persist and retrieve custom transformers from transaction.
  * @author Gabriel Dimitriu
  *
  */
-public interface IPersistence {
-	
-	/** configure the persistence
-	 * @param configuration the configuration 
-	 * @param type the type: user/system/upgrade/etc
-	 * */
-	void configure(final PersistenceConfiguration configuration, final String type);
+public interface ICustomStepPersistence {
+
+	/**
+	 * set the step name as is in storage provider.
+	 * @param name of the step as in storage
+	 */
+	void setStepName(final String name);
 	
 	/**
-	 * get the implementation type of persistence
-	 * @return name of the framework as string
+	 * get the step name as is in storage provider.
+	 * @return name of step.
 	 */
-	String getFramework();
+	String getStepName();
 	
 	/**
-	 * get the framework features which is implemented by this instance.
-	 * @return array of string as feature list.
+	 * set the bytecode after remaper.
+	 * @param bytecode after remapper.
 	 */
-	String[] getFeatures();
+	void setByteCode(final Byte[] bytecode);
 	
 	/**
-	 * get the factory for the persistence.
-	 * @return factory for persistence
+	 * get the bytecode after remapper.
+	 * @return bytecode after remapper
 	 */
-	Object getFactory();
-	
-	
-	/**
-	 * create the transaction based on the type of persistence.
-	 * @return transaction.
-	 */
-	ITransaction createTransaction();
+	Byte[] getByteCode();
 }

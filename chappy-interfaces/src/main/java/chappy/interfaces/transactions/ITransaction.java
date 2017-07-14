@@ -82,6 +82,41 @@ public interface ITransaction {
 	 */
 	IPersistence getPersistenceImpl();
 	
+	/**
+	 * set the system log persistence
+	 * @param persistenceImpl
+	 */
+	void setSystemLogPersistence(final IPersistence persistenceImpl);
+	
+	/**
+	 * get the system log persistence.
+	 * @return system persistence
+	 */
+	IPersistence getSystemLogPersistence();
+	
+	/**
+	 * set the system flow persistence.
+	 * @param flowPersistence
+	 */
+	void setSystemFlowPersistence(final IPersistence flowPersistence);
+	
+	/**
+	 * get the system flow persistence.
+	 * @return flow persistence
+	 */
+	IPersistence getSystemFlowPersistence();
+	
+	/**
+	 * set the system upgrade persistence.
+	 * @param upgradePersistence
+	 */
+	void setSystemUpgradePersistence(final IPersistence upgradePersistence);
+	
+	/**
+	 * get the system upgrade persistence.
+	 * @return flow persistence
+	 */
+	IPersistence getSystemUpgradePersistence();
 	
 	/**
 	 * start a transaction.
@@ -103,16 +138,5 @@ public interface ITransaction {
 	 * @param object to be persisted
 	 */
 	void makePersistent(final Object obj);
-	
-	/**
-	 * set the system persistence
-	 * @param persistenceImpl
-	 */
-	void setSystemPeristence(final IPersistence persistenceImpl);
-	
-	/**
-	 * get the system persistence.
-	 * @return system persistence
-	 */
-	IPersistence getSystemPersistence();
+
 }

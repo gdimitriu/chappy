@@ -27,13 +27,14 @@ import javax.jdo.annotations.PersistenceCapable;
 
 import org.reflections.Reflections;
 
+import chappy.interfaces.constants.IChappyPackagesConstants;
+
 /**
  * @author Gabriel Dimitriu
  *
  */
 public class PersistenceCapableProvider {
 
-	
 	/**
 	 * 
 	 */
@@ -43,7 +44,7 @@ public class PersistenceCapableProvider {
 	
 	
 	/**
-	 * get all classes from chappy which has persistence capabiblity.
+	 * get all classes from chappy which has persistence capability.
 	 * @return list of classes which are persistence capable
 	 */
 	static public List<String> getAllPersistenceCapableClasses() {
@@ -54,6 +55,31 @@ public class PersistenceCapableProvider {
 			all.add(cPersistence.getName());
 		}
 		return all;
+	}
+	
+	/**
+	 * get the classes from chappy which has persistence capability and is
+	 * marked with the type interface maker.
+	 * @param type of persistence
+	 * @return list of classes name.
+	 * @throws ClassNotFoundException
+	 */
+	static public List<String> getPersistenceType(final String type) throws ClassNotFoundException {
+		List<String> classes = new ArrayList<String>();
+		String marker = "I" + type + "Persistence";
+		Reflections reflections = new Reflections("chappy");
+		Class<?> markerClass = Class.forName(IChappyPackagesConstants.CHAPPY_INTERFACES_MARKERS + marker);
+		Set<Class<?>> allPresistedclasses = reflections.getTypesAnnotatedWith(PersistenceCapable.class);
+		for (Class<?> cl : allPresistedclasses) {
+			Class<?>[] interfaces = cl.getInterfaces();
+			for (Class<?> implInterface : interfaces) {
+				if (implInterface.equals(markerClass)) {
+					classes.add(cl.getName());
+					break;
+				}
+			}
+		}
+		return classes;
 	}
 
 }

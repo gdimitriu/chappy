@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 
 import javax.jdo.annotations.PersistenceCapable;
 
+import chappy.interfaces.markers.ISystemLogsPersistence;
 import chappy.interfaces.statisticslogs.StatisticLog;
 
 /**
@@ -30,7 +31,7 @@ import chappy.interfaces.statisticslogs.StatisticLog;
  *
  */
 @PersistenceCapable
-public class PersistenceDatanucleusStatisticsLog extends StatisticLog {
+public class PersistenceDatanucleusStatisticsLog extends StatisticLog implements ISystemLogsPersistence {
 
 	/**
 	 * 

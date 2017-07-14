@@ -42,8 +42,14 @@ public abstract class AbstractTransaction implements ITransaction {
 	/** persistence implementation */
 	private IPersistence persistenceImpl = null;
 	
-	/** system persistence implementation */
-	private IPersistence systemPersistenceImpl = null;
+	/** system log persistence implementation */
+	private IPersistence systemLogPersistenceImpl = null;
+	
+	/** system flow persistence implementation */
+	private IPersistence systemFlowPersistenceImpl = null;
+	
+	/** system upgrade persistence implementation */
+	private IPersistence systemUpgradePersistenceImpl = null;
 	
 	/**
 	 * 
@@ -125,18 +131,51 @@ public abstract class AbstractTransaction implements ITransaction {
 	}
 	
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#setSystemPeristence(chappy.interfaces.persistence.IPersistence)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemLogPeristence(chappy.interfaces.persistence.IPersistence)
 	 */
 	@Override
-	public void setSystemPeristence(IPersistence persistenceImpl) {
-		this.systemPersistenceImpl = persistenceImpl;
+	public void setSystemLogPersistence(IPersistence persistenceImpl) {
+		this.systemLogPersistenceImpl = persistenceImpl;
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#getSystemPersistence()
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemLogPersistence()
 	 */
 	@Override
-	public IPersistence getSystemPersistence() {
-		return this.systemPersistenceImpl;
+	public IPersistence getSystemLogPersistence() {
+		return this.systemLogPersistenceImpl;
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemFlowPeristence(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setSystemFlowPersistence(IPersistence persistenceImpl) {
+		this.systemFlowPersistenceImpl = persistenceImpl;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemFlowPersistence()
+	 */
+	@Override
+	public IPersistence getSystemFlowPersistence() {
+		return this.systemFlowPersistenceImpl;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemUpgradePeristence(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setSystemUpgradePersistence(IPersistence persistenceImpl) {
+		this.systemUpgradePersistenceImpl = persistenceImpl;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemLogPersistence()
+	 */
+	@Override
+	public IPersistence getSystemUpgradePersistence() {
+		return this.systemUpgradePersistenceImpl;
 	}
 }

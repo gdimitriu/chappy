@@ -153,7 +153,8 @@ public class StaticFlowRunner implements IFlowRunner{
     	for (ITransformerStep step : stepList) {
 			startTime = LocalDateTime.now();
 			if (logs != null) {
-				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+				transaction.makePersistent(log);
 			}
 			step.execute(holder, multipart, queryParams);
 			finishTime = LocalDateTime.now();

@@ -19,43 +19,22 @@
  */
 package chappy.interfaces.persistence;
 
-import chappy.configurations.system.PersistenceConfiguration;
-import chappy.interfaces.transactions.ITransaction;
-
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IPersistence {
+public interface IPersistenceConstants {
+
+	/** system logs persistence keyword */
+	public String SYSTEM_PERSISTENCE = "SystemLogs";
 	
-	/** configure the persistence
-	 * @param configuration the configuration 
-	 * @param type the type: user/system/upgrade/etc
-	 * */
-	void configure(final PersistenceConfiguration configuration, final String type);
+	/** system persistence keyword */
+	public String SYSTEM_UPGRADE_PERSISTENCE = "SystemUpgrade";
 	
-	/**
-	 * get the implementation type of persistence
-	 * @return name of the framework as string
-	 */
-	String getFramework();
+	/** system flow persistence keyword */
+	public String SYSTEM_FLOW_PERSISTENCE = "SystemFlow";
 	
-	/**
-	 * get the framework features which is implemented by this instance.
-	 * @return array of string as feature list.
-	 */
-	String[] getFeatures();
-	
-	/**
-	 * get the factory for the persistence.
-	 * @return factory for persistence
-	 */
-	Object getFactory();
-	
-	
-	/**
-	 * create the transaction based on the type of persistence.
-	 * @return transaction.
-	 */
-	ITransaction createTransaction();
+	/** persistence package */
+	public String PERSISTENCE_PACKAGE = "chappy.persistence";
+
 }

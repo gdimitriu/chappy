@@ -135,8 +135,8 @@ public class TransactionProviders {
 //				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
 //			}
 			try {
-				IPersistence systemPersistence = PersistenceProvider.getInstance().getSystemPersistence();
-				transaction.setSystemPeristence(systemPersistence);
+				IPersistence systemLogPersistence = PersistenceProvider.getInstance().getSystemPersistence();
+				transaction.setSystemLogPersistence(systemLogPersistence);
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());

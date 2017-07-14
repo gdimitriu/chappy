@@ -138,6 +138,14 @@ public interface ITransformerStep {
 	}
 	
 	/**
+	 * This will get the client serialized configuration.
+	 * This will marshall the configration using jaxb.
+	 * @return serialized configuration
+	 */
+	public default String getSerializedConfiguration() {
+		return "";
+	}
+	/**
 	 * This will set the log provider.
 	 * With the log provider the user could add logs to the system.
 	 * @param logProvider

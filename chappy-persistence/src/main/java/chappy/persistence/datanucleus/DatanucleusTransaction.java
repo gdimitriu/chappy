@@ -33,11 +33,11 @@ import chappy.interfaces.transactions.AbstractTransaction;
  */
 public class DatanucleusTransaction extends AbstractTransaction {
 
-	/** persistence manager who own this transaction */
-	private PersistenceManager persistenceManager = null;
+	/** persistence manager who own this log Transaction */
+	private PersistenceManager persistenceLogManager = null;
 	
-	/** persistence transaction */
-	private Transaction transaction = null;
+	/** persistence log Transaction */
+	private Transaction logTransaction = null;
 	
 	/**
 	 * 
@@ -56,34 +56,34 @@ public class DatanucleusTransaction extends AbstractTransaction {
 
 	@Override
 	public void start() {		
-		if (getSystemPersistence().getFactory() == null) {
+		if (getSystemLogPersistence().getFactory() == null) {
 			return ;
 		}
-		persistenceManager  = ((PersistenceManagerFactory) getSystemPersistence().getFactory()).getPersistenceManager();
-		transaction = persistenceManager.currentTransaction();
-		transaction.begin();
+		persistenceLogManager  = ((PersistenceManagerFactory) getSystemLogPersistence().getFactory()).getPersistenceManager();
+		logTransaction = persistenceLogManager.currentTransaction();
+		logTransaction.begin();
 	}
 
 	@Override
 	public void commit() {
-		if (transaction != null) {
-			 transaction.commit();
+		if (logTransaction != null) {
+			 logTransaction.commit();
 		 }
-		persistenceManager.close();
+		persistenceLogManager.close();
 	}
 
 	@Override
 	public void rollback() {
-		if (transaction != null) {
-			transaction.rollback();
+		if (logTransaction != null) {
+			logTransaction.rollback();
 		}
-		persistenceManager.close();
+		persistenceLogManager.close();
 	}
 
 	@Override
 	public void makePersistent(final Object obj) {
-		if (transaction != null && persistenceManager != null) {
-			 persistenceManager.makePersistent(obj);
+		if (logTransaction != null && persistenceLogManager != null) {
+			 persistenceLogManager.makePersistent(obj);
 		 }
 	}
 }
