@@ -24,9 +24,9 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.xml.sax.SAXException;
 
+import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.services.IServiceServer;
-import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.providers.services.ServicesProvider;
 
 /**

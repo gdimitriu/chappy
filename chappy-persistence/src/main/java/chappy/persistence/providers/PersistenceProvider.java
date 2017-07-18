@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.persistence;
+package chappy.persistence.providers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +25,11 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
+import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.PersistenceConfiguration;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.persistence.IPersistenceConstants;
-import chappy.providers.configurations.SystemConfigurationProvider;
 
 /**
  * This is the provider for the persistence.

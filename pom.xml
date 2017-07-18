@@ -90,6 +90,8 @@
 		<module>chappy-statistics-logs</module>
 		<module>chappy-policy</module>
 		<module>chappy-persistence</module>
+		<module>chappy.exceptions</module>
+		<module>chappy-exceptions</module>
 	</modules>
 	<dependencies>
 		<dependency>

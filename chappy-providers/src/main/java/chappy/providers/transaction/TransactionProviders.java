@@ -27,7 +27,7 @@ import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
-import chappy.providers.persistence.PersistenceProvider;
+import chappy.persistence.providers.PersistenceProvider;
 
 /**
  * providers for transactions.

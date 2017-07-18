@@ -23,13 +23,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import chappy.interfaces.persistence.IPersistence;
-
 /**
  * @author Gabriel Dimitriu
  *
  */
 public abstract class AbstractTransaction implements ITransaction {
+	
 	/** list of transformers used by this transaction */
 	private List<String> listOfTansformers = null;
 	
@@ -38,18 +37,6 @@ public abstract class AbstractTransaction implements ITransaction {
 	
 	/** transactionID */
 	private String transactionId;
-	
-	/** persistence implementation */
-	private IPersistence persistenceImpl = null;
-	
-	/** system log persistence implementation */
-	private IPersistence systemLogPersistenceImpl = null;
-	
-	/** system flow persistence implementation */
-	private IPersistence systemFlowPersistenceImpl = null;
-	
-	/** system upgrade persistence implementation */
-	private IPersistence systemUpgradePersistenceImpl = null;
 	
 	/**
 	 * 
@@ -73,7 +60,16 @@ public abstract class AbstractTransaction implements ITransaction {
 	public void setListOfTansformers(final List<String> listOfTansformers) {
 		this.listOfTansformers = listOfTansformers;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
+	 */
+	@Override
+	public void addTransformer(String userName, String fullName, byte[] originalByteCode)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+		this.listOfTansformers.add(fullName);
+	}
+
 	/* (non-Javadoc)
 	 * @see chappy.transaction.base.ITransaction#isPersistence()
 	 */
@@ -104,78 +100,5 @@ public abstract class AbstractTransaction implements ITransaction {
 	@Override
 	public String getTransactionId() {
 		return this.transactionId;
-	}
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#setPersistenceImpl(chappy.interfaces.persistence.IPersistence)
-	 */
-	@Override
-	public void setPersistenceImpl(final IPersistence persistence) {
-		this.persistenceImpl = persistence;
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#getPersistenceImpl()
-	 */
-	@Override
-	public IPersistence getPersistenceImpl() {
-		return this.persistenceImpl;
-	}
-	
-	/* (non-Javadoc)
-	 * @see chappy.transaction.base.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
-	 */
-	@Override
-	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
-		this.listOfTansformers.add(fullName);
-	}
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#setSystemLogPeristence(chappy.interfaces.persistence.IPersistence)
-	 */
-	@Override
-	public void setSystemLogPersistence(IPersistence persistenceImpl) {
-		this.systemLogPersistenceImpl = persistenceImpl;
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#getSystemLogPersistence()
-	 */
-	@Override
-	public IPersistence getSystemLogPersistence() {
-		return this.systemLogPersistenceImpl;
-	}
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#setSystemFlowPeristence(chappy.interfaces.persistence.IPersistence)
-	 */
-	@Override
-	public void setSystemFlowPersistence(IPersistence persistenceImpl) {
-		this.systemFlowPersistenceImpl = persistenceImpl;
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#getSystemFlowPersistence()
-	 */
-	@Override
-	public IPersistence getSystemFlowPersistence() {
-		return this.systemFlowPersistenceImpl;
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#setSystemUpgradePeristence(chappy.interfaces.persistence.IPersistence)
-	 */
-	@Override
-	public void setSystemUpgradePersistence(IPersistence persistenceImpl) {
-		this.systemUpgradePersistenceImpl = persistenceImpl;
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.transactions.ITransaction#getSystemLogPersistence()
-	 */
-	@Override
-	public IPersistence getSystemUpgradePersistence() {
-		return this.systemUpgradePersistenceImpl;
 	}
 }

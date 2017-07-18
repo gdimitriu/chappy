@@ -21,7 +21,9 @@ package chappy.providers.transaction;
 
 import java.io.IOException;
 
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.AbstractTransaction;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu
@@ -44,6 +46,7 @@ public class ChappyTransaction extends AbstractTransaction {
 	@Override
 	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
 		super.addTransformer(userName, fullName, originalByteCode);
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, isPersistence());
 	}
 
 	/* (non-Javadoc)
@@ -76,5 +79,93 @@ public class ChappyTransaction extends AbstractTransaction {
 	@Override
 	public void makePersistent(final Object obj) {
 		// TODO Auto-generated method stub		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setPersistenceImpl(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setPersistenceImpl(IPersistence persistenceImpl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getPersistenceImpl()
+	 */
+	@Override
+	public IPersistence getPersistenceImpl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemLogPersistence(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setSystemLogPersistence(IPersistence persistenceImpl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemLogPersistence()
+	 */
+	@Override
+	public IPersistence getSystemLogPersistence() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemFlowPersistence(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setSystemFlowPersistence(IPersistence flowPersistence) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemFlowPersistence()
+	 */
+	@Override
+	public IPersistence getSystemFlowPersistence() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#setSystemUpgradePersistence(chappy.interfaces.persistence.IPersistence)
+	 */
+	@Override
+	public void setSystemUpgradePersistence(IPersistence upgradePersistence) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#getSystemUpgradePersistence()
+	 */
+	@Override
+	public IPersistence getSystemUpgradePersistence() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

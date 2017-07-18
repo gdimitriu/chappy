@@ -39,10 +39,22 @@
 				<name>javax.jdo.option.Mapping</name>
 				<value>odf</value>
 			</property>
+			<property>
+				<name>datanucleus.autoCreateSchema</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>datanucleus.autoCreateTables</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>datanucleus.autoCreateColumns</name>
+				<value>true</value>
+			</property>
 		</feature>
 	</persistence>
 	<persistence>
-		<persistenceUnit>SystemLog</persistenceUnit>
+		<persistenceUnit>SystemLogs</persistenceUnit>
 		<framework>datanucleus</framework>
 		<feature>
 			<plugin>ODF</plugin>
@@ -55,15 +67,7 @@
 				<value>odf</value>
 			</property>
 			<property>
-				<name>datanucleus.autoCreateSchema</name>
-				<value>true</value>
-			</property>
-			<property>
-				<name>datanucleus.autoCreateTables</name>
-				<value>true</value>
-			</property>
-			<property>
-				<name>datanucleus.autoCreateColumns</name>
+				<name>datanucleus.schema.autoCreateAll</name>
 				<value>true</value>
 			</property>
 		</feature>
@@ -82,15 +86,7 @@
 				<value>odf</value>
 			</property>
 			<property>
-				<name>datanucleus.autoCreateSchema</name>
-				<value>true</value>
-			</property>
-			<property>
-				<name>datanucleus.autoCreateTables</name>
-				<value>true</value>
-			</property>
-			<property>
-				<name>datanucleus.autoCreateColumns</name>
+				<name>datanucleus.schema.autoCreateAll</name>
 				<value>true</value>
 			</property>
 		</feature>
@@ -109,15 +105,7 @@
 				<value>odf</value>
 			</property>
 			<property>
-				<name>datanucleus.autoCreateSchema</name>
-				<value>true</value>
-			</property>
-			<property>
-				<name>datanucleus.autoCreateTables</name>
-				<value>true</value>
-			</property>
-			<property>
-				<name>datanucleus.autoCreateColumns</name>
+				<name>datanucleus.schema.autoCreateAll</name>
 				<value>true</value>
 			</property>
 		</feature>

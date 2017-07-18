@@ -17,16 +17,16 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.transformers.custom;
+package chappy.persistence.providers;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.transformers.ITransformerStep;
-import chappy.providers.exception.ExceptionMappingProvider;
 import chappy.remapper.bytecode.RemapperValue;
 import chappy.utils.changebytecode.ChangeByteCode;
 import chappy.utils.loaders.JavaClassLoaderSimple;

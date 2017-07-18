@@ -17,8 +17,29 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
+package chappy.persistence.providers;
+
 /**
+ * utils for the custom transfomers.
  * @author Gabriel Dimitriu
  *
  */
-package chappy.providers.exception;
+public final class CustomUtils {
+
+	/**
+	 * 
+	 */
+	private CustomUtils() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * generate the storage name
+	 * @param userName
+	 * @param fullName
+	 * @return
+	 */
+	public static String generateStorageName(final String userName, final String fullName) {
+		return userName + "." + fullName;
+	}
+}

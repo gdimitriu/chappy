@@ -67,7 +67,6 @@ public class DatanucleusPersistence implements IPersistence {
 			List<String> classes = PersistenceCapableProvider.getPersistenceType(type);
 			classes.stream().forEach(a -> persistenceUnit.addClassName(a));
 			classes.stream().forEach(a -> enhancer.addClasses(a));
-//			enhancer.addClasses(classes.toArray(new String[1]));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

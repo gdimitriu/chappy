@@ -21,4 +21,4 @@
  * @author Gabriel Dimitriu
  *
  */
-package chappy.providers.configurations;
+package chappy.configurations.providers;

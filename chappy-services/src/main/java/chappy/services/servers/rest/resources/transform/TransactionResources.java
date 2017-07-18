@@ -58,11 +58,11 @@ import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.policy.provider.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
-import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.cookies.CookieUtils;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
@@ -182,8 +182,7 @@ public class TransactionResources {
 				.getField("data").getValue());
 		
 		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
-		transaction.addTransformer(received.getUserName(), transformerName, transformerData);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(received.getUserName(), transformerName, transformerData, transaction.isPersistence());
+		transaction.addTransformer(received.getUserName(), transformerName, transformerData);		
 
 		
 		return Response.ok().cookie(new NewCookie(cookie)).build();

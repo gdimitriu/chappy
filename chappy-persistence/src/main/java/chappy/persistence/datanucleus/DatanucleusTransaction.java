@@ -25,13 +25,12 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
-import chappy.interfaces.transactions.AbstractTransaction;
-
+import chappy.persistence.transaction.AbstractPersistenceTransaction;
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class DatanucleusTransaction extends AbstractTransaction {
+public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 
 	/** persistence manager who own this log Transaction */
 	private PersistenceManager persistenceLogManager = null;

@@ -6,9 +6,9 @@
 		<artifactId>chappy</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>chappy-transaction</artifactId>
-	<name>chappy-transaction</name>
-	<description>chappy transaction module</description>
+	<artifactId>chappy-exceptions</artifactId>
+	<name>chappy-exceptions</name>
+	<description>Chappy exceptions</description>
 	<build>
 		<plugins>
 			<plugin>
@@ -26,18 +26,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-providers</artifactId>
-			<version>${chappy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-interfaces</artifactId>
 			<version>${chappy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-statistics-logs</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

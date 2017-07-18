@@ -34,7 +34,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
-import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu

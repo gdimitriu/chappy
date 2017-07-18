@@ -22,9 +22,9 @@ package chappy.tests.manual.rest.transformers.test;
 import javax.xml.bind.JAXBException;
 import org.xml.sax.SAXException;
 
+import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.services.IServiceServer;
-import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.services.servers.rest.ServerJetty;
 
 /**

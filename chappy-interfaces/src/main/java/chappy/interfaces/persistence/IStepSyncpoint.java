@@ -26,6 +26,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
@@ -35,7 +36,7 @@ import chappy.utils.streams.wrappers.StreamHolder;
  * @author Gabriel Dimitriu
  *
  */
-public interface IStepSyncpoint {
+public interface IStepSyncpoint extends ISystemFlowPersistence {
 
 	/**
 	 * set the step name.

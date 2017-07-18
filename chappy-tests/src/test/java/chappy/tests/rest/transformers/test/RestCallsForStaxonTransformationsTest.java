@@ -36,10 +36,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.services.IServiceServer;
-import chappy.providers.configurations.SystemConfigurationProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
 
