@@ -28,6 +28,7 @@ Chappy uses the following libraries and technologies:
 - Datanucleus for persistence.
 
 Run the tests from the package chappy-tests using maven:
+- the JAVA_HOME is needed to be set into the main pom due to cassandra needs.
 - the port could be modified from systemTestConfiguration.xml from the test resources.
 - mvn build, test
 - to run the suite all modules should be added into the classpath.
