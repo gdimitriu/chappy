@@ -36,6 +36,8 @@ public class SystemConfigurations {
 	private SystemConfiguration systemConfiguration;
 	@XmlElement(name = "configuration")
 	private SystemConfiguration[] servicesConfigurations;
+	@XmlElement(name = "persistence")
+	private PersistenceConfiguration[] persistenceConfigurations;
 
 	/**
 	 * 
@@ -70,6 +72,42 @@ public class SystemConfigurations {
 	 */
 	public SystemConfiguration getSystemConfiguration() {
 		return systemConfiguration;
+	}
+
+	/** get the persistence configurations
+	 * @return the persistenceConfigurations
+	 */
+	public PersistenceConfiguration[] getPersistenceConfigurations() {
+		return persistenceConfigurations;
+	}
+
+	/**
+	 * set the persistence configurations
+	 * @param persistenceConfigurations the persistenceConfigurations to set
+	 */
+	public void setPersistenceConfigurations(final PersistenceConfiguration[] persistenceConfigurations) {
+		this.persistenceConfigurations = persistenceConfigurations;
+	}
+
+	/**
+	 * get the persistence configuration for the specific unit.
+	 * @param frameworkName the framework name
+	 * @param persistenceUnit the unit persistence name
+	 * @param feature name
+	 * @return configuration for the persistence.
+	 */
+	public PersistenceConfiguration getPersistenceConfiguration(final String persistenceUnit, final String frameworkName, 
+			final String featureName) {
+		for (PersistenceConfiguration conf : persistenceConfigurations) {
+			if (conf.getFramework().equals(frameworkName) && conf.getPersistenceUnit().equals(persistenceUnit)) {
+				for (FeaturePersistenceConfiguration feature : conf.getFeatures()) {
+					if (feature.getPlugin().equals(featureName)) {
+						return conf;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

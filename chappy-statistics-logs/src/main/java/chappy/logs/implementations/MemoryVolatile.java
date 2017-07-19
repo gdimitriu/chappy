@@ -22,6 +22,7 @@ package chappy.logs.implementations;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.interfaces.statisticslogs.StatisticLog;
 
@@ -44,9 +45,8 @@ public class MemoryVolatile implements ILogs {
 	 * @see chappy.interfaces.statisticslogs.ILogs#putLog(java.lang.String, java.time.LocalDateTime, java.lang.String)
 	 */
 	@Override
-	public void putLog(final String stepName, final LocalDateTime time, final String message) {
-		// TODO Auto-generated method stub
-		
+	public StatisticLog putLog(final String stepName, final LocalDateTime time, final String message) {
+		return new StatisticLog(stepName, time, message);
 	}
 
 	/* (non-Javadoc)
@@ -65,6 +65,12 @@ public class MemoryVolatile implements ILogs {
 	public List<StatisticLog> getAllLogs() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void persist(IPersistence persistence) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

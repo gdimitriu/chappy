@@ -30,9 +30,10 @@ import javax.xml.bind.JAXBException;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.reflections.Reflections;
 import org.xml.sax.SAXException;
+
+import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.flows.IFlowRunner;
-import chappy.providers.exception.ExceptionMappingProvider;
 
 /**
  * @author Gabriel Dimitriu

@@ -48,7 +48,21 @@ public interface IUserPolicy {
 	}
 	
 	
+	/**
+	 * get the statistics type for this user.
+	 * @param userName
+	 * @return statistics/log type
+	 */
 	default String statisticsType(final String userName) {
-		return IStatisticsLogsConstants.MEMORY_VOLATILE;
+		return IStatisticsLogsConstants.DATANUCLEUS_MEMORY;
+	}
+	
+	/**
+	 * get the persistence type for this user.
+	 * @param userName
+	 * @return persistence type.
+	 */
+	default String persistenceType(final String userName) {
+		return "default/datanucleus/ODF";
 	}
 }

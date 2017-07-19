@@ -19,6 +19,7 @@
  */
 package chappy.transformers.json;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -101,6 +102,25 @@ public abstract class StaxonStep extends AbstractStep{
 			e.printStackTrace();
 			configuration = null;
 		}
+	}
+	
+	@Override
+	public String getSerializedConfiguration() {
+		if (configuration == null) {
+			return "";
+		}
+		try {
+			JAXBContext context = JAXBContext.newInstance(StaxonConfiguration.class);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			context.createMarshaller().marshal(configuration, bos);
+			return bos.toString();
+			
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			configuration = null;
+		}
+		return "";
 	}
 	
 	/**

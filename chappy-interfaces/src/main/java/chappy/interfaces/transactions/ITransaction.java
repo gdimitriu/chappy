@@ -22,6 +22,8 @@ package chappy.interfaces.transactions;
 import java.io.IOException;
 import java.util.List;
 
+import chappy.interfaces.persistence.IPersistence;
+
 /**
  * This is the transaction interface the base interface for transaction support.
  * @author Gabriel Dimitriu
@@ -53,7 +55,7 @@ public interface ITransaction {
 	/**
 	 * @param persistance the persistence to set
 	 */
-	void setPersistence(boolean persistence);
+	void setPersistence(final boolean persistence);
 	
 	/**
 	 * set the transaction id.
@@ -66,4 +68,75 @@ public interface ITransaction {
 	 * @return transaction id
 	 */
 	String getTransactionId();
+	
+	
+	/**
+	 * set the persistence implementation for this transaction.
+	 * @param persistenceImpl
+	 */
+	void setPersistenceImpl(final IPersistence persistenceImpl);
+	
+	/**
+	 * get the persistence implementation for this transaction.
+	 * @return persistenceImpl
+	 */
+	IPersistence getPersistenceImpl();
+	
+	/**
+	 * set the system log persistence
+	 * @param persistenceImpl
+	 */
+	void setSystemLogPersistence(final IPersistence persistenceImpl);
+	
+	/**
+	 * get the system log persistence.
+	 * @return system persistence
+	 */
+	IPersistence getSystemLogPersistence();
+	
+	/**
+	 * set the system flow persistence.
+	 * @param flowPersistence
+	 */
+	void setSystemFlowPersistence(final IPersistence flowPersistence);
+	
+	/**
+	 * get the system flow persistence.
+	 * @return flow persistence
+	 */
+	IPersistence getSystemFlowPersistence();
+	
+	/**
+	 * set the system upgrade persistence.
+	 * @param upgradePersistence
+	 */
+	void setSystemUpgradePersistence(final IPersistence upgradePersistence);
+	
+	/**
+	 * get the system upgrade persistence.
+	 * @return flow persistence
+	 */
+	IPersistence getSystemUpgradePersistence();
+	
+	/**
+	 * start a transaction.
+	 */
+	void start();
+	
+	/**
+	 *  commit the transaction.
+	 */
+	void commit();
+	
+	/**
+	 *  rollback the transaction.
+	 */
+	void rollback();
+	
+	/**
+	 * persist the object.
+	 * @param object to be persisted
+	 */
+	void makePersistent(final Object obj);
+
 }

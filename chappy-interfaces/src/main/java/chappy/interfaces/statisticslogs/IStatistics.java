@@ -22,6 +22,8 @@ package chappy.interfaces.statisticslogs;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import chappy.interfaces.persistence.IPersistence;
+
 /**
  * @author Gabriel Dimitriu
  *
@@ -33,8 +35,9 @@ public interface IStatistics {
 	 * @param stepName step for statistic
 	 * @param start time
 	 * @param stop time
+	 * @return 
 	 */
-	void putStatistic(final String stepName, final LocalDateTime start, final LocalDateTime stop);
+	StatisticLog putStatistic(final String stepName, final LocalDateTime start, final LocalDateTime stop);
 	
 	/**
 	 * put a statistic information
@@ -54,4 +57,11 @@ public interface IStatistics {
 	 * @return list of statistics
 	 */
 	List<StatisticLog> getAllStatistics();
+
+	
+	/**
+	 * persist the statistics to specified persistence.
+	 * @param persistence the persistence factory.
+	 */
+	void persist(IPersistence persistence);
 }

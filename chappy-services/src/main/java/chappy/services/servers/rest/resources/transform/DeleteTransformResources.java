@@ -29,7 +29,7 @@ import javax.ws.rs.core.UriInfo;
 
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
-import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
  * resources for delete transformers

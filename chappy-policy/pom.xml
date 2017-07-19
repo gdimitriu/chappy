@@ -1,18 +1,33 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.github.gdimitriu.chappy</groupId>
-    <artifactId>chappy</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>chappy-policy</artifactId>
-  <name>chappy-policy</name>
-  <description>authentication policy</description>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.github.gdimitriu.chappy</groupId>
-  		<artifactId>chappy-interfaces</artifactId>
-  		<version>${chappy.version}</version>
-  	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.gdimitriu.chappy</groupId>
+		<artifactId>chappy</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>chappy-policy</artifactId>
+	<name>chappy-policy</name>
+	<description>authentication policy</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-interfaces</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+	</dependencies>
 </project>

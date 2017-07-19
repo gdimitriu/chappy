@@ -9,6 +9,8 @@ Chappy wish to implement the following characteristics of the long running serve
 - Predefined service for transformation using staxon and saxon.
 - Hot-plugin of the transformation steps.
 - Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. On logout the custom transformers are deleted from system.
+- Persistence of the logs in configured storage.
+- Persistence of running steps for the failover situation.
 - Hot-plugin of the transformations step with dependencies. (not implemented yet)
 - Persistence of the upgrade/hot-plugin.(not implemented yet)
 - HTTP upgrade service. (not implemented yet)
@@ -23,8 +25,10 @@ Chappy uses the following libraries and technologies:
 - Maven for building.
 - ASM for bytecode modification
 - reflections library for resource discovery.
+- Datanucleus for persistence.
 
 Run the tests from the package chappy-tests using maven:
+- the JAVA_HOME is needed to be set into the main pom due to cassandra needs.
 - the port could be modified from systemTestConfiguration.xml from the test resources.
 - mvn build, test
 - to run the suite all modules should be added into the classpath.

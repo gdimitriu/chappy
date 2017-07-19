@@ -36,15 +36,18 @@ import javax.xml.validation.SchemaFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.xml.sax.SAXException;
 
+import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.interfaces.statisticslogs.IStatistics;
+import chappy.interfaces.statisticslogs.StatisticLog;
+import chappy.interfaces.transactions.ITransaction;
 import chappy.interfaces.transformers.ITransformerStep;
-import chappy.providers.exception.ExceptionMappingProvider;
 import chappy.providers.transaction.StatisticsLogsProvider;
+import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.TransformerProvider;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -135,24 +138,38 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
     @Override
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception {
-    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
-    	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+    	IStatistics statistics = null; 
+    	ILogs logs = null;
+    	ITransaction transaction = null;
     	LocalDateTime startTime = null;
     	LocalDateTime finishTime = null;
+    	if (transactionCookie.getTransactionId() != null) {
+    		statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+    		logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
+        	transaction = TransactionProviders.getInstance().getTransaction(transactionCookie);
+        	transaction.start();
+    	}
+
     	for (ITransformerStep step : stepList) {
 			startTime = LocalDateTime.now();
 			if (logs != null) {
-				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), startTime, "started");
+				transaction.makePersistent(log);
 			}
 			step.execute(holder, multipart, queryParams);
 			finishTime = LocalDateTime.now();
 			if (logs != null) {
-				logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
-			}
+				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+				transaction.makePersistent(log);
+			}			
 			if (statistics != null) {
-				statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+				StatisticLog stat = statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+				transaction.makePersistent(stat);
 			}
 		}
+    	if (transaction != null) {
+    		transaction.commit();
+    	}
 		return holder;
 	}
     
@@ -162,6 +179,8 @@ public class StaticFlowRunner implements IFlowRunner{
     	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
     	LocalDateTime startTime = null;
     	LocalDateTime finishTime = null;
+    	ITransaction transaction = TransactionProviders.getInstance().getTransaction(transactionCookie);
+    	transaction.start();
    		for (ITransformerStep step : stepList) {
 			startTime = LocalDateTime.now();
 			if (logs != null) {
@@ -170,12 +189,15 @@ public class StaticFlowRunner implements IFlowRunner{
    			step.execute(holders, multipart, queryParams);
 			finishTime = LocalDateTime.now();
 			if (logs != null) {
-				logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
+				transaction.makePersistent(log);
 			}
 			if (statistics != null) {
-				statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+				StatisticLog stat = statistics.putStatistic(step.getClass().getSimpleName(), startTime, finishTime);
+				transaction.makePersistent(stat);
 			}
    		}
+   		transaction.commit();
    		return holders;
    	}
 

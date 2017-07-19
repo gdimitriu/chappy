@@ -52,8 +52,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.xml.sax.SAXException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.configurations.system.SystemConfiguration;
@@ -353,6 +351,7 @@ public class ProcessingRestTestManual {
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
 				.queryParam("user", "gdimitriu")
 				.queryParam("password", "password")
+				.queryParam("persist", "true")
 				.request().get();
 		
 		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());

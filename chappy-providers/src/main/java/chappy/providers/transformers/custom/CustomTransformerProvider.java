@@ -20,6 +20,7 @@
 package chappy.providers.transformers.custom;
 
 import chappy.interfaces.transformers.ITransformerStep;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu

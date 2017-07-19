@@ -34,37 +34,29 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
-import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
-import chappy.providers.transformers.custom.CustomTransformerStorageProvider;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.utils.TestUtils;
-
 
 /**
  * @author Gabriel Dimitriu
  *
  */
 public class RestListCallsTest {
-	
+
 	private IServiceServer server = null;
-	
+
 	private int port = 0;
 
 	private URI baseUri;
@@ -74,17 +66,12 @@ public class RestListCallsTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		JAXBContext context = JAXBContext.newInstance(SystemConfigurations.class);
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new StreamSource(
-				getClass().getClassLoader().getResourceAsStream("SystemConfiguration.xsd")));
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		unmarshaller.setSchema(schema);
-		SystemConfiguration configuration = ((SystemConfigurations) unmarshaller
-				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml")))
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(
+				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
-		baseUri = UriBuilder.fromUri("{arg}").build(new String[]{"http://localhost:"+ port + "/"},false);
+		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);
 		Thread thread = new Thread() {
 			public void run() {
@@ -110,69 +97,60 @@ public class RestListCallsTest {
 
 	@Test
 	public void getTheListOfDefaultTransformers() throws FileNotFoundException {
-		Client client = ClientBuilder.newClient()
-				.register(MultiPartFeature.class)
-				.register(MultiPartWriter.class);
+		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
-		
+
 		Response response = null;
-		
+
 		target = client.target(baseUri).register(MultiPartFeature.class);
-		response = target.path(IRestResourcesConstants.BASE_REST)
-					.path(IRestResourcesConstants.REST_LIST)
-					.path(IRestResourcesConstants.REST_DEFAULT)
-					.request().get();
+		response = target.path(IRestResourcesConstants.BASE_REST).path(IRestResourcesConstants.REST_LIST)
+				.path(IRestResourcesConstants.REST_DEFAULT).request().get();
 		if (response.getStatus() >= 0) {
 			@SuppressWarnings("unchecked")
 			List<String> actual = response.readEntity(new ArrayList<String>().getClass());
-	    	List<String> expected = new ArrayList<String>();
-	    	expected.add("XslStep");
-	    	expected.add("Json2XmlStep");
-	    	expected.add("Xml2JsonStep");
-	    	TestUtils.compareTwoListWithoutOrder(expected, actual);
+			List<String> expected = new ArrayList<String>();
+			expected.add("XslStep");
+			expected.add("Json2XmlStep");
+			expected.add("Xml2JsonStep");
+			TestUtils.compareTwoListWithoutOrder(expected, actual);
 		}
 	}
-	
+
 	@Test
 	public void getTheListOfTransactionTransformers() throws FileNotFoundException {
-		Client client = ClientBuilder.newClient()
-				.register(MultiPartFeature.class)
-				.register(MultiPartWriter.class);
+		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
-		
+
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
-				.queryParam("user", "gdimitriu")
-				.queryParam("password", "password")
-				.request().get();
-		
+				.queryParam("user", "gdimitriu").queryParam("password", "password").request().get();
+
 		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
-		
+
 		Map<String, NewCookie> cookies = response.getCookies();
-		
+
 		NewCookie cookie = cookies.get("userData");
-		
+
 		response = RestCallsUtils.addPrePostProcessingSteps(target, cookie);
-		
+
 		cookie = response.getCookies().get("userData");
-		
+
 		target = client.target(baseUri).register(MultiPartFeature.class);
-		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-					.path(IRestResourcesConstants.REST_LIST)
-					.request().cookie(cookie).get();
-		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LIST).request()
+				.cookie(cookie).get();
+
 		cookie = response.getCookies().get("userData");
-		
+
 		if (response.getStatus() >= 0) {
 			@SuppressWarnings("unchecked")
 			List<String> actual = response.readEntity(new ArrayList<String>().getClass());
-	    	List<String> expected = new ArrayList<String>();
-	    	expected.add("PreProcessingStep");
-	    	expected.add("PostProcessingStep");
-	    	expected.add("ProcessingStep");
-	    	TestUtils.compareTwoListWithoutOrder(expected, actual);
+			List<String> expected = new ArrayList<String>();
+			expected.add("PreProcessingStep");
+			expected.add("PostProcessingStep");
+			expected.add("ProcessingStep");
+			TestUtils.compareTwoListWithoutOrder(expected, actual);
 		}
-		
-		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGOUT)
+				.request().cookie(cookie).get();
 	}
 }

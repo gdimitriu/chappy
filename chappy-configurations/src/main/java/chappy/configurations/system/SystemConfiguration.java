@@ -37,7 +37,7 @@ public class SystemConfiguration {
 	@XmlElement(name = "property")
 	private PropertyConfiguration[] property;
 	/**
-	 * 
+	 * dummy constructor
 	 */
 	public SystemConfiguration() {
 		// TODO Auto-generated constructor stub
