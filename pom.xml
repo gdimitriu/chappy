@@ -85,15 +85,16 @@
 		<module>chappy-mappings</module>
 		<module>chappy-tests</module>
 		<module>chappy-installer</module>
-		<module>chappy-change-bytecode</module>
-		<module>chappy-transaction</module>
+		
+		
 		<module>chappy-statistics-logs</module>
 		<module>chappy-policy</module>
 		<module>chappy-persistence</module>
-		<module>chappy.exceptions</module>
+		
 		<module>chappy-exceptions</module>
 	</modules>
 	<dependencies>
+	<!-- this is neeed by cassandra  -->
 		<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
@@ -319,12 +320,12 @@
 			<artifactId>mongo-java-driver</artifactId> <version>3.0.0</version> </dependency -->
 
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<!-- this is needed by cassandra -->
+		<!-- this is needed by cassandra 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>22.0</version>
-		</dependency>
+		</dependency> -->
 		<!-- ENABLE THIS FOR Cassandra -->
 		<dependency>
 			<groupId>org.datanucleus</groupId>
