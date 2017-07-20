@@ -156,6 +156,7 @@ public class TransactionResources {
     	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
     	
     	TransactionProviders.getInstance().removeTransaction(received);
+    	transaction.commit();
     	
     	return Response.ok().build();
 	}

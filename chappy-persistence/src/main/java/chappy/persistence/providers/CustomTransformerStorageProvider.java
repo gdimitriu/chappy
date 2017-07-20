@@ -26,6 +26,7 @@ import java.util.Map;
 
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
+import chappy.interfaces.transactions.ITransaction;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.remapper.bytecode.RemapperValue;
 import chappy.utils.changebytecode.ChangeByteCode;
@@ -101,29 +102,30 @@ public class CustomTransformerStorageProvider {
 	 */
 	public void pushNewUserTransformer(final String userName, final String fullName, final byte[] originalByteCode) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
-		pushNewUserTransformer(userName, fullName, originalByteCode, false);
+		pushNewUserTransformer(userName, fullName, originalByteCode, null);
 	}
 	/**
 	 * push new transformer defined in one class.
 	 * @param userName
 	 * @param fullName
 	 * @param remappedBytecode
-	 * @param persistence true if is persisted
+	 * @param transaction transaction
 	 * @throws ClassNotFoundException 
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 * @throws IOException 
 	 */
-	public void pushNewUserTransformer(final String userName, final String fullName, final byte[] originalByteCode , final boolean persistence) 
+	public void pushNewUserTransformer(final String userName, final String fullName, final byte[] originalByteCode , final ITransaction transaction) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 		RemapperValue remapper = (RemapperValue) getClass().getClassLoader()
 					.loadClass("chappy.transformers.custom.Remapper").newInstance();
 		remapper.setUserName(userName);
 		byte[] remappedBytecode = new ChangeByteCode().remapByteCode(originalByteCode, remapper);
-		if (persistence) {
-			persistenceTransformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
-		} else {
+		if (transaction == null || !transaction.isPersistence()) {
 			transformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
+		} else if (transaction.isPersistence()){
+			persistenceTransformersStorage.put(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
+			transaction.persistTransformer(CustomUtils.generateStorageName(userName, fullName), remappedBytecode);
 		}
 	}
 	

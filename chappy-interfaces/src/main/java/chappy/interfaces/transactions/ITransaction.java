@@ -139,4 +139,10 @@ public interface ITransaction {
 	 */
 	void makePersistent(final Object obj);
 
+	/**
+	 * @param generateStorageName
+	 * @param remappedBytecode
+	 */
+	void persistTransformer(final String generateStorageName, final byte[] remappedBytecode);
+
 }

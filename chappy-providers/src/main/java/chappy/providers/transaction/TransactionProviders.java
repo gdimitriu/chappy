@@ -139,10 +139,18 @@ public class TransactionProviders {
 				transaction.setSystemLogPersistence(systemLogPersistence);
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
-				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
+				throw new ForbiddenException("persistence for logs not allowed : " + e.getLocalizedMessage());
+			}
+			try {
+				IPersistence systemUpgradePersistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
+				transaction.setSystemUpgradePersistence(systemUpgradePersistence);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new ForbiddenException("persistence for upgrade not allowed : " + e.getLocalizedMessage());
 			}
 		}		
 		TransactionProviders.getInstance().putTransaction(cookie, transaction);
+		transaction.start();
 		return transaction;
 	}
 	

@@ -19,12 +19,14 @@
  */
 package chappy.persistence.datanucleus;
 
-import java.io.IOException;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
+import chappy.interfaces.markers.ISystemFlowPersistence;
+import chappy.interfaces.markers.ISystemLogsPersistence;
+import chappy.interfaces.markers.ISystemUpgradePersistence;
+import chappy.persistence.datanucleus.upgrade.DatanucleusCustomStepPersistence;
 import chappy.persistence.transaction.AbstractPersistenceTransaction;
 /**
  * @author Gabriel Dimitriu
@@ -35,8 +37,20 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	/** persistence manager who own this log Transaction */
 	private PersistenceManager persistenceLogManager = null;
 	
+	/** persistence manager who own this upgrade Transaction */
+	private PersistenceManager persistenceUpgradeManager = null;
+	
+	/** persistence manager who own this flow Transaction */
+	private PersistenceManager persistenceFlowManager = null;
+	
 	/** persistence log Transaction */
 	private Transaction logTransaction = null;
+	
+	/** persistence upgrade Transaction */
+	private Transaction upgradeTransaction = null;
+	
+	/** persistence flow Transaction */
+	private Transaction flowTransaction = null;
 	
 	/**
 	 * 
@@ -45,44 +59,123 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		// TODO Auto-generated constructor stub
 	}
 	
-	/* (non-Javadoc)
-	 * @see chappy.transaction.base.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
-	 */
-	@Override
-	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
-		super.addTransformer(userName, fullName, originalByteCode);
-	}
-
 	@Override
 	public void start() {		
 		if (getSystemLogPersistence().getFactory() == null) {
 			return ;
 		}
-		persistenceLogManager  = ((PersistenceManagerFactory) getSystemLogPersistence().getFactory()).getPersistenceManager();
-		logTransaction = persistenceLogManager.currentTransaction();
-		logTransaction.begin();
+		if (logTransaction == null) {
+			if (getSystemLogPersistence() != null) {
+				persistenceLogManager  = ((PersistenceManagerFactory) getSystemLogPersistence().getFactory()).getPersistenceManager();
+				if (persistenceLogManager != null) {
+					logTransaction = persistenceLogManager.currentTransaction();
+					logTransaction.begin();
+				}
+			}
+		}
+		if (upgradeTransaction == null) {
+			if (getSystemUpgradePersistence() != null) {
+				persistenceUpgradeManager  = ((PersistenceManagerFactory) getSystemUpgradePersistence().getFactory()).getPersistenceManager();
+				if (persistenceUpgradeManager != null) {
+					upgradeTransaction = persistenceUpgradeManager.currentTransaction();
+					upgradeTransaction.begin();
+				}
+			}
+		}
+		if (flowTransaction == null) {
+			if (getSystemFlowPersistence() != null) {
+				persistenceFlowManager  = ((PersistenceManagerFactory) getSystemFlowPersistence().getFactory()).getPersistenceManager();
+				if (persistenceFlowManager != null) {
+					flowTransaction = persistenceFlowManager.currentTransaction();
+					flowTransaction.begin();
+				}
+			}
+		}
 	}
 
 	@Override
 	public void commit() {
 		if (logTransaction != null) {
 			 logTransaction.commit();
-		 }
-		persistenceLogManager.close();
+			 logTransaction = null;
+		}
+		if (persistenceLogManager != null) {
+			persistenceLogManager.close();
+		}
+		
+		if (upgradeTransaction != null) {
+			 upgradeTransaction.commit();
+			 upgradeTransaction = null;
+		}
+		if (persistenceUpgradeManager != null) {
+			persistenceUpgradeManager.close();
+		}
+		
+		if (flowTransaction != null) {
+			 flowTransaction.commit();
+			 flowTransaction = null;
+		}
+		if (persistenceFlowManager != null) {
+			persistenceFlowManager.close();
+		}
 	}
 
 	@Override
 	public void rollback() {
+		/** log is always committed */
 		if (logTransaction != null) {
-			logTransaction.rollback();
+			logTransaction.commit();
+			logTransaction = null;
 		}
-		persistenceLogManager.close();
+		if (persistenceLogManager != null) {
+			persistenceLogManager.close();
+		}
+		
+		if (upgradeTransaction != null) {
+			 upgradeTransaction.rollback();
+			 upgradeTransaction = null;
+		}
+		if (persistenceUpgradeManager != null) {
+			persistenceUpgradeManager.close();
+		}
+		
+		if (flowTransaction != null) {
+			 flowTransaction.rollback();
+			 flowTransaction = null;
+		}
+		if (persistenceFlowManager != null) {
+			persistenceFlowManager.close();
+		}
 	}
 
 	@Override
 	public void makePersistent(final Object obj) {
-		if (logTransaction != null && persistenceLogManager != null) {
-			 persistenceLogManager.makePersistent(obj);
-		 }
+		if (obj instanceof ISystemLogsPersistence) {
+			if (logTransaction != null && persistenceLogManager != null) {
+				persistenceLogManager.makePersistent(obj);
+			}
+		} else if (obj instanceof ISystemUpgradePersistence) {
+			if (upgradeTransaction != null && persistenceUpgradeManager != null) {
+				persistenceUpgradeManager.makePersistent(obj);
+			}
+		} else if (obj instanceof ISystemFlowPersistence) {
+			if (flowTransaction != null && persistenceFlowManager != null) {
+				persistenceFlowManager.makePersistent(obj);
+			}
+		}
+	}
+
+	@Override
+	public void persistTransformer(String generateStorageName, byte[] remappedBytecode) {
+		if (upgradeTransaction != null && persistenceUpgradeManager != null) {
+			DatanucleusCustomStepPersistence persist = new DatanucleusCustomStepPersistence();
+			persist.setByteCode(remappedBytecode);
+			persist.setStepName(generateStorageName);
+			try {
+			persistenceUpgradeManager.makePersistent(persist);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

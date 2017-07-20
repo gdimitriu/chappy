@@ -72,7 +72,7 @@ public abstract class AbstractPersistenceTransaction extends AbstractTransaction
 	@Override
 	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
 		super.addTransformer(userName, fullName, originalByteCode);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, isPersistence());
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, this);
 	}
 	
 	/* (non-Javadoc)

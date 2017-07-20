@@ -46,7 +46,7 @@ public class ChappyTransaction extends AbstractTransaction {
 	@Override
 	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
 		super.addTransformer(userName, fullName, originalByteCode);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, isPersistence());
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, null);
 	}
 
 	/* (non-Javadoc)
@@ -167,5 +167,13 @@ public class ChappyTransaction extends AbstractTransaction {
 	public IPersistence getSystemUpgradePersistence() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+	@Override
+	public void persistTransformer(String generateStorageName, byte[] remappedBytecode) {
+		// TODO Auto-generated method stub
+		
 	}
 }

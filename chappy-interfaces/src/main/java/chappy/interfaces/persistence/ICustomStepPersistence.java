@@ -46,11 +46,11 @@ public interface ICustomStepPersistence extends ISystemUpgradePersistence{
 	 * set the bytecode after remaper.
 	 * @param bytecode after remapper.
 	 */
-	void setByteCode(final Byte[] bytecode);
+	void setByteCode(final byte[] bytecode);
 	
 	/**
 	 * get the bytecode after remapper.
 	 * @return bytecode after remapper
 	 */
-	Byte[] getByteCode();
+	byte[] getByteCode();
 }
