@@ -415,6 +415,7 @@ public class ProcessingRestTestManual {
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 	}
 	
+	
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
 		//test.push3CustomTransformersByTransactionAndMakeTransformation();

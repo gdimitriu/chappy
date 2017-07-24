@@ -19,6 +19,8 @@
  */
 package chappy.interfaces.persistence;
 
+import javax.jdo.PersistenceManagerFactory;
+
 import chappy.configurations.system.PersistenceConfiguration;
 import chappy.interfaces.transactions.ITransaction;
 
@@ -50,7 +52,7 @@ public interface IPersistence {
 	 * get the factory for the persistence.
 	 * @return factory for persistence
 	 */
-	Object getFactory();
+	PersistenceManagerFactory getFactory();
 	
 	
 	/**
@@ -58,4 +60,10 @@ public interface IPersistence {
 	 * @return transaction.
 	 */
 	ITransaction createTransaction();
+	
+	/**get the implentation of the interface
+	 * @param interfaceof the interface
+	 * @return class implementation.
+	 */
+	Class<?> getImplementationOf(final Class<?> interfaceof);
 }

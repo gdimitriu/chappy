@@ -24,8 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
+import chappy.interfaces.persistence.ICustomStepPersistence;
+import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.remapper.bytecode.RemapperValue;
@@ -53,8 +58,32 @@ public class CustomTransformerStorageProvider {
 	 */
 	private CustomTransformerStorageProvider() {
 		transformersStorage = new HashMap<String, byte[]>();
-		persistenceTransformersStorage = new HashMap<String, byte[]>();
+		loadPersistenceCustomTransformers();
 		loadedTransformers = new HashMap<String, Class<?>>();
+	}
+
+	/**
+	 * load the persited custom transformers.
+	 */
+	public void loadPersistenceCustomTransformers() {
+		Query query = null;
+		persistenceTransformersStorage = new HashMap<String, byte[]>();
+		try {
+			IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
+			PersistenceManager pm = persistence.getFactory().getPersistenceManager();
+			Class<?> customPersistenceImpl = persistence.getImplementationOf(ICustomStepPersistence.class);
+			if (customPersistenceImpl != null) {
+				query = pm.newQuery(customPersistenceImpl);
+				@SuppressWarnings("unchecked")
+				List<ICustomStepPersistence> customs = (List<ICustomStepPersistence>) query.execute();
+				for (ICustomStepPersistence custom : customs) {
+					persistenceTransformersStorage.put(custom.getStepName(), custom.getByteCode());
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

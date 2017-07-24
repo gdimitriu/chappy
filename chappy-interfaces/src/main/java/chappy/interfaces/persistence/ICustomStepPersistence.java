@@ -19,6 +19,7 @@
  */
 package chappy.interfaces.persistence;
 
+
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 
 /**

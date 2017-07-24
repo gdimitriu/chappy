@@ -20,12 +20,14 @@
 package chappy.persistence.datanucleus;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.PersistenceManagerFactory;
 
 import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
 import org.datanucleus.enhancer.DataNucleusEnhancer;
 import org.datanucleus.metadata.PersistenceUnitMetaData;
+import org.reflections.Reflections;
 
 import chappy.configurations.system.FeaturePersistenceConfiguration;
 import chappy.configurations.system.PersistenceConfiguration;
@@ -98,7 +100,7 @@ public class DatanucleusPersistence implements IPersistence {
 	 * @see chappy.interfaces.persistence.IPersistence#getFactory()
 	 */
 	@Override
-	public Object getFactory() {
+	public PersistenceManagerFactory getFactory() {
 		return persistenceManagerFactory;
 	}
 
@@ -108,5 +110,18 @@ public class DatanucleusPersistence implements IPersistence {
 	@Override
 	public ITransaction createTransaction() {
 		return new DatanucleusTransaction();
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.persistence.IPersistence#getImplementationOf(java.lang.Class)
+	 */
+	@Override
+	public Class<?> getImplementationOf(final Class<?> interfaceof) {
+		Reflections reflection = new Reflections(getClass().getPackage().getName());
+		Set<?> rezultat = reflection.getSubTypesOf(interfaceof);
+		if(!rezultat.isEmpty()) {
+			return (Class<?>) rezultat.iterator().next();
+		}
+		return null;
 	}
 }

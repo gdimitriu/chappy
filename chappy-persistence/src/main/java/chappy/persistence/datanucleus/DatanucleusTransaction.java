@@ -172,7 +172,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			persist.setByteCode(remappedBytecode);
 			persist.setStepName(generateStorageName);
 			try {
-			persistenceUpgradeManager.makePersistent(persist);
+				persistenceUpgradeManager.makePersistent(persist);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
