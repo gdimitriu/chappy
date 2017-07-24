@@ -58,27 +58,24 @@ public class CustomTransformerStorageProvider {
 	 */
 	private CustomTransformerStorageProvider() {
 		transformersStorage = new HashMap<String, byte[]>();
-		loadPersistenceCustomTransformers();
+		persistenceTransformersStorage = new HashMap<String, byte[]>();
 		loadedTransformers = new HashMap<String, Class<?>>();
+		loadPersistenceCustomTransformers();
 	}
 
 	/**
 	 * load the persited custom transformers.
 	 */
 	public void loadPersistenceCustomTransformers() {
-		Query query = null;
-		persistenceTransformersStorage = new HashMap<String, byte[]>();
 		try {
 			IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
 			PersistenceManager pm = persistence.getFactory().getPersistenceManager();
 			Class<?> customPersistenceImpl = persistence.getImplementationOf(ICustomStepPersistence.class);
 			if (customPersistenceImpl != null) {
-				query = pm.newQuery(customPersistenceImpl);
+				Query query = pm.newQuery(customPersistenceImpl);
 				@SuppressWarnings("unchecked")
 				List<ICustomStepPersistence> customs = (List<ICustomStepPersistence>) query.execute();
-				for (ICustomStepPersistence custom : customs) {
-					persistenceTransformersStorage.put(custom.getStepName(), custom.getByteCode());
-				}
+				customs.stream().forEach(a -> persistenceTransformersStorage.put(a.getStepName(), a.getByteCode()));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
