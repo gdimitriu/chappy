@@ -22,6 +22,7 @@ package chappy.interfaces.transactions;
 import java.io.IOException;
 import java.util.List;
 
+import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
 
 /**
@@ -143,6 +144,5 @@ public interface ITransaction {
 	 * @param generateStorageName
 	 * @param remappedBytecode
 	 */
-	void persistTransformer(final String generateStorageName, final byte[] remappedBytecode);
-
+	ICustomStepPersistence persistTransformer(final String generateStorageName, final byte[] remappedBytecode);
 }

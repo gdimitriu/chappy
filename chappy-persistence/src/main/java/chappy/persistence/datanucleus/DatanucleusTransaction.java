@@ -26,10 +26,15 @@ import javax.jdo.Transaction;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemLogsPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
+import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.persistence.datanucleus.upgrade.DatanucleusCustomStepPersistence;
 import chappy.persistence.transaction.AbstractPersistenceTransaction;
 /**
  * @author Gabriel Dimitriu
+ *
+ */
+/**
+ * @author Gabriel
  *
  */
 public class DatanucleusTransaction extends AbstractPersistenceTransaction {
@@ -76,19 +81,11 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		if (upgradeTransaction == null) {
 			if (getSystemUpgradePersistence() != null) {
 				persistenceUpgradeManager  = ((PersistenceManagerFactory) getSystemUpgradePersistence().getFactory()).getPersistenceManager();
-				if (persistenceUpgradeManager != null) {
-					upgradeTransaction = persistenceUpgradeManager.currentTransaction();
-					upgradeTransaction.begin();
-				}
 			}
 		}
 		if (flowTransaction == null) {
 			if (getSystemFlowPersistence() != null) {
 				persistenceFlowManager  = ((PersistenceManagerFactory) getSystemFlowPersistence().getFactory()).getPersistenceManager();
-				if (persistenceFlowManager != null) {
-					flowTransaction = persistenceFlowManager.currentTransaction();
-					flowTransaction.begin();
-				}
 			}
 		}
 	}
@@ -155,27 +152,35 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 				persistenceLogManager.makePersistent(obj);
 			}
 		} else if (obj instanceof ISystemUpgradePersistence) {
-			if (upgradeTransaction != null && persistenceUpgradeManager != null) {
+			if (persistenceUpgradeManager != null) {
 				persistenceUpgradeManager.makePersistent(obj);
 			}
 		} else if (obj instanceof ISystemFlowPersistence) {
-			if (flowTransaction != null && persistenceFlowManager != null) {
+			if (persistenceFlowManager != null) {
 				persistenceFlowManager.makePersistent(obj);
 			}
 		}
 	}
 
 	@Override
-	public void persistTransformer(String generateStorageName, byte[] remappedBytecode) {
-		if (upgradeTransaction != null && persistenceUpgradeManager != null) {
+	public ICustomStepPersistence persistTransformer(String generateStorageName, byte[] remappedBytecode) {
+		if (persistenceUpgradeManager != null) {
 			DatanucleusCustomStepPersistence persist = new DatanucleusCustomStepPersistence();
 			persist.setByteCode(remappedBytecode);
 			persist.setStepName(generateStorageName);
 			try {
+				upgradeTransaction = persistenceUpgradeManager.currentTransaction();
+				upgradeTransaction.begin();
 				persistenceUpgradeManager.makePersistent(persist);
+				upgradeTransaction.commit();
+				upgradeTransaction  = null;
+				return persist;
 			} catch (Throwable e) {
 				e.printStackTrace();
+				upgradeTransaction.rollback();
+				upgradeTransaction  = null;
 			}
 		}
+		return null;
 	}
 }

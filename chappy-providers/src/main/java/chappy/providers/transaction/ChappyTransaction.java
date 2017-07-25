@@ -21,6 +21,7 @@ package chappy.providers.transaction;
 
 import java.io.IOException;
 
+import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.AbstractTransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
@@ -172,8 +173,8 @@ public class ChappyTransaction extends AbstractTransaction {
 
 
 	@Override
-	public void persistTransformer(String generateStorageName, byte[] remappedBytecode) {
+	public ICustomStepPersistence persistTransformer(String generateStorageName, byte[] remappedBytecode) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 }

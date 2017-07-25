@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
@@ -52,7 +53,8 @@ public class CustomTransformerStorageProvider {
 	/** hash storage for Persistence transformers */
 	private Map<String, byte[]> persistenceTransformersStorage = null;
 	
-	private Map<String, Class<?>> loadedTransformers = null; 
+	private Map<String, Class<?>> loadedTransformers = null;
+	
 	/**
 	 * constructor for singleton
 	 */
@@ -64,18 +66,23 @@ public class CustomTransformerStorageProvider {
 	}
 
 	/**
-	 * load the persited custom transformers.
+	 * load the persisted custom transformers.
 	 */
+	
 	public void loadPersistenceCustomTransformers() {
 		try {
 			IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
 			PersistenceManager pm = persistence.getFactory().getPersistenceManager();
 			Class<?> customPersistenceImpl = persistence.getImplementationOf(ICustomStepPersistence.class);
+			Transaction tx = pm.currentTransaction();
 			if (customPersistenceImpl != null) {
-				Query query = pm.newQuery(customPersistenceImpl);
+				tx.begin();
+				Query<?> query = pm.newQuery(customPersistenceImpl);
 				@SuppressWarnings("unchecked")
-				List<ICustomStepPersistence> customs = (List<ICustomStepPersistence>) query.execute();
-				customs.stream().forEach(a -> persistenceTransformersStorage.put(a.getStepName(), a.getByteCode()));
+				List<ICustomStepPersistence> persisted = (List<ICustomStepPersistence>) query.execute();
+				persisted.stream().forEach(a -> persistenceTransformersStorage.put(a.getStepName(), a.getByteCode()));
+				query.close();
+				tx.commit();
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -233,10 +240,7 @@ public class CustomTransformerStorageProvider {
 	 */
 	public void removeTransformers(final String userName, final List<String> listOfTransformers) {
 		for (String fullName : listOfTransformers) {
-			String storageId = CustomUtils.generateStorageName(userName, fullName);
-			if (transformersStorage.containsKey(storageId)) {
-				transformersStorage.remove(storageId);
-			}
+			removeTransformer(CustomUtils.generateStorageName(userName, fullName));
 		}
 	}
 
@@ -245,10 +249,31 @@ public class CustomTransformerStorageProvider {
 	 * @param transformerName full name
 	 * @return true if it deleted it
 	 */
-	public boolean removeTransformer(String transformerName) {
+	public boolean removeTransformer(final String transformerName) {
 		if (transformersStorage.containsKey(transformerName)) {
 			transformersStorage.remove(transformerName);
 			return true;
+		}
+		if (persistenceTransformersStorage.containsKey(transformerName)) {
+			try {
+				byte[] code = persistenceTransformersStorage.remove(transformerName);
+				IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
+				PersistenceManager pm = persistence.getFactory().getPersistenceManager();
+				Transaction tx = pm.currentTransaction();
+				tx.begin();
+				@SuppressWarnings("unchecked")
+				List<ICustomStepPersistence> persisted =  (List<ICustomStepPersistence>) pm.newQuery(
+						"SELECT FROM " + persistence.getImplementationOf(ICustomStepPersistence.class).getName() 
+						+ " WHERE stepName ==\"" + transformerName + "\"").execute();
+				for (ICustomStepPersistence custom : persisted) {
+					pm.deletePersistent(custom);
+				}
+				tx.commit();
+				
+			} catch (InstantiationException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
@@ -257,15 +282,10 @@ public class CustomTransformerStorageProvider {
 	 * remove a custom transformer for storage
 	 * @param userName user who push the transformer
 	 * @param transformerName full name
-	 * @return true if it delete it
+	 * @return true if it deleted it
 	 */
 	public boolean removeTransformer(String userName, String transformerName) {
-		String storageId = CustomUtils.generateStorageName(userName, transformerName);
-		if (transformersStorage.containsKey(storageId)) {
-			transformersStorage.remove(storageId);
-			return true;
-		}
-		return false;
+		return removeTransformer(CustomUtils.generateStorageName(userName, transformerName));
 	}
 	
 }
