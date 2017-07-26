@@ -23,14 +23,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -52,7 +50,6 @@ import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
-import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.utils.ClassUtils;

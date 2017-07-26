@@ -28,6 +28,7 @@ import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.PersistenceProvider;
+import chappy.persistence.providers.TransactionStorageProvider;
 
 /**
  * providers for transactions.
@@ -42,11 +43,15 @@ public class TransactionProviders {
 	/** map of transactions */
 	private Map<String, ITransaction> mapOfTransactionData = null;
 	
+	private TransactionStorageProvider storageProvider = null;
+	
 	/**
 	 * private because is singleton.
 	 */
 	private TransactionProviders() {
 		mapOfTransactionData = new HashMap<String, ITransaction>();
+		storageProvider = new TransactionStorageProvider();
+		storageProvider.loadPersisted();
 	}
 	
 	/**

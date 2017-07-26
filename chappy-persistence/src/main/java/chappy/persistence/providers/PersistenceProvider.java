@@ -54,6 +54,12 @@ public class PersistenceProvider {
 	private static IPersistence systemUpgradePersistence = null;
 	
 	/**
+	 * cache for system flow persistence.
+	 * there is only one system flow persistence unit.
+	 */
+	private static IPersistence systemFlowPersistence = null;
+	
+	/**
 	 * private for singleton.
 	 * @throws Exception 
 	 */
@@ -85,6 +91,24 @@ public class PersistenceProvider {
 			}
 		}
 		return systemPersistence;
+	}
+	
+	/**
+	 * get the flow
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public IPersistence getSystemFlowPersistence() throws InstantiationException, IllegalAccessException {
+		if (systemFlowPersistence == null) {
+			synchronized (this) {
+				if (systemFlowPersistence == null) {
+					systemFlowPersistence = getPersistenceByType(IPersistenceConstants.SYSTEM_FLOW_PERSISTENCE);
+					return systemFlowPersistence;
+				}
+			}
+		}
+		return systemFlowPersistence;
 	}
 	
 	

@@ -34,10 +34,7 @@ import chappy.persistence.transaction.AbstractPersistenceTransaction;
  * @author Gabriel Dimitriu
  *
  */
-/**
- * @author Gabriel
- *
- */
+
 public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 
 	/** persistence manager who own this log Transaction */
