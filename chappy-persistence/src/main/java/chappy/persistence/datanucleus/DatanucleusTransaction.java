@@ -23,6 +23,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemLogsPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
@@ -182,5 +183,15 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#generateTransactionId(chappy.interfaces.cookies.CookieTransaction)
+	 */
+	@Override
+	public void generateTransactionId(final CookieTransaction cookie) {
+		// TODO Auto-generated method stub
+		setTransactionId(cookie.getUserName());
+		cookie.setTransactionId(getTransactionId());
 	}
 }

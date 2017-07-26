@@ -17,21 +17,27 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.rest.transformers.test;
+package chappy.persistence.datanucleus.flow;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
-@RunWith(Suite.class)
-@SuiteClasses({ RestCallsForDigesterTransformationsTest.class,
-		RestCallsForStaxonTransformationsTest.class,
-		RestCallsForFlowTransformationsTest.class,
-		RestUserCallsForFlowTransformationsTest.class,
-		RestTrasactionFlowTransformationsTest.class,
-		RestCallsForFlowTransformationsExceptionsTest.class,
-		RestListCallsTest.class,
-		RestTransactionFailOverAndPersistence.class})
-public class RestCallTransformationsSuiteTest {
+import chappy.interfaces.markers.ISystemFlowPersistence;
+
+/**
+ * @author Gabriel Dimitriu
+ *
+ */
+@PersistenceCapable
+public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersistence{
+
+	@Persistent(customValueStrategy = "uuuid", primaryKey = "true")
+	private String transactionId;
+	/**
+	 * 
+	 */
+	public DatanucleusFlowTransactionPersistence() {
+		// TODO Auto-generated constructor stub
+	}
 
 }

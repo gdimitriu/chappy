@@ -19,15 +19,12 @@
  */
 package chappy.persistence.providers;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.reflections.Reflections;
 
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.PersistenceConfiguration;
-import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.persistence.IPersistenceConstants;
 
@@ -42,7 +39,7 @@ public class PersistenceProvider {
 	static private PersistenceProvider singleton = new PersistenceProvider();
 
 	/** cache map for persistenceUnit names */
-	private Map<String, IPersistence> persistenceCache = new HashMap<String, IPersistence>();
+//	private Map<String, IPersistence> persistenceCache = new HashMap<String, IPersistence>();
 	
 	/**
 	 * cache for system persistence
@@ -142,9 +139,9 @@ public class PersistenceProvider {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	synchronized public IPersistence getPersistenceInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+/*	synchronized public IPersistence getPersistenceInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
 		//TODO only system persistance is allowed.
-/*		String type = SystemPolicyProvider.getInstance().getAuthenticationHandler().persistenceType(cookie.getUserName());
+		String type = SystemPolicyProvider.getInstance().getAuthenticationHandler().persistenceType(cookie.getUserName());
 		String cacheUnitPersistence = createCacheUnit(type, cookie.getUserName());
 		IPersistence persistence = null;
 		//first check in cache
@@ -174,17 +171,7 @@ public class PersistenceProvider {
 					 }
 				 }
 			}
-		} */
+		}
 		return null;
-	}
-	
-	/**
-	 * create the cache name for the persistence implementation.
-	 * @param type
-	 * @param userName
-	 * @return cache key
-	 */
-	private String createCacheUnit(final String type, final String userName) {		
-		return userName + ":" + type;
-	}
+	} */
 }

@@ -17,21 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.rest.transformers.test;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses({ RestCallsForDigesterTransformationsTest.class,
-		RestCallsForStaxonTransformationsTest.class,
-		RestCallsForFlowTransformationsTest.class,
-		RestUserCallsForFlowTransformationsTest.class,
-		RestTrasactionFlowTransformationsTest.class,
-		RestCallsForFlowTransformationsExceptionsTest.class,
-		RestListCallsTest.class,
-		RestTransactionFailOverAndPersistence.class})
-public class RestCallTransformationsSuiteTest {
-
-}
+/**
+ * @author Gabriel Dimitriu
+ *
+ */
+package chappy.persistence.datanucleus.flow;

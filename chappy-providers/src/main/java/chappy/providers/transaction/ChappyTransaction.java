@@ -21,6 +21,7 @@ package chappy.providers.transaction;
 
 import java.io.IOException;
 
+import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.AbstractTransaction;
@@ -176,5 +177,15 @@ public class ChappyTransaction extends AbstractTransaction {
 	public ICustomStepPersistence persistTransformer(String generateStorageName, byte[] remappedBytecode) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#generateTransactionId(chappy.interfaces.cookies.CookieTransaction)
+	 */
+	@Override
+	public void generateTransactionId(final CookieTransaction cookie) {
+		setTransactionId(cookie.getUserName());
+		cookie.setTransactionId(getTransactionId());
 	}
 }

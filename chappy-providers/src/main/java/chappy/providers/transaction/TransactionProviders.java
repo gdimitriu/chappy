@@ -89,18 +89,6 @@ public class TransactionProviders {
 	}
 	
 	/**
-	 * generate the transactionId for a user.
-	 * @param cookie
-	 * @return
-	 */
-	public String generateId(final CookieTransaction cookie) {
-		//TODO: hardcoded now
-		return cookie.getUserName();
-	}
-	
-	
-	
-	/**
 	 * start a new transaction.
 	 * @param cookie that is identified
 	 * @param persistence true if it has persistence.
@@ -120,8 +108,7 @@ public class TransactionProviders {
 			}
 		}
 		transaction.setPersistence(persistence);
-		transaction.setTransactionId(TransactionProviders.getInstance().generateId(cookie));
-		cookie.setTransactionId(transaction.getTransactionId());
+		transaction.generateTransactionId(cookie);
 		if (persistence) {
 //TODO DISABLED
 //			try {

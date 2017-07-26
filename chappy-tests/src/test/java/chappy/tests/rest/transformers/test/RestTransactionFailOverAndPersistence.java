@@ -181,16 +181,7 @@ public class RestTransactionFailOverAndPersistence {
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
-		cookie = response.getCookies().get("userData");		
-		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_STATISTICS)
-				.request().cookie(cookie).get();
-		
-		if (response.getStatus() >= 0) {
-			List<StatisticLog> actual = response.readEntity(new GenericType<List<StatisticLog>>(){}); 
-			for (StatisticLog stat : actual) {
-				System.out.println(stat.getStepName() + " started at " + stat.getStartTime().toString() + " and finished at " + stat.getStopTime().toString());
-			}
-		}
+		cookie = response.getCookies().get("userData");
 		
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();

@@ -24,6 +24,7 @@ import java.util.List;
 
 import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
+import chappy.interfaces.cookies.CookieTransaction;
 
 /**
  * This is the transaction interface the base interface for transaction support.
@@ -70,6 +71,12 @@ public interface ITransaction {
 	 */
 	String getTransactionId();
 	
+	
+	/**
+	 * this will internaly generate the transactionID based on cookie.
+	 * 
+	 */
+	void generateTransactionId(final CookieTransaction cookie);
 	
 	/**
 	 * set the persistence implementation for this transaction.

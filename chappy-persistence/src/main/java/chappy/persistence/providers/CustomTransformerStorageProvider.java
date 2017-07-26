@@ -256,7 +256,6 @@ public class CustomTransformerStorageProvider {
 		}
 		if (persistenceTransformersStorage.containsKey(transformerName)) {
 			try {
-				byte[] code = persistenceTransformersStorage.remove(transformerName);
 				IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
 				PersistenceManager pm = persistence.getFactory().getPersistenceManager();
 				Transaction tx = pm.currentTransaction();
