@@ -28,7 +28,6 @@ import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemLogsPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
-import chappy.persistence.datanucleus.upgrade.DatanucleusCustomStepPersistence;
 import chappy.persistence.transaction.AbstractPersistenceTransaction;
 /**
  * @author Gabriel Dimitriu
@@ -62,6 +61,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		// TODO Auto-generated constructor stub
 	}
 	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#start()
+	 */
 	@Override
 	public void start() {		
 		if (getSystemLogPersistence().getFactory() == null) {
@@ -88,6 +90,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#commit()
+	 */
 	@Override
 	public void commit() {
 		if (logTransaction != null) {
@@ -115,6 +120,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#rollback()
+	 */
 	@Override
 	public void rollback() {
 		/** log is always committed */
@@ -143,27 +151,40 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#makePersistent(java.lang.Object)
+	 */
 	@Override
 	public void makePersistent(final Object obj) {
-		if (obj instanceof ISystemLogsPersistence) {
-			if (logTransaction != null && persistenceLogManager != null) {
-				persistenceLogManager.makePersistent(obj);
-			}
-		} else if (obj instanceof ISystemUpgradePersistence) {
+//		if (obj instanceof ISystemLogsPersistence) {
+//			if (logTransaction != null && persistenceLogManager != null) {
+//				persistenceLogManager.makePersistent(obj);
+//			}
+//		}
+		if (obj instanceof ISystemUpgradePersistence) {
 			if (persistenceUpgradeManager != null) {
 				persistenceUpgradeManager.makePersistent(obj);
 			}
-		} else if (obj instanceof ISystemFlowPersistence) {
+		}
+		if (obj instanceof ISystemFlowPersistence) {
 			if (persistenceFlowManager != null) {
 				persistenceFlowManager.makePersistent(obj);
 			}
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#persistTransformer(java.lang.String, byte[])
+	 */
 	@Override
-	public ICustomStepPersistence persistTransformer(String generateStorageName, byte[] remappedBytecode) {
+	public ICustomStepPersistence persistTransformer(String generateStorageName, byte[] remappedBytecode) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		if (persistenceUpgradeManager != null) {
-			DatanucleusCustomStepPersistence persist = new DatanucleusCustomStepPersistence();
+			ICustomStepPersistence persist = null;
+			try {
+				persist = (ICustomStepPersistence) getSystemUpgradePersistence().getClassLoader().loadClass("chappy.persistence.datanucleus.upgrade.DatanucleusCustomStepPersistence").newInstance();
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NullPointerException e ) {
+				persist = (ICustomStepPersistence) ClassLoader.getSystemClassLoader().loadClass("chappy.persistence.datanucleus.upgrade.DatanucleusCustomStepPersistence").newInstance();
+			}
 			persist.setByteCode(remappedBytecode);
 			persist.setStepName(generateStorageName);
 			try {
@@ -172,7 +193,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 				persistenceUpgradeManager.makePersistent(persist);
 				upgradeTransaction.commit();
 				upgradeTransaction  = null;
-				return persist;
+				return (ICustomStepPersistence) persist;
 			} catch (Throwable e) {
 				e.printStackTrace();
 				upgradeTransaction.rollback();

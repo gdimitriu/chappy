@@ -66,4 +66,10 @@ public interface IPersistence {
 	 * @return class implementation.
 	 */
 	Class<?> getImplementationOf(final Class<?> interfaceof);
+
+	/** 
+	 * get the defined classLoader.
+	 * @return class loader or systemClassLoader
+	 */
+	ClassLoader getClassLoader();
 }

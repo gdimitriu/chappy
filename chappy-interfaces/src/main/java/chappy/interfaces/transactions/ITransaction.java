@@ -150,6 +150,9 @@ public interface ITransaction {
 	/**
 	 * @param generateStorageName
 	 * @param remappedBytecode
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	ICustomStepPersistence persistTransformer(final String generateStorageName, final byte[] remappedBytecode);
+	ICustomStepPersistence persistTransformer(final String generateStorageName, final byte[] remappedBytecode) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
 }

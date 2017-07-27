@@ -19,13 +19,23 @@
  */
 package chappy.persistence.datanucleus;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.metadata.ClassMetadata;
+import javax.jdo.metadata.JDOMetadata;
 
+import org.datanucleus.PropertyNames;
 import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
 import org.datanucleus.enhancer.DataNucleusEnhancer;
+import org.datanucleus.exceptions.NucleusException;
+import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.PersistenceUnitMetaData;
 import org.reflections.Reflections;
 
@@ -35,6 +45,8 @@ import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.discovery.PersistenceCapableProvider;
+import chappy.utils.loaders.JavaClassLoaderSimple;
+import chappy.utils.streams.StreamUtils;
 
 /**
  * This is the specialization of the persistence for the framework Datanucleus.
@@ -46,6 +58,8 @@ public class DatanucleusPersistence implements IPersistence {
 	private PersistenceUnitMetaData persistenceUnit = null;
 	
 	private PersistenceManagerFactory persistenceManagerFactory = null;
+	
+	private JavaClassLoaderSimple runtimeClassLoader = new JavaClassLoaderSimple(ClassLoader.getSystemClassLoader());
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.persistence.IPersistence#configure(chappy.configurations.system.PersistenceConfiguration)
@@ -63,19 +77,57 @@ public class DatanucleusPersistence implements IPersistence {
 		//enhance classes
 		DataNucleusEnhancer enhancer = new DataNucleusEnhancer("JDO", null);
 		enhancer.setVerbose(true);
+		enhancer.setSystemOut(true);
 		enhancer.addPersistenceUnit(persistenceUnit);
+		List<String> classes = null;
 		try {
+			JavaClassLoaderSimple compileClassLoader = new JavaClassLoaderSimple(ClassLoader.getSystemClassLoader());
 			//add discovery classes
-			List<String> classes = PersistenceCapableProvider.getPersistenceType(type);
-			classes.stream().forEach(a -> persistenceUnit.addClassName(a));
-			classes.stream().forEach(a -> enhancer.addClasses(a));
+			classes = PersistenceCapableProvider.getPersistenceType(type);
+			for (String name : classes) {
+				Class<?> cl = Class.forName(name);
+				compileClassLoader.loadClass(name,
+						StreamUtils.getBytesFromInputStream(ClassLoader.getSystemClassLoader().getResourceAsStream(cl.getName().replace('.', '/') + ".class")));
+				persistenceUnit.addClassName(name);
+				enhancer.addClasses(name);
+			}
+			enhancer.setClassLoader(compileClassLoader);
+			enhancer.enhance();
+			for (String name : classes) {
+				try {
+					runtimeClassLoader.loadClass(name, enhancer.getEnhancedBytes(name));
+				} catch (NucleusException e) {
+					//just continue it was previously enhanced on disk.
+					e.printStackTrace();
+				}
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		enhancer.enhance();
-		//create manager factory
-		persistenceManagerFactory = new JDOPersistenceManagerFactory(persistenceUnit, null);
 		
+		Map<Object, Object> props = new HashMap<Object, Object>();
+		props.putAll(persistenceUnit.getProperties());
+		props.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, runtimeClassLoader);
+		props.put("datanucleus.autoStartClassNames", classes.get(0));
+		//create manager factory
+		persistenceManagerFactory = JDOHelper.getPersistenceManagerFactory(props);
+		Collection<String> col = enhancer.getMetaDataManager().getClassesWithMetaData();
+		
+		JDOMetadata mdata = persistenceManagerFactory.newMetadata();
+		for (String name : classes) {
+			Class<?> cl = null;
+			try {
+				cl = Class.forName(name);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ClassMetadata cdata = mdata.newClassMetadata(cl);
+			AbstractClassMetaData cdata1 = enhancer.getMetaDataManager().getMetaDataForClass(cl, ((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getClassLoaderResolver(runtimeClassLoader));
+		}
 	}
 
 	/* (non-Javadoc)
@@ -120,8 +172,21 @@ public class DatanucleusPersistence implements IPersistence {
 		Reflections reflection = new Reflections(getClass().getPackage().getName());
 		Set<?> rezultat = reflection.getSubTypesOf(interfaceof);
 		if(!rezultat.isEmpty()) {
-			return (Class<?>) rezultat.iterator().next();
+			try {
+				return runtimeClassLoader.loadClass(((Class<?>) rezultat.iterator().next()).getName());
+			} catch (ClassNotFoundException e) {
+				return null;
+			}
 		}
 		return null;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.persistence.IPersistence#getClassLoader()
+	 */
+	@Override
+	public ClassLoader getClassLoader() {
+		return runtimeClassLoader;
 	}
 }

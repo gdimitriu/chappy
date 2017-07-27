@@ -36,6 +36,9 @@ public class TransactionStorageProvider {
 	
 	/** map of transactions persisted data */
 	private Map<String, ITransaction> mapOfTransactionPersistedData = null;
+	
+	/** map of transactions */
+	private Map<String, ITransaction> mapOfTransactionTransientData = null;
 	/**
 	 * 
 	 */
@@ -46,6 +49,7 @@ public class TransactionStorageProvider {
 			e.printStackTrace();
 		}
 		mapOfTransactionPersistedData = new HashMap<String, ITransaction>();
+		mapOfTransactionTransientData = new HashMap<String, ITransaction>();
 	}
 	
 	
@@ -62,6 +66,11 @@ public class TransactionStorageProvider {
 	 * @return transaction.
 	 */
 	public ITransaction getTransaction(final CookieTransaction cookie) {
+		if (mapOfTransactionTransientData.containsKey(cookie.generateStorageId())) {
+			return mapOfTransactionTransientData.get(cookie.generateStorageId());
+		} else if (mapOfTransactionPersistedData.containsKey(cookie.generateStorageId())) {
+			return mapOfTransactionPersistedData.get(cookie.generateStorageId());
+		}
 		return null;
 	}
 	
@@ -70,6 +79,23 @@ public class TransactionStorageProvider {
 	 * @param cookie
 	 */
 	public void removeTransaction(final CookieTransaction cookie) {
-		
+		if (mapOfTransactionTransientData.containsKey(cookie.generateStorageId())) {
+			mapOfTransactionTransientData.remove(cookie.generateStorageId());
+		} else if (mapOfTransactionPersistedData.containsKey(cookie.generateStorageId())) {
+			mapOfTransactionPersistedData.remove(cookie.generateStorageId());
+		}
+	}
+	
+	/**
+	 * put the transaction into the persistence and cache.
+	 * @param cookie
+	 * @param transaction
+	 */
+	public void putTransaction(final CookieTransaction cookie, final ITransaction transaction) {
+		if (transaction.isPersistence()) {
+			mapOfTransactionPersistedData.put(cookie.generateStorageId(), transaction);
+		} else {
+			mapOfTransactionTransientData.put(cookie.generateStorageId(), transaction);
+		}
 	}
 }

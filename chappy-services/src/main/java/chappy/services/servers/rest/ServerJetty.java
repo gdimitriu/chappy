@@ -26,6 +26,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.services.IServiceServer;
+import chappy.persistence.providers.PersistenceProvider;
 
 /**
  * This is the jetty HTTP server in which run the jersey REST server.
@@ -95,7 +96,9 @@ public class ServerJetty implements IServiceServer {
 				ServletContextHandler.SESSIONS);
 
 		context.addServlet(sh, "/*");
-
+		PersistenceProvider.getInstance().getSystemPersistence();
+		PersistenceProvider.getInstance().getSystemFlowPersistence();
+		PersistenceProvider.getInstance().getSystemUpgradePersistence();
 		server.start();
 		System.out.println(String.format("Application started.%nHit enter to stop it..."));
 		System.in.read();
