@@ -51,6 +51,7 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
+import chappy.providers.transaction.TransactionProviders;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.utils.ClassUtils;
 import chappy.utils.streams.StreamUtils;
@@ -156,6 +157,7 @@ public class RestTransactionFailOverAndPersistence {
 		tearDown();
 		setUp();
 		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
+		TransactionProviders.getInstance().loadPersisted();
 		
 		multipartEntity = new FormDataMultiPart()
 				.field("name", "ProcessingStep")

@@ -28,8 +28,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
-
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.persistence.ICustomStepPersistence;
@@ -76,8 +74,6 @@ public class CustomTransformerStorageProvider {
 			IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
 			 
 			PersistenceManager pm = persistence.getFactory().getPersistenceManager();
-			JDOPersistenceManagerFactory jpm = (JDOPersistenceManagerFactory) persistence.getFactory();
-			
 			Class<?> customPersistenceImpl = persistence.getImplementationOf(ICustomStepPersistence.class);
 			Transaction tx = pm.currentTransaction();
 			if (customPersistenceImpl != null) {

@@ -48,6 +48,14 @@ public class TransactionProviders {
 	}
 	
 	/**
+	 *  load the persistenced transactions.
+	 * @return void
+	 */
+	public void loadPersisted() {
+		storageProvider.loadPersisted();
+	}
+	
+	/**
 	 * get the instance of the singleton.
 	 * @return singleton of the transactions.
 	 */
@@ -105,11 +113,16 @@ public class TransactionProviders {
 				e.printStackTrace();
 				throw new ForbiddenException("persistence for upgrade not allowed : " + e.getLocalizedMessage());
 			}
+			try {
+				IPersistence systemFlowPersistence = PersistenceProvider.getInstance().getSystemFlowPersistence();
+				transaction.setSystemFlowPersistence(systemFlowPersistence);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new ForbiddenException("persistence for upgrade not allowed : " + e.getLocalizedMessage());
+			}
 		}
 		transaction.setPersistence(persistence);
-		transaction.generateTransactionId(cookie);
 		storageProvider.putTransaction(cookie, transaction);
-		transaction.start();
 		return transaction;
 	}
 	

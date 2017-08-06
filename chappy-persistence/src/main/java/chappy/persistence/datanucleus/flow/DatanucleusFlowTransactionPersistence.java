@@ -19,6 +19,11 @@
  */
 package chappy.persistence.datanucleus.flow;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jdo.annotations.Join;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -28,16 +33,66 @@ import chappy.interfaces.markers.ISystemFlowPersistence;
  * @author Gabriel Dimitriu
  *
  */
-@PersistenceCapable
+@PersistenceCapable(detachable = "true")
 public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersistence{
 
-	@Persistent(customValueStrategy = "uuuid", primaryKey = "true")
+	@Persistent//(defaultFetchGroup = "true", customValueStrategy = "uuuid", primaryKey = "true")
 	private String transactionId;
+	
+	@Persistent(defaultFetchGroup = "true")
+	@Order
+	@Join(column = "DatanucleusFlowTransactionPersistence_listOfTransformers")
+	private List<String> listOftransformers = new ArrayList<String>();
+	
+	@Persistent(defaultFetchGroup = "true")
+	private String storageId;
+	
 	/**
 	 * 
 	 */
 	public DatanucleusFlowTransactionPersistence() {
 		// TODO Auto-generated constructor stub
 	}
-
+	/**
+	 * @return the transactionId
+	 */
+	public String getTransactionId() {
+		return transactionId;
+	}
+	
+	/**
+	 * @param transactionId the transactionId to set
+	 */
+	public void setTransactionId(final String transactionId) {
+		this.transactionId = transactionId;
+	}
+	
+	/**
+	 * @return the listOftransformers
+	 */
+	public List<String> getListOftransformers() {
+		return listOftransformers;
+	}
+	
+	/**
+	 * @param listOftransformers the listOftransformers to set
+	 */
+	public void setListOftransformers(final List<String> listOftransformers) {
+		this.listOftransformers.clear();
+		this.listOftransformers.addAll(listOftransformers);
+	}
+	
+	/**
+	 * @return the storageId
+	 */
+	public String getStorageId() {
+		return storageId;
+	}
+	
+	/**
+	 * @param storageId the storageId to set
+	 */
+	public void setStorageId(String storageId) {
+		this.storageId = storageId;
+	}
 }

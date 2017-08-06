@@ -46,19 +46,7 @@ public class ChappyDatanucleusClassResolver extends ClassLoaderResolverImpl {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public boolean isAssignableFrom(String class_name_1, Class<?> class_2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAssignableFrom(Class<?> class_1, String class_name_2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public boolean isAssignableFrom(String class_name_1, String class_name_2) {
 		// TODO Auto-generated method stub

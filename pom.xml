@@ -84,8 +84,6 @@
 		<module>chappy-mappings</module>
 		<module>chappy-tests</module>
 		<module>chappy-installer</module>
-		
-		
 		<module>chappy-statistics-logs</module>
 		<module>chappy-policy</module>
 		<module>chappy-persistence</module>

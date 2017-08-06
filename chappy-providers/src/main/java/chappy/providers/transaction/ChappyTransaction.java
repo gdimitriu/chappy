@@ -188,4 +188,14 @@ public class ChappyTransaction extends AbstractTransaction {
 		setTransactionId(cookie.getUserName());
 		cookie.setTransactionId(getTransactionId());
 	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#persist()
+	 */
+	@Override
+	public void persist() {
+		// ChappyTransaction is not persistence capable.
+	}
 }

@@ -112,10 +112,10 @@ public class DatanucleusPersistence implements IPersistence {
 		props.putAll(persistenceUnit.getProperties());
 		props.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, runtimeClassLoader);
 		props.put("datanucleus.autoStartClassNames", classes.get(0));
+		props.put(PropertyNames.PROPERTY_MAX_FETCH_DEPTH, "-1");
 		//create manager factory
 		persistenceManagerFactory = JDOHelper.getPersistenceManagerFactory(props);
 		Collection<String> col = enhancer.getMetaDataManager().getClassesWithMetaData();
-		
 		JDOMetadata mdata = persistenceManagerFactory.newMetadata();
 		for (String name : classes) {
 			Class<?> cl = null;
@@ -125,8 +125,10 @@ public class DatanucleusPersistence implements IPersistence {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ClassMetadata cdata = mdata.newClassMetadata(cl);
-			AbstractClassMetaData cdata1 = enhancer.getMetaDataManager().getMetaDataForClass(cl, ((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getClassLoaderResolver(runtimeClassLoader));
+//			ClassMetadata cdata = mdata.newClassMetadata(cl);
+//			AbstractClassMetaData cdata1 = enhancer.getMetaDataManager().getMetaDataForClass(cl, ((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getClassLoaderResolver(runtimeClassLoader));
+//			((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getMetaDataManager().addORMDataToClass(cl,((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getClassLoaderResolver(runtimeClassLoader));
+//			((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getMetaDataManager().unloadMetaDataForClass(name);
 		}
 	}
 

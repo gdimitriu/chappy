@@ -20,9 +20,15 @@
 package chappy.persistence.providers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+import javax.jdo.Transaction;
+
 import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 
@@ -57,7 +63,24 @@ public class TransactionStorageProvider {
 	 * load the persisted transactions.
 	 */
 	public void loadPersisted() {
-		
+		try {
+			PersistenceManager pm = systemFlowPersistence.getFactory().getPersistenceManager();
+			Class<?> customPersistenceImpl = systemFlowPersistence.getImplementationOf(ISystemFlowPersistence.class);
+			Transaction tx = pm.currentTransaction();
+			if (customPersistenceImpl != null) {
+				tx.begin();
+				Query<?> query = pm.newQuery(customPersistenceImpl);
+				@SuppressWarnings("unchecked")
+				List<ISystemFlowPersistence> persisted = (List<ISystemFlowPersistence>) query.execute();
+				// TODO put persistence in map
+				
+				query.close();
+				tx.commit();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -92,10 +115,14 @@ public class TransactionStorageProvider {
 	 * @param transaction
 	 */
 	public void putTransaction(final CookieTransaction cookie, final ITransaction transaction) {
+		transaction.generateTransactionId(cookie);
 		if (transaction.isPersistence()) {
 			mapOfTransactionPersistedData.put(cookie.generateStorageId(), transaction);
 		} else {
 			mapOfTransactionTransientData.put(cookie.generateStorageId(), transaction);
 		}
+		transaction.start();
+		transaction.persist();
+		
 	}
 }

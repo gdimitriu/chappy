@@ -28,6 +28,7 @@ import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemLogsPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
+import chappy.persistence.datanucleus.flow.DatanucleusFlowTransactionPersistence;
 import chappy.persistence.transaction.AbstractPersistenceTransaction;
 /**
  * @author Gabriel Dimitriu
@@ -53,6 +54,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	
 	/** persistence flow Transaction */
 	private Transaction flowTransaction = null;
+	
+	/** persistence transaction */
+	private DatanucleusFlowTransactionPersistence persistedTransaction = new DatanucleusFlowTransactionPersistence();
 	
 	/**
 	 * 
@@ -95,7 +99,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 */
 	@Override
 	public void commit() {
-		if (logTransaction != null) {
+		if (logTransaction != null && logTransaction.isActive()) {
 			 logTransaction.commit();
 			 logTransaction = null;
 		}
@@ -103,7 +107,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			persistenceLogManager.close();
 		}
 		
-		if (upgradeTransaction != null) {
+		if (upgradeTransaction != null && upgradeTransaction.isActive()) {
 			 upgradeTransaction.commit();
 			 upgradeTransaction = null;
 		}
@@ -111,7 +115,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			persistenceUpgradeManager.close();
 		}
 		
-		if (flowTransaction != null) {
+		if (flowTransaction != null && flowTransaction.isActive()) {
 			 flowTransaction.commit();
 			 flowTransaction = null;
 		}
@@ -126,7 +130,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	@Override
 	public void rollback() {
 		/** log is always committed */
-		if (logTransaction != null) {
+		if (logTransaction != null && logTransaction.isActive()) {
 			logTransaction.commit();
 			logTransaction = null;
 		}
@@ -134,7 +138,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			persistenceLogManager.close();
 		}
 		
-		if (upgradeTransaction != null) {
+		if (upgradeTransaction != null && upgradeTransaction.isActive()) {
 			 upgradeTransaction.rollback();
 			 upgradeTransaction = null;
 		}
@@ -142,7 +146,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			persistenceUpgradeManager.close();
 		}
 		
-		if (flowTransaction != null) {
+		if (flowTransaction != null && flowTransaction.isActive()) {
 			 flowTransaction.rollback();
 			 flowTransaction = null;
 		}
@@ -193,6 +197,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 				persistenceUpgradeManager.makePersistent(persist);
 				upgradeTransaction.commit();
 				upgradeTransaction  = null;
+				updatePersistenceData();
 				return (ICustomStepPersistence) persist;
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -201,6 +206,16 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			}
 		}
 		return null;
+	}
+	
+	private void updatePersistenceData() {
+		DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
+		persistedTransaction = obj;
+		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
+		Transaction transaction = persistenceFlowManager.currentTransaction();
+		transaction.begin();
+		persistedTransaction = persistenceFlowManager.makePersistent(persistedTransaction);
+		transaction.commit();
 	}
 
 	/* (non-Javadoc)
@@ -211,5 +226,16 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		// TODO Auto-generated method stub
 		setTransactionId(cookie.getUserName());
 		cookie.setTransactionId(getTransactionId());
+		persistedTransaction.setTransactionId(getTransactionId());
+		persistedTransaction.setStorageId(cookie.generateStorageId());
+	}
+
+	@Override
+	public void persist() {
+		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
+		flowTransaction = persistenceFlowManager.currentTransaction();
+		flowTransaction.begin();
+		persistenceFlowManager.makePersistent(persistedTransaction);
+		flowTransaction.commit();
 	}
 }
