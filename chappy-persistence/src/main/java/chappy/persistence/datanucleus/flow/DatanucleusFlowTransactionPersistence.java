@@ -22,6 +22,7 @@ package chappy.persistence.datanucleus.flow;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Join;
 import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
@@ -38,7 +39,7 @@ import chappy.persistence.datanucleus.DatanucleusTransaction;
 @PersistenceCapable(detachable = "true")
 public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersistence{
 
-	@Persistent//(defaultFetchGroup = "true", customValueStrategy = "uuuid", primaryKey = "true")
+	@Persistent(defaultFetchGroup = "true", valueStrategy = IdGeneratorStrategy.UUIDHEX, primaryKey = "true")
 	private String transactionId;
 	
 	@Persistent(defaultFetchGroup = "true")

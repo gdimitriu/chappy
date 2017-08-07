@@ -237,15 +237,20 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 */
 	@Override
 	public void generateTransactionId(final CookieTransaction cookie) {
-		// TODO Auto-generated method stub
-		setTransactionId(cookie.getUserName());
-		cookie.setTransactionId(getTransactionId());
-		persistedTransaction.setTransactionId(getTransactionId());
+		start();
+		flowTransaction = persistenceFlowManager.currentTransaction();
 		persistedTransaction.setStorageId(cookie.generateStorageId());
+		flowTransaction.begin();
+		persistenceFlowManager.makePersistent(persistedTransaction);		
+		setTransactionId(persistedTransaction.getTransactionId());
+		flowTransaction.commit();
+		cookie.setTransactionId(getTransactionId());
 	}
 
 	@Override
 	public void persist() {
+		DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
+		persistedTransaction = obj;
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		flowTransaction.begin();
