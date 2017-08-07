@@ -73,7 +73,9 @@ public class TransactionStorageProvider {
 				@SuppressWarnings("unchecked")
 				List<ISystemFlowPersistence> persisted = (List<ISystemFlowPersistence>) query.execute();
 				// TODO put persistence in map
-				
+				for (ISystemFlowPersistence flow : persisted) {
+					mapOfTransactionPersistedData.put(flow.getStorageId(), (ITransaction) flow.createRealElement());
+				}
 				query.close();
 				tx.commit();
 			}
@@ -105,6 +107,23 @@ public class TransactionStorageProvider {
 		if (mapOfTransactionTransientData.containsKey(cookie.generateStorageId())) {
 			mapOfTransactionTransientData.remove(cookie.generateStorageId());
 		} else if (mapOfTransactionPersistedData.containsKey(cookie.generateStorageId())) {
+			try {
+				IPersistence persistence = PersistenceProvider.getInstance().getSystemFlowPersistence();
+				PersistenceManager pm = persistence.getFactory().getPersistenceManager();
+				Transaction tx = pm.currentTransaction();
+				tx.begin();
+				// TODO : special select :(
+				@SuppressWarnings("unchecked")
+				List<ISystemFlowPersistence> persisted =  (List<ISystemFlowPersistence>) pm.newQuery(
+						"SELECT FROM " + persistence.getImplementationOf(ISystemFlowPersistence.class).getName()).execute();
+				for (ISystemFlowPersistence custom : persisted) {
+					pm.deletePersistent(custom);
+				}
+				tx.commit();
+			} catch (InstantiationException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			mapOfTransactionPersistedData.remove(cookie.generateStorageId());
 		}
 	}

@@ -28,6 +28,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
 import chappy.interfaces.markers.ISystemFlowPersistence;
+import chappy.interfaces.transactions.ITransaction;
+import chappy.persistence.datanucleus.DatanucleusTransaction;
 
 /**
  * @author Gabriel Dimitriu
@@ -53,9 +55,11 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	public DatanucleusFlowTransactionPersistence() {
 		// TODO Auto-generated constructor stub
 	}
+	
 	/**
 	 * @return the transactionId
 	 */
+	@Override
 	public String getTransactionId() {
 		return transactionId;
 	}
@@ -85,6 +89,7 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	/**
 	 * @return the storageId
 	 */
+	@Override
 	public String getStorageId() {
 		return storageId;
 	}
@@ -94,5 +99,13 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	 */
 	public void setStorageId(String storageId) {
 		this.storageId = storageId;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.markers.ISystemFlowPersistence#createRealElement()
+	 */
+	@Override
+	public ITransaction createRealElement() {
+		return new DatanucleusTransaction(transactionId, true, listOftransformers);
 	}
 }

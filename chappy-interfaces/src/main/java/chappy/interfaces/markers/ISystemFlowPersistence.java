@@ -26,4 +26,18 @@ package chappy.interfaces.markers;
  */
 public interface ISystemFlowPersistence {
 
+	/**
+	 * @return the storageId
+	 */
+	public String getStorageId();
+	
+	/**
+	 * @return the transactionId
+	 */
+	public String getTransactionId();
+	
+	/**
+	 * create the real element from the persisted data.
+	 */
+	public Object createRealElement();
 }

@@ -255,7 +255,7 @@ public class CustomTransformerStorageProvider {
 			transformersStorage.remove(transformerName);
 			return true;
 		}
-/*		if (persistenceTransformersStorage.containsKey(transformerName)) {
+		if (persistenceTransformersStorage.containsKey(transformerName)) {
 			try {
 				IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
 				PersistenceManager pm = persistence.getFactory().getPersistenceManager();
@@ -274,7 +274,7 @@ public class CustomTransformerStorageProvider {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} */
+		}
 		return false;
 	}
 

@@ -44,6 +44,21 @@ public abstract class AbstractTransaction implements ITransaction {
 	public AbstractTransaction() {
 		listOfTansformers = new ArrayList<String>();
 	}
+	
+	/**
+	 * constructor used to reload data.
+	 * @param id of transaction
+	 * @param persistence true if persist
+	 * @param transformers list of transformers
+	 */
+	public AbstractTransaction(final String id, final boolean persistence, final List<String> transformers) {
+		this.persistence = persistence;
+		this.transactionId = id;
+		this.listOfTansformers = new ArrayList<String>();
+		if (transformers != null && !transformers.isEmpty()) {
+			this.listOfTansformers.addAll(transformers);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see chappy.transaction.base.ITransaction#getListOfCustomTansformers()

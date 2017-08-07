@@ -19,6 +19,8 @@
  */
 package chappy.persistence.datanucleus;
 
+import java.util.List;
+
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
@@ -63,6 +65,18 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 */
 	public DatanucleusTransaction() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+	/**
+	 * constructor used for loading data.
+	 * @param id
+	 * @param persistence
+	 * @param transformers
+	 */
+	public DatanucleusTransaction(final String id, final boolean persistence, final List<String> transformers) {
+		super(id,persistence,transformers);
+		start();
 	}
 	
 	/* (non-Javadoc)

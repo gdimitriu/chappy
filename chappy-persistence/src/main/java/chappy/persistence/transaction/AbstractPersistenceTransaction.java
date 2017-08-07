@@ -20,9 +20,12 @@
 package chappy.persistence.transaction;
 
 import java.io.IOException;
+import java.util.List;
+
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.AbstractTransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
+import chappy.persistence.providers.PersistenceProvider;
 
 /**
  * @author Gabriel Dimitriu
@@ -49,7 +52,35 @@ public abstract class AbstractPersistenceTransaction extends AbstractTransaction
 	public AbstractPersistenceTransaction() {
 		
 	}
-
+	
+	/**
+	 * constructor used for loading.
+	 * @param id
+	 * @param persistence
+	 * @param transformers
+	 */
+	public AbstractPersistenceTransaction(final String id, final boolean persistence, final List<String> transformers) {
+		super(id,persistence, transformers);
+		try {
+			systemUpgradePersistenceImpl = PersistenceProvider.getInstance().getSystemUpgradePersistence();
+		} catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			systemFlowPersistenceImpl = PersistenceProvider.getInstance().getSystemFlowPersistence();
+		} catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			systemLogPersistenceImpl = PersistenceProvider.getInstance().getSystemPersistence();
+		} catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.transactions.ITransaction#setPersistenceImpl(chappy.interfaces.persistence.IPersistence)
 	 */
