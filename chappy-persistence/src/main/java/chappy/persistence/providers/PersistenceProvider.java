@@ -19,15 +19,12 @@
  */
 package chappy.persistence.providers;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.reflections.Reflections;
 
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.PersistenceConfiguration;
-import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.persistence.IPersistenceConstants;
 
@@ -42,7 +39,7 @@ public class PersistenceProvider {
 	static private PersistenceProvider singleton = new PersistenceProvider();
 
 	/** cache map for persistenceUnit names */
-	private Map<String, IPersistence> persistenceCache = new HashMap<String, IPersistence>();
+//	private Map<String, IPersistence> persistenceCache = new HashMap<String, IPersistence>();
 	
 	/**
 	 * cache for system persistence
@@ -55,6 +52,12 @@ public class PersistenceProvider {
 	 * there is only one upgrade persistence unit.
 	 */
 	private static IPersistence systemUpgradePersistence = null;
+	
+	/**
+	 * cache for system flow persistence.
+	 * there is only one system flow persistence unit.
+	 */
+	private static IPersistence systemFlowPersistence = null;
 	
 	/**
 	 * private for singleton.
@@ -88,6 +91,24 @@ public class PersistenceProvider {
 			}
 		}
 		return systemPersistence;
+	}
+	
+	/**
+	 * get the flow
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public IPersistence getSystemFlowPersistence() throws InstantiationException, IllegalAccessException {
+		if (systemFlowPersistence == null) {
+			synchronized (this) {
+				if (systemFlowPersistence == null) {
+					systemFlowPersistence = getPersistenceByType(IPersistenceConstants.SYSTEM_FLOW_PERSISTENCE);
+					return systemFlowPersistence;
+				}
+			}
+		}
+		return systemFlowPersistence;
 	}
 	
 	
@@ -142,9 +163,9 @@ public class PersistenceProvider {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	synchronized public IPersistence getPersistenceInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+/*	synchronized public IPersistence getPersistenceInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
 		//TODO only system persistance is allowed.
-/*		String type = SystemPolicyProvider.getInstance().getAuthenticationHandler().persistenceType(cookie.getUserName());
+		String type = SystemPolicyProvider.getInstance().getAuthenticationHandler().persistenceType(cookie.getUserName());
 		String cacheUnitPersistence = createCacheUnit(type, cookie.getUserName());
 		IPersistence persistence = null;
 		//first check in cache
@@ -174,17 +195,7 @@ public class PersistenceProvider {
 					 }
 				 }
 			}
-		} */
+		}
 		return null;
-	}
-	
-	/**
-	 * create the cache name for the persistence implementation.
-	 * @param type
-	 * @param userName
-	 * @return cache key
-	 */
-	private String createCacheUnit(final String type, final String userName) {		
-		return userName + ":" + type;
-	}
+	} */
 }

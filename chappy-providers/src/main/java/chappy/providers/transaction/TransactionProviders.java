@@ -19,15 +19,13 @@
  */
 package chappy.providers.transaction;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.PersistenceProvider;
+import chappy.persistence.providers.TransactionStorageProvider;
 
 /**
  * providers for transactions.
@@ -39,14 +37,22 @@ public class TransactionProviders {
 	/** singleton providers */
 	static private TransactionProviders singleton = new TransactionProviders();
 	
-	/** map of transactions */
-	private Map<String, ITransaction> mapOfTransactionData = null;
+	private TransactionStorageProvider storageProvider = null;
 	
 	/**
 	 * private because is singleton.
 	 */
 	private TransactionProviders() {
-		mapOfTransactionData = new HashMap<String, ITransaction>();
+		storageProvider = new TransactionStorageProvider();
+		storageProvider.loadPersisted();
+	}
+	
+	/**
+	 *  load the persistenced transactions.
+	 * @return void
+	 */
+	public void loadPersisted() {
+		storageProvider.loadPersisted();
 	}
 	
 	/**
@@ -63,10 +69,7 @@ public class TransactionProviders {
 	 * @return base transaction.
 	 */
 	public ITransaction getTransaction(final CookieTransaction cookie) {
-		if (mapOfTransactionData.containsKey(cookie.generateStorageId())) {
-			return mapOfTransactionData.get(cookie.generateStorageId());
-		}
-		return null;
+		return storageProvider.getTransaction(cookie);
 	}
 
 	/**
@@ -74,32 +77,10 @@ public class TransactionProviders {
 	 * @param cookie of the transaction
 	 */
 	public void removeTransaction(final CookieTransactionsToken cookie) {
-		if (mapOfTransactionData.containsKey(cookie.generateStorageId())) {
-			mapOfTransactionData.remove(cookie.generateStorageId());
-		}
+		storageProvider.removeTransaction(cookie);
 	}
 	
-	/**
-	 * put the transaction in storage.
-	 * @param cookie
-	 * @param transaction
-	 */
-	public void putTransaction(final CookieTransaction cookie, final ITransaction transaction) {
-		mapOfTransactionData.put(cookie.generateStorageId(), transaction);
-	}
-	
-	/**
-	 * generate the transactionId for a user.
-	 * @param cookie
-	 * @return
-	 */
-	public String generateId(final CookieTransaction cookie) {
-		//TODO: hardcoded now
-		return cookie.getUserName();
-	}
-	
-	
-	
+
 	/**
 	 * start a new transaction.
 	 * @param cookie that is identified
@@ -113,36 +94,35 @@ public class TransactionProviders {
 			transaction = new ChappyTransaction();
 		} else {
 			try {
-				transaction = PersistenceProvider.getInstance().getSystemPersistence().createTransaction();//.getPersistenceInstance(cookie).createTransaction();
+				transaction = PersistenceProvider.getInstance().getSystemPersistence().createTransaction();
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
 			}
-		}
-		transaction.setPersistence(persistence);
-		transaction.setTransactionId(TransactionProviders.getInstance().generateId(cookie));
-		cookie.setTransactionId(transaction.getTransactionId());
-		if (persistence) {
-//TODO DISABLED
-//			try {
-//				IPersistence persistenceImpl = PersistenceProvider.getInstance().getPersistenceInstance(cookie);
-//				if (persistenceImpl == null) {
-//					throw new ForbiddenException("persistence not allowed");
-//				}
-//				transaction.setPersistenceImpl(persistenceImpl);
-//			} catch (InstantiationException | IllegalAccessException e) {				
-//				e.printStackTrace();
-//				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
-//			}
 			try {
 				IPersistence systemLogPersistence = PersistenceProvider.getInstance().getSystemPersistence();
 				transaction.setSystemLogPersistence(systemLogPersistence);
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
-				throw new ForbiddenException("persistence not allowed : " + e.getLocalizedMessage());
+				throw new ForbiddenException("persistence for logs not allowed : " + e.getLocalizedMessage());
 			}
-		}		
-		TransactionProviders.getInstance().putTransaction(cookie, transaction);
+			try {
+				IPersistence systemUpgradePersistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
+				transaction.setSystemUpgradePersistence(systemUpgradePersistence);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new ForbiddenException("persistence for upgrade not allowed : " + e.getLocalizedMessage());
+			}
+			try {
+				IPersistence systemFlowPersistence = PersistenceProvider.getInstance().getSystemFlowPersistence();
+				transaction.setSystemFlowPersistence(systemFlowPersistence);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				throw new ForbiddenException("persistence for upgrade not allowed : " + e.getLocalizedMessage());
+			}
+		}
+		transaction.setPersistence(persistence);
+		storageProvider.putTransaction(cookie, transaction);
 		return transaction;
 	}
 	

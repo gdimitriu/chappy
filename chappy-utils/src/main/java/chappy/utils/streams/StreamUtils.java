@@ -20,6 +20,8 @@
 package chappy.utils.streams;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
@@ -76,5 +78,26 @@ public final class StreamUtils {
 	 */
 	static public InputStream toStreamFromResource(final String resourceFile) {
 		return StreamUtils.class.getClassLoader().getResourceAsStream(resourceFile);
+	}
+	
+	/**
+	 * get as byte array the input stream.
+	 * @param is
+	 * @return
+	 * @throws IOException
+	 */
+	public static byte[] getBytesFromInputStream(InputStream is) throws IOException
+	{
+	    try (ByteArrayOutputStream os = new ByteArrayOutputStream();)
+	    {
+	        byte[] buffer = new byte[0xFFFF];
+
+	        for (int len; (len = is.read(buffer)) != -1;)
+	            os.write(buffer, 0, len);
+
+	        os.flush();
+
+	        return os.toByteArray();
+	    }
 	}
 }

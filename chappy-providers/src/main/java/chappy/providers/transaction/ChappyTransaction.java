@@ -21,6 +21,8 @@ package chappy.providers.transaction;
 
 import java.io.IOException;
 
+import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.AbstractTransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
@@ -46,7 +48,7 @@ public class ChappyTransaction extends AbstractTransaction {
 	@Override
 	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
 		super.addTransformer(userName, fullName, originalByteCode);
-		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, isPersistence());
+		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, fullName, originalByteCode, null);
 	}
 
 	/* (non-Javadoc)
@@ -167,5 +169,33 @@ public class ChappyTransaction extends AbstractTransaction {
 	public IPersistence getSystemUpgradePersistence() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+	@Override
+	public ICustomStepPersistence persistTransformer(String generateStorageName, byte[] remappedBytecode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#generateTransactionId(chappy.interfaces.cookies.CookieTransaction)
+	 */
+	@Override
+	public void generateTransactionId(final CookieTransaction cookie) {
+		setTransactionId(cookie.getUserName());
+		cookie.setTransactionId(getTransactionId());
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#persist()
+	 */
+	@Override
+	public void persist() {
+		// ChappyTransaction is not persistence capable.
 	}
 }

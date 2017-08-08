@@ -30,7 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		RestUserCallsForFlowTransformationsTest.class,
 		RestTrasactionFlowTransformationsTest.class,
 		RestCallsForFlowTransformationsExceptionsTest.class,
-		RestListCallsTest.class})
+		RestListCallsTest.class,
+		RestTransactionFailOverAndPersistence.class})
 public class RestCallTransformationsSuiteTest {
 
 }

@@ -15,7 +15,6 @@
 		<asm.version>5.2</asm.version>
 		<chappy.version>1.0.0-SNAPSHOT</chappy.version>
 		<jackson.version>2.8.7</jackson.version>
-		<JAVA_HOME>C:\Program Files\Java\jdk1.8.0_72</JAVA_HOME>
 	</properties>
 	<build>
 		<pluginManagement>
@@ -85,8 +84,6 @@
 		<module>chappy-mappings</module>
 		<module>chappy-tests</module>
 		<module>chappy-installer</module>
-		
-		
 		<module>chappy-statistics-logs</module>
 		<module>chappy-policy</module>
 		<module>chappy-persistence</module>
@@ -100,7 +97,7 @@
 			<artifactId>jdk.tools</artifactId>
 			<version>1.8</version>
 			<scope>system</scope>
-			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+			<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
 		</dependency>
 		<!-- jackson -->
 		<dependency>

@@ -22,7 +22,9 @@ package chappy.interfaces.transactions;
 import java.io.IOException;
 import java.util.List;
 
+import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
+import chappy.interfaces.cookies.CookieTransaction;
 
 /**
  * This is the transaction interface the base interface for transaction support.
@@ -69,6 +71,12 @@ public interface ITransaction {
 	 */
 	String getTransactionId();
 	
+	
+	/**
+	 * this will internaly generate the transactionID based on cookie.
+	 * 
+	 */
+	void generateTransactionId(final CookieTransaction cookie);
 	
 	/**
 	 * set the persistence implementation for this transaction.
@@ -139,4 +147,18 @@ public interface ITransaction {
 	 */
 	void makePersistent(final Object obj);
 
+	/**
+	 * @param generateStorageName
+	 * @param remappedBytecode
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	ICustomStepPersistence persistTransformer(final String generateStorageName, final byte[] remappedBytecode) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
+
+	
+	/**
+	 * persist the transaction if the transaction is capable.
+	 */
+	void persist();
 }

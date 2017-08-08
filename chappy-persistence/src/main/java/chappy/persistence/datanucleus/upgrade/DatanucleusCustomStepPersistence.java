@@ -20,7 +20,7 @@
 package chappy.persistence.datanucleus.upgrade;
 
 import javax.jdo.annotations.PersistenceCapable;
-
+import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
 
 /**
@@ -28,13 +28,13 @@ import chappy.interfaces.persistence.ICustomStepPersistence;
  *
  */
 @PersistenceCapable
-public class DatanucleusCustomStepPersistence implements ICustomStepPersistence {
+public class DatanucleusCustomStepPersistence implements ICustomStepPersistence, ISystemUpgradePersistence {
 
 	/** full step name from the storage provider */
 	private String stepName;
 	
 	/** byte-code from storage provider after re-mapper */
-	private Byte[] byteCode;
+	private byte[] byteCode;
 	/**
 	 * 
 	 */
@@ -63,7 +63,7 @@ public class DatanucleusCustomStepPersistence implements ICustomStepPersistence 
 	 * @see chappy.interfaces.persistence.ICustomStepPersistence#setByteCode(java.lang.Byte[])
 	 */
 	@Override
-	public void setByteCode(final Byte[] bytecode) {
+	public void setByteCode(final byte[] bytecode) {
 		this.byteCode = bytecode;
 	}
 
@@ -71,7 +71,7 @@ public class DatanucleusCustomStepPersistence implements ICustomStepPersistence 
 	 * @see chappy.interfaces.persistence.ICustomStepPersistence#getByteCode()
 	 */
 	@Override
-	public Byte[] getByteCode() {
+	public byte[] getByteCode() {
 		return this.byteCode;
 	}
 
