@@ -19,10 +19,7 @@
  */
 package chappy.interfaces.transformers;
 
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -83,10 +80,10 @@ public abstract class AbstractStep implements ITransformerStep {
 	}
 
 	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#execute(transformationsEngine.wrappers.StreamHolder, org.glassfish.jersey.media.multipart.FormDataMultiPart, javax.ws.rs.core.MultivaluedMap)
+	 * @see chappy.interfaces.transformers.ITransformerStep#execute(chappy.utils.streams.wrappers.StreamHolder, chappy.interfaces.flows.MultiDataQueryHolder)
 	 */
 	@Override
-	public abstract void execute(final StreamHolder holder, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
+	public abstract void execute(final StreamHolder holder, final MultiDataQueryHolder dataHolder)
 			throws Exception;
 	
 	

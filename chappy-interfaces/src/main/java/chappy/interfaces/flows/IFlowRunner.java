@@ -22,10 +22,8 @@ package chappy.interfaces.flows;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBException;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.xml.sax.SAXException;
 
 import chappy.interfaces.cookies.CookieTransaction;
@@ -76,13 +74,11 @@ public interface IFlowRunner {
 	 * setConfigurations, this will create the flow configuration.
 	 * The flow configuration will be created using JAXB.
 	 * @param configurationStream
-	 * @param multipart
-	 * @param queryParams 
+	 * @param multipart the data and queries.
 	 * @throws JAXBException 
 	 * @throws SAXException 
 	 */
 	public void setConfigurations(final InputStream configurationStream,
-			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws Exception;
+			final MultiDataQueryHolder multiPart) throws Exception;
 
 }

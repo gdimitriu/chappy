@@ -22,11 +22,8 @@ package chappy.tests.rest.transformers.dummy;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
 import chappy.configurations.transformers.ConfigurationProperties;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.transformers.AbstractSplitterStep;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -47,11 +44,10 @@ public class SplitterStep extends AbstractSplitterStep {
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.transformers.AbstractSplitterStep#execute(java.util.List, org.glassfish.jersey.media.multipart.FormDataMultiPart, javax.ws.rs.core.MultivaluedMap)
+	 * @see chappy.interfaces.transformers.AbstractSplitterStep#execute(java.util.List, chappy.interfaces.flows.MultiDataQueryHolder)
 	 */
 	@Override
-	public void execute(final List<StreamHolder> holders, final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws Exception {
+	public void execute(final List<StreamHolder> holders, final MultiDataQueryHolder dataHolder) throws Exception {
 		if (holders.size() != 1) {
 			return;
 		}

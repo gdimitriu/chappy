@@ -414,13 +414,48 @@ public class ProcessingRestTestManual {
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 	}
+	private static final String CONFIGURATION_AUTOPRIMITIVE = "<?xml version=\"1.0\"?><configuration><autoPrimitive>false</autoPrimitive><autoArray>false</autoArray></configuration>";
+
+	public void xml2jsonStepTest() {
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON).queryParam("mode", "xml2json")
+				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_XML)
+				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
+						MediaType.APPLICATION_XML));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("xml2json2xml.json"),
+					StreamUtils.toStringFromStream(inputStream));
+		}
+	}
 	
-	
+	public void xml2xmlXsltOneStepWParametersTest() {
+		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("processingMapParameters.xsl",
+						getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
+						MediaType.APPLICATION_XML_TYPE);
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam("param1", "buru")
+				.queryParam("param2", "-1000").request(new String[] { MediaType.MULTIPART_FORM_DATA })
+				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("processingOutputParameters.xml"),
+					StreamUtils.toStringFromStream(inputStream));
+		}
+	}
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
 		//test.push3CustomTransformersByTransactionAndMakeTransformation();
 		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
-		test.push3CustomTransformersByTransactionAndMakeTransformationGetStatistics();
+		test.xml2xmlXsltOneStepWParametersTest();
 	}
 
 }

@@ -40,9 +40,11 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -103,8 +105,10 @@ public class TransformResources {
 		
 		bos = null;
 		
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
+				.createFlowRunner("StaticFlow", configurationStream, multiData);
 		CookieTransaction cookie = new CookieTransactionsToken();
 		cookie.setUserName(userName);
 		runner.createSteps(cookie);
@@ -150,8 +154,10 @@ public class TransformResources {
 		
 		bos = null;
 		
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("DigesterFlow", configurationStream, multipart, queryParams);
+				.createFlowRunner("DigesterFlow", configurationStream, multiData);
 		runner.createSteps();
 		StreamHolder output = runner.executeSteps(holder);
 		ByteArrayInputStreamWrapper inputStream = output.getInputStream();
@@ -185,7 +191,7 @@ public class TransformResources {
 		bos = null;
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaxonSimpleFlow", null, null, null);
+				.createFlowRunner("StaxonSimpleFlow", null, null);
 		runner.configure(mode, configuration);
 		StreamHolder result = runner.executeSteps(holder);
 		if (result == null) {

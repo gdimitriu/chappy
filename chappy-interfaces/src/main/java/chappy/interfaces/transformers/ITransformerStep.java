@@ -26,6 +26,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.configurations.transformers.StaxonConfiguration;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.utils.streams.wrappers.StreamHolder;
 import chappy.utils.streams.wrappers.WrapperUtils;
@@ -75,12 +76,10 @@ public interface ITransformerStep {
 	 * This is the execute method, this is used to execute the actual transformation.
 	 * The input is holder in which will be also the return and intermediary values. 
 	 * @param holder StreamHolder.
-	 * @param multipart multipart from rest request
+	 * @param dataHolder holder for data and query.
 	 * @throws Exception 
 	 */
-	public default void execute(StreamHolder holder,
-			FormDataMultiPart multipart,
-			MultivaluedMap<String, String> queryParams) throws Exception {
+	public default void execute(final StreamHolder holder, final MultiDataQueryHolder dataHolder) throws Exception {
 		holder.setOutputStream(
 				WrapperUtils.fromInputStreamToOutputWrapper(holder.getInputStream()));
 	}
@@ -93,11 +92,10 @@ public interface ITransformerStep {
 	 * @throws Exception 
 	 */
 	public default void execute(List<StreamHolder> holders,
-			FormDataMultiPart multipart,
-			MultivaluedMap<String, String> queryParams) throws Exception {
+			final MultiDataQueryHolder dataHolder) throws Exception {
 		
 		if(holders.size() == 1) {
-			execute(holders.get(0), multipart, queryParams);
+			execute(holders.get(0), dataHolder);
 			return;
 		}
 		holders.get(0).setOutputStream(

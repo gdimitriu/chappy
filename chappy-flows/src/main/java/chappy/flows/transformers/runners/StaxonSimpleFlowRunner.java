@@ -22,14 +22,9 @@ package chappy.flows.transformers.runners;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.xml.bind.JAXBException;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.xml.sax.SAXException;
-
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.transformers.ITransformerStep;
 import chappy.providers.transformers.TransformerProvider;
 import chappy.utils.streams.wrappers.StreamHolder;
@@ -71,12 +66,12 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 			case "json2xml":
 				step = TransformerProvider.getInstance().createStep("Json2XmlStep");
 				step.setSerializedConfiguration(configuration);
-				step.execute(holder, null, null);
+				step.execute(holder, null);
 				break;
 			case "xml2json":
 				step = TransformerProvider.getInstance().createStep("Xml2JsonStep");
 				step.setSerializedConfiguration(configuration);
-				step.execute(holder, null, null);
+				step.execute(holder, null);
 				break;
 			default:
 				return null;
@@ -92,12 +87,6 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 	}
 
 	@Override
-	public void setConfigurations(final InputStream configurationStream, final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws JAXBException, SAXException {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void createSteps(final CookieTransaction cookie) throws Exception {
 		//nothing to do for staxon simple flow because this flow could not be overriden
 	}
@@ -106,6 +95,12 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
 		//nothing to transform yet.
 		return null;
+	}
+
+	@Override
+	public void setConfigurations(final InputStream configurationStream, final MultiDataQueryHolder multiPart) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
