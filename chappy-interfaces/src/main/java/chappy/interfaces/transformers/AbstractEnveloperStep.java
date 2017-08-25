@@ -21,11 +21,8 @@ package chappy.interfaces.transformers;
 
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
 import chappy.configurations.transformers.ConfigurationProperties;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
@@ -46,17 +43,17 @@ public abstract class AbstractEnveloperStep extends AbstractStep implements IEnv
 	}
 	
 	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#execute(java.util.List<transformationsEngine.wrappers.StreamHolder>, org.glassfish.jersey.media.multipart.FormDataMultiPart, javax.ws.rs.core.MultivaluedMap)
+	 * @see chappy.interfaces.transformers.ITransformerStep#execute(java.util.List, chappy.interfaces.flows.MultiDataQueryHolder)
 	 */
 	@Override
-	public abstract void execute(final List<StreamHolder> holders, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
+	public abstract void execute(final List<StreamHolder> holders, final MultiDataQueryHolder dataHolder)
 			throws Exception;
 
 	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.ITransformerStep#execute(transformationsEngine.wrappers.StreamHolder, org.glassfish.jersey.media.multipart.FormDataMultiPart, javax.ws.rs.core.MultivaluedMap)
+	 * @see chappy.interfaces.transformers.AbstractStep#execute(chappy.utils.streams.wrappers.StreamHolder, chappy.interfaces.flows.MultiDataQueryHolder)
 	 */
 	@Override
-	public void execute(final StreamHolder holder, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
+	public void execute(final StreamHolder holder, final MultiDataQueryHolder dataHolder)
 			throws Exception {
 		
 	}

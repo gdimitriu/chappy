@@ -28,14 +28,11 @@ import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.metadata.ClassMetadata;
 import javax.jdo.metadata.JDOMetadata;
 
 import org.datanucleus.PropertyNames;
-import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
 import org.datanucleus.enhancer.DataNucleusEnhancer;
 import org.datanucleus.exceptions.NucleusException;
-import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.PersistenceUnitMetaData;
 import org.reflections.Reflections;
 

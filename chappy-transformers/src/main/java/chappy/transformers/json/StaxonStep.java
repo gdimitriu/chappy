@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLEventReader;
@@ -32,9 +31,8 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
 import chappy.configurations.transformers.StaxonConfiguration;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.transformers.AbstractStep;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -183,8 +181,7 @@ public abstract class StaxonStep extends AbstractStep{
 	 */
 	@Override
 	public void execute(StreamHolder holder,
-			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams)
+			final MultiDataQueryHolder dataHolder)
 			throws XMLStreamException {
 		configure();
 		ByteArrayInputStreamWrapper input = holder.getInputStream();

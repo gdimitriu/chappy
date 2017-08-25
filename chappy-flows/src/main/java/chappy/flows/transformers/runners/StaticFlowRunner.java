@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,7 +32,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.xml.sax.SAXException;
 
 import chappy.exception.providers.ExceptionMappingProvider;
@@ -41,6 +39,7 @@ import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
@@ -63,9 +62,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	/** flow configuration steps */
 	private FlowConfiguration configuration = null;
 	/** multi-part request from rest which contains mapping. */
-	private FormDataMultiPart multipart;
-	/** query parameters which are parameters to be send to the steps */
-	private MultivaluedMap<String, String> queryParams;
+	private MultiDataQueryHolder multipart;
 	/** list of steps to be executed */
 	private List<ITransformerStep> stepList = new ArrayList<ITransformerStep>();
 	
@@ -80,8 +77,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	
 	@Override
 	public void setConfigurations(final InputStream configurationStream,
-			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws Exception {
+			final MultiDataQueryHolder multipart) throws Exception {
 		try {
 			JAXBContext context = JAXBContext.newInstance(FlowConfiguration.class);
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -94,7 +90,6 @@ public class StaticFlowRunner implements IFlowRunner{
 			throw ExceptionMappingProvider.getInstace().mapException(e);
 		}
 		this.multipart = multipart;
-		this.queryParams = queryParams;
 	}
 
 	/* (non-Javadoc)
@@ -156,7 +151,7 @@ public class StaticFlowRunner implements IFlowRunner{
 				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), startTime, "started");
 				transaction.makePersistent(log);
 			}
-			step.execute(holder, multipart, queryParams);
+			step.execute(holder, multipart);
 			finishTime = LocalDateTime.now();
 			if (logs != null) {
 				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
@@ -186,7 +181,7 @@ public class StaticFlowRunner implements IFlowRunner{
 			if (logs != null) {
 				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
 			}
-   			step.execute(holders, multipart, queryParams);
+   			step.execute(holders, multipart);
 			finishTime = LocalDateTime.now();
 			if (logs != null) {
 				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");

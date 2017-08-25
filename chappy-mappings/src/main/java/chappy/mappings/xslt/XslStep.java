@@ -20,9 +20,9 @@
 package chappy.mappings.xslt;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Iterator;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -30,10 +30,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.xml.sax.InputSource;
 
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.transformers.AbstractStep;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -87,26 +86,25 @@ public class XslStep extends AbstractStep {
 		mappingName = name;
 	}
 	
-	public void setMappingStream(final FormDataMultiPart multipart) throws Exception {
-		FormDataBodyPart part = multipart.getField(mappingName);
-		if (part == null) {
+	public void setMappingStream(final MultiDataQueryHolder dataHolder) throws Exception {
+		Collection<InputStream> data = dataHolder.getBodyValueAs(mappingName, InputStream.class);
+		if (data == null || data.isEmpty()) {
 			throw new Exception("mapping rule " + mappingName + " is not present in formData request");
 		}
-		mappingStream = part.getValueAs(InputStream.class);
+		mappingStream =  data.iterator().next();
 		if (mappingStream == null) {
 			throw new Exception("mapping rule " + mappingName + " is not present in formData request");
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.AbstractStep#execute(transformationsEngine.wrappers.StreamHolder)
+	 * @see chappy.interfaces.transformers.AbstractStep#execute(chappy.utils.streams.wrappers.StreamHolder, chappy.interfaces.flows.MultiDataQueryHolder)
 	 */
 	@Override
 	public void execute(StreamHolder holder,
-			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams)
+			final MultiDataQueryHolder dataHolder)
 					throws Exception {
-		setMappingStream(multipart);
+		setMappingStream(dataHolder);
 		Source messageSource = new SAXSource(new InputSource(holder.getInputStream()));
 		ByteArrayOutputStreamWrapper bos = new ByteArrayOutputStreamWrapper();
 		Result messageResult = new StreamResult(bos);
@@ -116,11 +114,11 @@ public class XslStep extends AbstractStep {
 		Transformer transformer = TransformerFactory.newInstance(factoryEngine,
 				getClass().getClassLoader()).newTransformer(mappingSource);
 	
-		Iterator<String> it = queryParams.keySet().iterator();
+		Iterator<String> it = dataHolder.getQueriesSet().iterator();
         
 		while(it.hasNext()){
         	String theKey = (String) it.next();
-		    transformer.setParameter(theKey, queryParams.getFirst(theKey));
+		    transformer.setParameter(theKey, dataHolder.getFirstQuery(theKey));
 		}
 
 		transformer.transform(messageSource, messageResult);

@@ -53,6 +53,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.statisticslogs.IStatistics;
@@ -61,6 +62,7 @@ import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.policy.provider.SystemPolicyProvider;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.services.servers.rest.cookies.CookieUtils;
@@ -227,9 +229,9 @@ public class TransactionResources {
 		}
 		
 		bos = null;
-		
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaticFlow", configurationStream, multipart, queryParams);
+				.createFlowRunner("StaticFlow", configurationStream, multiData);
 		runner.createSteps(received);
 		runner.executeSteps(holder);
 		

@@ -24,16 +24,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBException;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.reflections.Reflections;
 import org.xml.sax.SAXException;
 
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 
 /**
  * @author Gabriel Dimitriu
@@ -98,15 +97,14 @@ public class TransformersFlowRunnerProvider {
 	 */
 	public IFlowRunner createFlowRunner(final String name,
 			final InputStream configurationStream,
-			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) throws Exception {
+			final MultiDataQueryHolder multipart) throws Exception {
 		if (runners == null || !runners.containsKey(name)) {
 			return null;
 		}
 		IFlowRunner runner = null;
 		try {
 			runner = runners.get(name).newInstance();
-			runner.setConfigurations(configurationStream, multipart, queryParams);
+			runner.setConfigurations(configurationStream, multipart);
 		} catch (Exception e) {
 			if (e instanceof IChappyException) {
 				throw e;

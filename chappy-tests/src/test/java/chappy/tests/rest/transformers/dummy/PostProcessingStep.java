@@ -2,10 +2,7 @@ package chappy.tests.rest.transformers.dummy;
 
 import java.io.IOException;
 
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.transformers.AbstractStep;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -43,10 +40,10 @@ public class PostProcessingStep extends AbstractStep {
 	}
 
 	/* (non-Javadoc)
-	 * @see transformationsEngine.digester.steps.AbstractStep#execute(transformationsEngine.wrappers.StreamHolder)
+	 * @see chappy.interfaces.transformers.AbstractStep#execute(chappy.utils.streams.wrappers.StreamHolder, chappy.interfaces.flows.MultiDataQueryHolder)
 	 */
 	@Override
-	public void execute(final StreamHolder holder, final FormDataMultiPart multipart, final MultivaluedMap<String, String> queryParams)
+	public void execute(final StreamHolder holder, final MultiDataQueryHolder dataHolder)
 			throws IOException {
 		ByteArrayInputStreamWrapper input = holder.getInputStream();
 		ByteArrayOutputStreamWrapper output = new ByteArrayOutputStreamWrapper();

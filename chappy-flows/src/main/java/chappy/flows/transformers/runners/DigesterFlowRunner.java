@@ -22,16 +22,13 @@ package chappy.flows.transformers.runners;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.commons.digester3.Digester;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
 import chappy.configurations.transformers.StaxonConfiguration;
 import chappy.flows.transformers.dynamicflows.DigesterStepsFactory;
 import chappy.flows.transformers.dynamicflows.MapOfStepsParametersFactory;
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
@@ -44,9 +41,7 @@ public class DigesterFlowRunner implements IFlowRunner {
 	/** configuration stream */
 	private InputStream configurationStream = null;
 	/** data from multipart */
-	private FormDataMultiPart multipart = null;
-	/** query from rest request */
-	private MultivaluedMap<String, String> queryParams = null;
+	private MultiDataQueryHolder multipart = null;
 	
 	private Digester digester = new Digester();
 	/**
@@ -73,18 +68,15 @@ public class DigesterFlowRunner implements IFlowRunner {
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception {
 		digester.push(holder);
 		digester.push(multipart);
-		digester.push(queryParams);
 		return digester.parse(configurationStream);
 	}
 
 	@Override
 	public void setConfigurations(final InputStream configurationStream,
-			final FormDataMultiPart multipart,
-			final MultivaluedMap<String, String> queryParams) {
+			final MultiDataQueryHolder multiPart) {
 		
 		this.configurationStream = configurationStream;
-		this.multipart = multipart;
-		this.queryParams = queryParams;
+		this.multipart = multiPart;
 		
 		digester.addFactoryCreate("*/step", new DigesterStepsFactory());
 
@@ -112,11 +104,10 @@ public class DigesterFlowRunner implements IFlowRunner {
 //				MapOfStepsParametersFactory.getSingletion().getMapFields());
 
 		paramTypes = new String[] { "chappy.utils.streams.wrappers.StreamHolder",
-				"org.glassfish.jersey.media.multipart.FormDataMultiPart", "javax.ws.rs.core.MultivaluedMap" };
-		digester.addCallMethod("*/step", "execute", 3, paramTypes);
-		digester.addCallParam("*/step", 0, 3);
-		digester.addCallParam("*/step", 1, 2);
-		digester.addCallParam("*/step", 2, 1);
+				"chappy.interfaces.flows.MultiDataQueryHolder" };
+		digester.addCallMethod("*/step", "execute", 2, paramTypes);
+		digester.addCallParam("*/step", 0, 2);
+		digester.addCallParam("*/step", 1, 1);
 	}
 
 	@Override
