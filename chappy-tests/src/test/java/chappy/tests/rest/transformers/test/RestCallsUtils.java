@@ -34,6 +34,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.tests.utils.ClassUtils;
 
 /**
@@ -58,8 +59,9 @@ public final class RestCallsUtils {
 	public static Response addPrePostProcessingSteps(WebTarget target, NewCookie cookie) throws FileNotFoundException {
 		Response response;
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("name", "PreProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
@@ -67,8 +69,9 @@ public final class RestCallsUtils {
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
-				.field("name", "PostProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
@@ -76,8 +79,9 @@ public final class RestCallsUtils {
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
-				.field("name", "ProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "ProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
