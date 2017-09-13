@@ -49,6 +49,7 @@ import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
@@ -124,35 +125,37 @@ public class RestTransactionFailOverAndPersistence {
 		WebTarget target = client.target(baseUri);
 		
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
-				.queryParam("user", "gdimitriu")
-				.queryParam("password", "password")
-				.queryParam("persist", "true")
+				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
+				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password")
+				.queryParam(IChappyServiceNamesConstants.PERSIST, "true")
 				.request().get();
 		
 		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
 		
 		Map<String, NewCookie> cookies = response.getCookies();
 		
-		NewCookie cookie = cookies.get("userData");
+		NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("name", "PreProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
-		cookie = response.getCookies().get("userData");
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart()
-				.field("name", "PostProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
-		cookie = response.getCookies().get("userData");
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		//stop and restart the server
 		tearDown();
 		setUp();
@@ -160,19 +163,21 @@ public class RestTransactionFailOverAndPersistence {
 		TransactionProviders.getInstance().loadPersisted();
 		
 		multipartEntity = new FormDataMultiPart()
-				.field("name", "ProcessingStep")
-				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "ProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
-		cookie = response.getCookies().get("userData");
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart()
-				.field("data", "blabla");
+				.field(IChappyServiceNamesConstants.INPUT_DATA, "blabla");
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 					.path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW)
-					.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
+					.queryParam(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils
+							.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
 					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -180,7 +185,7 @@ public class RestTransactionFailOverAndPersistence {
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 						StreamUtils.toStringFromStream(inputStream));
 		}
-		cookie = response.getCookies().get("userData");
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();

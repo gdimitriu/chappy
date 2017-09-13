@@ -23,8 +23,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -40,6 +38,7 @@ import org.junit.Test;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
@@ -95,8 +94,9 @@ public class RestCallsForStaxonTransformationsTest {
 	public void xml2jsonStepTest() {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON).queryParam("mode", "xml2json")
-				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_XML)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON)
+				.queryParam(IChappyServiceNamesConstants.MODE, "xml2json")
+				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_XML)
 				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
 						MediaType.APPLICATION_XML));
 		if (response.getStatus() >= 0) {
@@ -110,8 +110,9 @@ public class RestCallsForStaxonTransformationsTest {
 	public void json2xmlStepTest() {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON).queryParam("mode", "json2xml")
-				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_JSON)
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON)
+				.queryParam(IChappyServiceNamesConstants.MODE, "json2xml")
+				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_JSON)
 				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.json"),
 						MediaType.APPLICATION_JSON));
 		if (response.getStatus() >= 0) {

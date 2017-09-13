@@ -56,6 +56,7 @@ import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
@@ -101,8 +102,8 @@ public class TransactionResources {
 	 */
 	@Path(IRestResourcesConstants.REST_LOGIN)
 	@GET
-	public Response login(@QueryParam("user") final String userName, @QueryParam("password") final String password, 
-			@QueryParam("persist") final boolean persistence){
+	public Response login(@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName, @QueryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD) final String password, 
+			@QueryParam(IChappyServiceNamesConstants.PERSIST) final boolean persistence){
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
@@ -133,7 +134,7 @@ public class TransactionResources {
 			return Response.status(Status.FORBIDDEN).build();
 		}
     	byte[] base64json=Base64.getEncoder().encode(json.getBytes());
-		NewCookie cookie = new NewCookie("userData", new String(base64json));
+		NewCookie cookie = new NewCookie(IChappyServiceNamesConstants.COOKIE_USER_DATA, new String(base64json));
 		return Response.ok().cookie(cookie).build();
 	}
 	
@@ -147,10 +148,10 @@ public class TransactionResources {
 	 */
 	@Path(IRestResourcesConstants.REST_LOGOUT)
 	@GET
-	public Response logout(@QueryParam("getStatistics") final boolean getStatistics,
+	public Response logout(@QueryParam(IChappyServiceNamesConstants.GET_STATISTICS) final boolean getStatistics,
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
-		Cookie cookie = cookies.get("userData");
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
     	ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
@@ -177,12 +178,12 @@ public class TransactionResources {
 	public Response addTransformer(final FormDataMultiPart multipart,
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
-		Cookie cookie = cookies.get("userData");
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
-		String transformerName = multipart.getField("name").getValue();
+		String transformerName = multipart.getField(IChappyServiceNamesConstants.TRANSFORMER_NAME).getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
-				.getField("data").getValue());
+				.getField(IChappyServiceNamesConstants.TRANSFORMER_DATA).getValue());
 		
 		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
 		transaction.addTransformer(received.getUserName(), transformerName, transformerData);		
@@ -205,18 +206,18 @@ public class TransactionResources {
 			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
-		Cookie cookie = cookies.get("userData");
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
     	
-		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
+		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
 		String configuration = null;
 		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
 		if (queryParams != null) {
-			configuration = queryParams.getFirst("configuration");
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
 		}
 		if (configuration == null || "".equals(configuration)) {
-			configurationStream = multipart.getField("configuration").getEntityAs(InputStream.class);
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
 		} else {
 			configurationStream = new ByteArrayInputStream(configuration.getBytes());
 		}
@@ -231,7 +232,7 @@ public class TransactionResources {
 		bos = null;
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaticFlow", configurationStream, multiData);
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
 		runner.createSteps(received);
 		runner.executeSteps(holder);
 		
@@ -251,7 +252,7 @@ public class TransactionResources {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
-		Cookie cookie = cookies.get("userData");
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
 		ITransaction transaction = TransactionProviders.getInstance().getTransaction(receivedCookie);
 		List<String> listOfSteps = transaction.getListOfCustomTansformers();
@@ -270,7 +271,7 @@ public class TransactionResources {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStatistics(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
-		Cookie cookie = cookies.get("userData");
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
 		IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(receivedCookie);
 		if (statistics != null) {

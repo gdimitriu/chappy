@@ -29,6 +29,7 @@ import javax.ws.rs.core.UriInfo;
 
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
@@ -57,7 +58,7 @@ public class DeleteTransformResources {
 	 */
 	@Path(IRestResourcesConstants.REST_TRANSFORMER)
 	@DELETE
-	public Response pushTransformer(final @QueryParam("transformer") String transformerName,
+	public Response pushTransformer(final @QueryParam(IChappyServiceNamesConstants.TRANSFORMER) String transformerName,
 			@Context UriInfo uriInfo) throws Exception {
 		boolean status = CustomTransformerStorageProvider.getInstance().removeTransformer(transformerName);
 		if (status) {
@@ -76,8 +77,8 @@ public class DeleteTransformResources {
 	 */
 	@Path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER)
 	@DELETE
-	public Response pushTransformer(@QueryParam("transformer") final String transformerName,
-			@QueryParam("user") final String userName,
+	public Response pushTransformer(@QueryParam(IChappyServiceNamesConstants.TRANSFORMER) final String transformerName,
+			@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName,
 			@Context UriInfo uriInfo) throws Exception {
 		boolean status = CustomTransformerStorageProvider.getInstance().removeTransformer(userName, transformerName);
 		if (status) {
