@@ -32,6 +32,9 @@ public interface IChappyServiceNamesConstants {
 	/** login password for the login user query*/
 	public String LOGIN_PASSWORD = "password";
 	
+	/** user data for the cookie*/
+	public String COOKIE_USER_DATA = "userData";
+	
 	/** name of the transformer */
 	public String TRANSFORMER_NAME = "name";
 	
@@ -44,13 +47,8 @@ public interface IChappyServiceNamesConstants {
 	/**configuration */
 	public String CONFIGURATION = "configuration";
 
-	
-
 	/** input data to be processed */
 	public String INPUT_DATA = "data";
-
-	/** user data for the cookie*/
-	public String COOKIE_USER_DATA = "userData";
 
 	/** persist query required */
 	public String PERSIST = "persist";
@@ -61,12 +59,10 @@ public interface IChappyServiceNamesConstants {
 	/** mode for staxon (deprecated) */
 	public String MODE = "mode";
 	
-	/* flows to be run */
-
-	
-
-	
-	
+	/* ---------------------------------------------------------
+	 *  runner for flows to be run
+	 *  -------------------------------------------------------- 
+	 */
 	/** staxon simple flow */
 	public String STAXON_SIMPLE_FLOW = "StaxonSimpleFlow";
 	
@@ -75,6 +71,4 @@ public interface IChappyServiceNamesConstants {
 
 	/** digester flow runner */
 	public String DIGESTER_FLOW = "DigesterFlow";
-
-
 }
