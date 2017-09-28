@@ -29,16 +29,16 @@ import chappy.interfaces.jms.resources.IQueueNameConstants;
  * @author Gabriel Dimitriu
  *
  */
-public class QueuesProvider {
+public class JMSQueuesProvider {
 
 	/** singleton provider */
-	private static QueuesProvider singleton = new QueuesProvider();
+	private static JMSQueuesProvider singleton = new JMSQueuesProvider();
 	/** system queues */
 	private List<String> systemQueues = new ArrayList<String>();
 	/**
 	 * add the system queues.
 	 */
-	private QueuesProvider() {		
+	private JMSQueuesProvider() {		
 		systemQueues.add(IQueueNameConstants.TRANSACTION);
 		systemQueues.add(IQueueNameConstants.ADD);
 		systemQueues.add(IQueueNameConstants.TRANSFORM);
@@ -60,7 +60,7 @@ public class QueuesProvider {
 	 * get the singleton instance.
 	 * @return singleton instance.
 	 */
-	public static QueuesProvider getInstance() {
+	public static JMSQueuesProvider getInstance() {
 		return singleton;
 	}
 }

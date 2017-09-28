@@ -25,7 +25,9 @@ import org.xml.sax.SAXException;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.services.IServiceServer;
+import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.services.servers.jms.ServerJMS;
+import chappy.services.servers.jms.resources.TransactionRouter;
 
 /**
  * Server class for manual tests.
@@ -48,6 +50,7 @@ public class ProcessingJMSTestManualServer {
 				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		server = new ServerJMS();
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransactionRouter());
 		server.configure(configuration);
 		Thread thread = new Thread() {
 			public void run() {

@@ -43,7 +43,8 @@ import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.jms.resources.IJMSRuntimeResource;
 import chappy.interfaces.services.IServiceJMS;
 import chappy.interfaces.services.IServiceServer;
-import chappy.providers.jms.resources.QueuesProvider;
+import chappy.policy.provider.JMSRuntimeResourceProvider;
+import chappy.providers.jms.resources.JMSQueuesProvider;
 import chappy.providers.jms.security.RolesProvider;
 import chappy.providers.jms.security.ServerSecurityManager;
 
@@ -65,7 +66,7 @@ public class ServerJMS implements IServiceJMS {
 	private Map<String, IJMSRuntimeResource> registeredConsumers = null;
 	
 	/** map of runtime consumers */
-	private Map<String, ConsumerHolder> runtimeConsumers = null;
+	private Map<String, JMSConsumerHolder> runtimeConsumers = null;
 	
 	//from configuration.xml	
 	/** JMS communication port */
@@ -115,7 +116,7 @@ public class ServerJMS implements IServiceJMS {
 	public ServerJMS() {
 		queuesNames = new HashSet<String>();
 		registeredConsumers = new HashMap<String, IJMSRuntimeResource>();
-		runtimeConsumers = new HashMap<String, ConsumerHolder>();
+		runtimeConsumers = new HashMap<String, JMSConsumerHolder>();
 	}
 	
 	/**
@@ -123,7 +124,7 @@ public class ServerJMS implements IServiceJMS {
 	 */
 	public static void main(String[] args) {
 		IServiceServer server = new ServerJMS();
-		((IServiceJMS) server).setQueuesNames(QueuesProvider.getInstance().getAllQueues());
+		((IServiceJMS) server).setQueuesNames(JMSQueuesProvider.getInstance().getAllQueues());
 		try {
 			server.startServer();
 		} catch (Exception e) {
@@ -185,7 +186,7 @@ public class ServerJMS implements IServiceJMS {
 	    System.out.println("Started Embedded JMS Server");
 	    
 	    registeredConsumers.entrySet().stream().forEach(consumer -> runtimeConsumers.put(consumer.getKey(), 
-	    		new ConsumerHolder(jmsServer, consumer.getValue())));
+	    		new JMSConsumerHolder(jmsServer, consumer.getValue())));
 	    
 	    runtimeConsumers.entrySet().stream().forEach(runtimeConsumer -> runtimeConsumer.getValue().start());
 	}
@@ -234,7 +235,11 @@ public class ServerJMS implements IServiceJMS {
 				}				
 			}
 		}
-		
+		//set the queues names
+		setQueuesNames(JMSQueuesProvider.getInstance().getAllQueues());
+		//get and set the resources
+		List<IJMSRuntimeResource> resources = JMSRuntimeResourceProvider.getInstance().getAllResources();
+		resources.stream().forEach(res -> registerResourceConsumer(res));
 	}
 
 	@Override

@@ -32,13 +32,15 @@ import javax.jms.Session;
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
 
 import chappy.interfaces.jms.resources.IJMSRuntimeResource;
+import chappy.policy.authentication.CredentialHolder;
+import chappy.policy.provider.SystemPolicyProvider;
 
 /**
  * Consumer holder for the resources.
  * @author Gabriel Dimitriu
  *
  */
-public class ConsumerHolder {
+public class JMSConsumerHolder {
 	
 	private EmbeddedJMS jmsServer = null;
 	
@@ -51,7 +53,7 @@ public class ConsumerHolder {
 	
 	private List<Session> sessions = null;
 	
-	public ConsumerHolder(final EmbeddedJMS server, final IJMSRuntimeResource resource) {
+	public JMSConsumerHolder(final EmbeddedJMS server, final IJMSRuntimeResource resource) {
 		jmsServer = server;
 		this.resource = resource;
 		sessions = new ArrayList<Session>();
@@ -65,8 +67,8 @@ public class ConsumerHolder {
 			// Step 6. Lookup JMS resources defined in the configuration
 			cf = (ConnectionFactory) jmsServer.lookup(resource.getFactoryName());
 
-//			connection = cf.createConnection(credentials.getUser(), credentials.getPasswd());
-			connection = cf.createConnection();
+			CredentialHolder credential = SystemPolicyProvider.getInstance().getCredentialForSystemResource(resource);
+			connection = cf.createConnection(credential.getUser(), credential.getPasswd());
 			
 			resource.setCurrentConnection(connection);
 
