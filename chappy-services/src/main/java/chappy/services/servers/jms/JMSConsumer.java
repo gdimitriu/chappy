@@ -17,47 +17,36 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.services;
+package chappy.services.servers.jms;
+
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
+import chappy.interfaces.jms.resources.IJMSRuntimeResource;
+
 /**
- * This is the interface for the servers that could start and stop.
+ * just a wrapper for a simple JMS Consumer. 
  * @author Gabriel Dimitriu
  *
  */
-public interface IServiceServer {
+public class JMSConsumer implements MessageListener {
 
+	/** the resource on which will consumer the message */ 
+	private IJMSRuntimeResource resource = null;
 	/**
-	 * stop the REST server.
-	 * @throws Exception
+	 * @param resource 
+	 * 
 	 */
-	void stopServer() throws Exception;
+	public JMSConsumer(final IJMSRuntimeResource resource) {
+		this.resource = resource;
+	}
 
-	/**
-	 * Start the REST server.
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
 	 */
-	void startServer() throws Exception;
-	
-	/**
-	 * configure the server.
-	 * @param configuration
-	 */
-	void configure(final Object configuration);
+	@Override
+	public void onMessage(Message message) {
+		resource.processMessage(null, message);
+	}
 
-	/**
-	 * set the name of the service.
-	 * @param name the name of the server
-	 */
-	void setName(final String key);
-	
-	/**
-	 * get the service name.
-	 * @return service name
-	 */
-	String getName();
-
-	/**
-	 * get the server host name (default is localhost).
-	 * @return server host.
-	 */
-	String getServerHost();
 }

@@ -26,6 +26,45 @@
 			<value>8100</value>
 		</property>
 	</configuration>
+	<configuration>
+		<name>jms</name>
+		<property>
+			<name>serverPort</name>
+			<value>61616</value>
+		</property>
+		<property>
+			<name>serverName</name>
+			<value>ChappyJMSserver</value>
+		</property>
+		<property>
+			<name>protocolType</name>
+			<value>tcp</value>
+		</property>
+		<property>
+			<name>connectionDefaultFactoryName</name>
+			<value>default</value>
+		</property>
+		<property>
+			<name>journalDirectory</name>
+			<value>target/data/journal</value>
+		</property>
+		<property>
+			<name>serverHost</name>
+			<value>localhost</value>
+		</property>
+		<property>
+			<name>queueDurable</name>
+			<value>true</value>
+		</property>
+		<property>
+			<name>serverSecurityEnabled</name>
+			<value>true</value>
+		</property>
+		<property>
+			<name>serverPersistenceEnabled</name>
+			<value>true</value>
+		</property>
+	</configuration>
 	<persistence>
 		<persistenceUnit>default</persistenceUnit>
 		<framework>datanucleus</framework>

@@ -44,6 +44,7 @@ public class ServicesProvider {
 	 */
 	private ServicesProvider() {
 		services.put("rest", "ServerJetty");
+		services.put("jms", "ServerJMS");
 	}
 	
 	/**

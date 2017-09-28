@@ -17,47 +17,43 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.services;
+package chappy.interfaces.jms.resources;
+
+import javax.jms.Connection;
+import javax.jms.Message;
+import javax.jms.Session;
+
 /**
- * This is the interface for the servers that could start and stop.
  * @author Gabriel Dimitriu
  *
  */
-public interface IServiceServer {
+public interface IJMSRuntimeResource {
 
 	/**
-	 * stop the REST server.
-	 * @throws Exception
+	 * @return queue name associated with this consumer.
 	 */
-	void stopServer() throws Exception;
-
-	/**
-	 * Start the REST server.
-	 * @throws Exception
-	 */
-	void startServer() throws Exception;
+	public String getQueueName();	
 	
 	/**
-	 * configure the server.
-	 * @param configuration
+	 * @return factory name as string
 	 */
-	void configure(final Object configuration);
+	public String getFactoryName();
+	
+	public Connection getCurrentConnection();
 
-	/**
-	 * set the name of the service.
-	 * @param name the name of the server
-	 */
-	void setName(final String key);
+	public void setCurrentConnection(final Connection currentConnection);
 	
 	/**
-	 * get the service name.
-	 * @return service name
+	 * get the maximum number of instances allowed.
+	 * @return nr of number of instances allowed (-1) for infinite
 	 */
-	String getName();
-
+	default public int getMaxConcurentInstances() {
+		return 10;
+	}
+	
 	/**
-	 * get the server host name (default is localhost).
-	 * @return server host.
+	 * @param session the session in which the message was received
+	 * @param message the received message
 	 */
-	String getServerHost();
+	public void processMessage(final Session session, final Message message);
 }

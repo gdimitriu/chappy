@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.configurations.system.test;
+package chappy.tests.configurations.system.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -59,7 +59,7 @@ public class SystemConfigurationTest {
 				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfiguration configuration = configurations.getFirstConfiguration();
 		assertEquals("name", "rest", configuration.getName());
-		assertEquals("port", "8100", configuration.getProperty());
+		assertEquals("port", "8099", configuration.getProperty());
 	}
 	
 }

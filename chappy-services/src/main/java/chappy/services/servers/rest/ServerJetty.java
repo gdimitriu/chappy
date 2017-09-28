@@ -122,4 +122,8 @@ public class ServerJetty implements IServiceServer {
 		return name;
 	}
 
+	@Override
+	public String getServerHost() {
+		return "localhost";
+	}
 }
