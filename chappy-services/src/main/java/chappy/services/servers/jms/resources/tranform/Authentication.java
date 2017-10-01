@@ -17,50 +17,42 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.jms.resources;
+package chappy.services.servers.jms.resources.tranform;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.jms.Message;
+import javax.jms.Session;
 
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
+import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
 
 /**
- * Singleton queue provider.
  * @author Gabriel Dimitriu
  *
  */
-public class JMSQueuesProvider {
+public class Authentication extends JMSAbstractProducerConsumer {
 
-	/** singleton provider */
-	private static JMSQueuesProvider singleton = new JMSQueuesProvider();
-	/** system queues */
-	private List<String> systemQueues = new ArrayList<String>();
 	/**
-	 * add the system queues.
+	 * 
 	 */
-	private JMSQueuesProvider() {		
-		systemQueues.add(IJMSQueueNameConstants.TRANSACTION);
-		systemQueues.add(IJMSQueueNameConstants.ADD);
-		systemQueues.add(IJMSQueueNameConstants.TRANSFORM);
-		systemQueues.add(IJMSQueueNameConstants.AUTHENTICATION);
-		systemQueues.add(IJMSQueueNameConstants.TRANSACTION_RETURN);
+	public Authentication() {
+		// TODO Auto-generated constructor stub
 	}
 
-	
-	/**
-	 * get all the queue from the system.
-	 * @return all queues.
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.resources.IJMSRuntimeResource#getQueueName()
 	 */
-	public List<String> getAllQueues() {
-		return systemQueues;
+	@Override
+	public String getQueueName() {
+		return IJMSQueueNameConstants.AUTHENTICATION;
 	}
-	
-	
-	/**
-	 * get the singleton instance.
-	 * @return singleton instance.
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.resources.IJMSRuntimeResource#processMessage(javax.jms.Session, javax.jms.Message)
 	 */
-	public static JMSQueuesProvider getInstance() {
-		return singleton;
+	@Override
+	public void processMessage(final Session session, final Message message) {
+		// TODO Auto-generated method stub
+
 	}
+
 }

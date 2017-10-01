@@ -17,41 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.jms.resources;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import chappy.interfaces.jms.resources.IJMSCommands;
-import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
+package chappy.interfaces.jms.protocol;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class JMSRouteProvider {
-	
-	private static JMSRouteProvider singleton = new JMSRouteProvider();
-	
-	private Map<String, String> routes = null;
+public class JMSStatisticsMessage {
 
 	/**
 	 * 
 	 */
-	private JMSRouteProvider() {
-		routes = new HashMap<String, String>();
-		routes.put(IJMSCommands.LOGIN, IJMSQueueNameConstants.AUTHENTICATION);
-		routes.put(IJMSCommands.LOGOUT, IJMSQueueNameConstants.AUTHENTICATION);
-	}
-	
-	public static JMSRouteProvider getInstance() {
-		return singleton;
+	public JMSStatisticsMessage() {
+		// TODO Auto-generated constructor stub
 	}
 
-	public String getRouteQueueName(final String inputCommandName) {
-		if (routes.containsKey(inputCommandName)) {
-			return routes.get(inputCommandName);
-		}
-		return inputCommandName;
-	}
 }

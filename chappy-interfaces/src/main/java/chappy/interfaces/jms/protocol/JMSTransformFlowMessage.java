@@ -17,18 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.resources;
+package chappy.interfaces.jms.protocol;
 
 /**
- * Queue names of the system.
  * @author Gabriel Dimitriu
  *
  */
-public interface IQueueNameConstants {
+public class JMSTransformFlowMessage {
 
-	String ADD = "add";
-	String TRANSFORM = "transform";
-	String AUTHENTICATION = "authentication";
-	String TRANSACTION = "transaction";
-	String TRANSACTION_RETURN = "transaction_return";
+	/**
+	 * 
+	 */
+	public JMSTransformFlowMessage() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

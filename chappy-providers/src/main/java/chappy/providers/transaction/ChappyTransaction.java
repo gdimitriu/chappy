@@ -185,8 +185,12 @@ public class ChappyTransaction extends AbstractTransaction {
 	 */
 	@Override
 	public void generateTransactionId(final CookieTransaction cookie) {
-		setTransactionId(cookie.getUserName());
-		cookie.setTransactionId(getTransactionId());
+		if(cookie.getTransactionId() == null  || cookie.getTransactionId().isEmpty()) {
+			setTransactionId(cookie.getUserName());
+			cookie.setTransactionId(getTransactionId());			
+			return;
+		}
+		setTransactionId(cookie.getTransactionId());
 	}
 
 

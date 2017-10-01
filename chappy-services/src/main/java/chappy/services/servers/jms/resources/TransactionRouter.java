@@ -28,7 +28,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
 import chappy.interfaces.jms.resources.IJMSCommands;
-import chappy.interfaces.jms.resources.IQueueNameConstants;
+import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.providers.jms.resources.JMSRouteProvider;
 
 /**
@@ -50,7 +50,7 @@ public class TransactionRouter extends JMSAbstractProducerConsumer {
 	 */
 	@Override
 	public String getQueueName() {
-		return IQueueNameConstants.TRANSACTION;
+		return IJMSQueueNameConstants.TRANSACTION;
 	}
 
 	/* (non-Javadoc)
