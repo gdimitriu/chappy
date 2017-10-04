@@ -21,10 +21,6 @@ package chappy.interfaces.transformers;
 
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-
 import chappy.configurations.transformers.StaxonConfiguration;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.statisticslogs.ILogs;

@@ -27,7 +27,6 @@ import javax.jdo.Transaction;
 
 import chappy.interfaces.cookies.CookieTransaction;
 import chappy.interfaces.markers.ISystemFlowPersistence;
-import chappy.interfaces.markers.ISystemLogsPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.persistence.datanucleus.flow.DatanucleusFlowTransactionPersistence;
