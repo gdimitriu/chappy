@@ -25,7 +25,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
@@ -235,7 +235,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 * @see chappy.interfaces.transactions.ITransaction#generateTransactionId(chappy.interfaces.cookies.CookieTransaction)
 	 */
 	@Override
-	public void generateTransactionId(final CookieTransaction cookie) {
+	public void generateTransactionId(final IChappyCookie cookie) {
 		start();
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		persistedTransaction.setStorageId(cookie.generateStorageId());

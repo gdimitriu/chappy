@@ -28,7 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
-import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.clients.cookies.CookieTransactionsToken;
 
 /**
  * @author Gabriel Dimitriu

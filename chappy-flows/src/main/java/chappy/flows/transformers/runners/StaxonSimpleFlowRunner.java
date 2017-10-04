@@ -22,7 +22,7 @@ package chappy.flows.transformers.runners;
 import java.io.InputStream;
 import java.util.List;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.transformers.ITransformerStep;
@@ -87,7 +87,7 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 	}
 
 	@Override
-	public void createSteps(final CookieTransaction cookie) throws Exception {
+	public void createSteps(final IChappyCookie cookie) throws Exception {
 		//nothing to do for staxon simple flow because this flow could not be overriden
 	}
 

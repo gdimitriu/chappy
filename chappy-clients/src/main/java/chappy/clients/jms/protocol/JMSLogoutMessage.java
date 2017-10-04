@@ -17,23 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.cookies;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package chappy.clients.jms.protocol;
 
 /**
- * Cookie for transactions.
  * @author Gabriel Dimitriu
  *
  */
-
-@XmlRootElement
-public class CookieTransactionsToken extends CookieTransaction {
+public class JMSLogoutMessage {
 
 	/**
-	 * cookie transaction token constructor
+	 * 
 	 */
-	public CookieTransactionsToken() {
+	public JMSLogoutMessage() {
 		// TODO Auto-generated constructor stub
 	}
+
 }

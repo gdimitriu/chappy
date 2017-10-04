@@ -17,18 +17,18 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.protocol;
+package chappy.clients.jms.protocol;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class JMSLogoutMessage {
+public class JMSListStepsMessage {
 
 	/**
 	 * 
 	 */
-	public JMSLogoutMessage() {
+	public JMSListStepsMessage() {
 		// TODO Auto-generated constructor stub
 	}
 

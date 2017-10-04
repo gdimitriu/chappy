@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBException;
 
 import org.xml.sax.SAXException;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
@@ -44,7 +44,7 @@ public interface IFlowRunner {
 	 * This will create the steps from the configuration for a specific user.
 	 * @throws Exception 
 	 */
-	public void createSteps(final CookieTransaction cookie) throws  Exception;
+	public void createSteps(final IChappyCookie cookie) throws  Exception;
 
 	/**
 	 * execute the flow constructed using the configuration.

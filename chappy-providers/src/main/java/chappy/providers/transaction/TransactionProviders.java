@@ -19,8 +19,7 @@
  */
 package chappy.providers.transaction;
 
-import chappy.interfaces.cookies.CookieTransaction;
-import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
@@ -68,7 +67,7 @@ public class TransactionProviders {
 	 * @param cookie of the transaction
 	 * @return base transaction.
 	 */
-	public ITransaction getTransaction(final CookieTransaction cookie) {
+	public ITransaction getTransaction(final IChappyCookie cookie) {
 		return storageProvider.getTransaction(cookie);
 	}
 
@@ -76,7 +75,7 @@ public class TransactionProviders {
 	 * remove transaction from storage.
 	 * @param cookie of the transaction
 	 */
-	public void removeTransaction(final CookieTransactionsToken cookie) {
+	public void removeTransaction(final IChappyCookie cookie) {
 		storageProvider.removeTransaction(cookie);
 	}
 	
@@ -88,7 +87,7 @@ public class TransactionProviders {
 	 * @return the transaction.
 	 * @throws ForbiddenException in case of transaction problem for persistence
 	 */
-	public ITransaction startTransaction(final CookieTransaction cookie, final boolean persistence) throws ForbiddenException {
+	public ITransaction startTransaction(final IChappyCookie cookie, final boolean persistence) throws ForbiddenException {
 		ITransaction transaction;
 		if (!persistence) {
 			transaction = new ChappyTransaction();

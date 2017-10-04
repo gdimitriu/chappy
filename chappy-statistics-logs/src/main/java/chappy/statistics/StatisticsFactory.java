@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.policy.IUserPolicy;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.policy.provider.SystemPolicyProvider;
@@ -57,7 +57,7 @@ public class StatisticsFactory {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public IStatistics newInstance(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+	public IStatistics newInstance(final IChappyCookie cookie) throws InstantiationException, IllegalAccessException {
 		IUserPolicy policy = SystemPolicyProvider.getInstance().getAuthenticationHandler();
 		return newInstance(policy.statisticsType(cookie.getUserName()));
 	}

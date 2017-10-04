@@ -89,6 +89,7 @@
 		<module>chappy-persistence</module>
 		
 		<module>chappy-exceptions</module>
+		<module>chappy-clients</module>
 	</modules>
 	<dependencies>
 	<!-- this is neeed by cassandra  -->

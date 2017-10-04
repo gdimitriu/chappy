@@ -50,7 +50,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.clients.cookies.CookieTransactionsToken;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;

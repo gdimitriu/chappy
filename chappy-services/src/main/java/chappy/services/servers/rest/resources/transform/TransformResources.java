@@ -37,8 +37,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import chappy.interfaces.cookies.CookieTransaction;
-import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.clients.cookies.CookieTransaction;
+import chappy.clients.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;

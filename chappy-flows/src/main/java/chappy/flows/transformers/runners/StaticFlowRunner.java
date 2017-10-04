@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.statisticslogs.ILogs;
@@ -67,7 +67,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	private List<ITransformerStep> stepList = new ArrayList<ITransformerStep>();
 	
 	/** cookie of the  transaction */
-	private CookieTransaction transactionCookie = null;
+	private IChappyCookie transactionCookie = null;
 	/**
 	 * constructor need for reflection.
 	 */
@@ -112,7 +112,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
 	 */
 	@Override
-	public void createSteps(final CookieTransaction cookie) throws Exception {
+	public void createSteps(final IChappyCookie cookie) throws Exception {
 		transactionCookie = cookie;
 		if (cookie.getUserName() == null || cookie.getUserName().equals("")) {
 			createSteps();

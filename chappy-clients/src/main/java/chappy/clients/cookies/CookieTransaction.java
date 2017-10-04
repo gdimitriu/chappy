@@ -17,9 +17,11 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.cookies;
+package chappy.clients.cookies;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import chappy.interfaces.cookies.IChappyCookie;
 
 /**
  * Base class for cookie.
@@ -27,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement
-public abstract class CookieTransaction {
+public abstract class CookieTransaction implements IChappyCookie {
 
 	/** name of the user */
 	private String userName;
@@ -42,42 +44,42 @@ public abstract class CookieTransaction {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * get the user name
-	 * @return the user name
+	/* (non-Javadoc)
+	 * @see chappy.clients.cookies.IChappyCookie#getUserName()
 	 */
+	@Override
 	public String getUserName() {
 		return userName;
 	}
 	
-	/**
-	 * set the user Name.
-	 * @param nameUser
+	/* (non-Javadoc)
+	 * @see chappy.clients.cookies.IChappyCookie#setUserName(java.lang.String)
 	 */
+	@Override
 	public void setUserName(String nameUser) {
 		this.userName = nameUser;
 	}
 
-	/**
-	 * get the transaction id.
-	 * @return transaction id
+	/* (non-Javadoc)
+	 * @see chappy.clients.cookies.IChappyCookie#getTransactionId()
 	 */
+	@Override
 	public String getTransactionId() {
 		return transactionId;
 	}
 
-	/**
-	 * set the transaction id.
-	 * @param transactionId transaction id
+	/* (non-Javadoc)
+	 * @see chappy.clients.cookies.IChappyCookie#setTransactionId(java.lang.String)
 	 */
+	@Override
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
 	}
 
-	/**
-	 * generate the storage id.
-	 * @return storage id for the hash.
+	/* (non-Javadoc)
+	 * @see chappy.clients.cookies.IChappyCookie#generateStorageId()
 	 */
+	@Override
 	public String generateStorageId() {
 		return userName + ":" + transactionId;
 	}

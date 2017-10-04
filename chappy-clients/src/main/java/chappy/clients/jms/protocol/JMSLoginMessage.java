@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.protocol;
+package chappy.clients.jms.protocol;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -25,7 +25,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 
 /**
  * @author Gabriel Dimitriu
@@ -40,7 +40,7 @@ public class JMSLoginMessage {
 	private String password = null;
 	
 	/** cookie for the transaction */
-	private CookieTransaction cookie = null;
+	private IChappyCookie cookie = null;
 	
 	/**
 	 * default constructor used for send.
@@ -77,7 +77,7 @@ public class JMSLoginMessage {
 	 * set the cookie that correspond to this login
 	 * @param cookie that correspond to this login.
 	 */
-	public void setCookie(final CookieTransaction cookie) {
+	public void setCookie(final IChappyCookie cookie) {
 		this.cookie = cookie;
 	}
 	
@@ -85,7 +85,7 @@ public class JMSLoginMessage {
 	 * get the cookie for this login.
 	 * @return cookie for this login.
 	 */
-	public CookieTransaction getCookie() {
+	public IChappyCookie getCookie() {
 		return this.cookie;
 	}
 	

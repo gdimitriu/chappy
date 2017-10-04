@@ -48,5 +48,10 @@
 			<artifactId>chappy-persistence</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-clients</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
 	</dependencies>
 </project>
