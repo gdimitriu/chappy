@@ -45,6 +45,7 @@ import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.interfaces.transformers.ITransformerStep;
+import chappy.providers.cookie.CookieFactory;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.TransformerProvider;
@@ -109,12 +110,12 @@ public class StaticFlowRunner implements IFlowRunner{
 	}
 	
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
+	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final IChappyCookie cookie)
 	 */
 	@Override
 	public void createSteps(final IChappyCookie cookie) throws Exception {
 		transactionCookie = cookie;
-		if (cookie.getUserName() == null || cookie.getUserName().equals("")) {
+		if (cookie == null || cookie.getUserName() == null || cookie.getUserName().equals("")) {
 			createSteps();
 			return;
 		}
@@ -127,6 +128,15 @@ public class StaticFlowRunner implements IFlowRunner{
 			stepList.add(step);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
+	 */
+	@Override
+	public void createSteps(final String userName) throws Exception {
+		createSteps(CookieFactory.getFactory().newCookie(null, userName));		
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.flows.IFlowRunner#executeSteps(chappy.utils.streams.wrappers.StreamHolder)
@@ -201,5 +211,6 @@ public class StaticFlowRunner implements IFlowRunner{
 		// TODO Auto-generated method stub
 		
 	}
+
 
 }

@@ -41,10 +41,17 @@ public interface IFlowRunner {
 	public void createSteps() throws  Exception;
 	
 	/**
-	 * This will create the steps from the configuration for a specific user.
+	 * This will create the steps from the configuration for a specific user in transaction.
 	 * @throws Exception 
 	 */
 	public void createSteps(final IChappyCookie cookie) throws  Exception;
+	
+	/**
+	 * This will create the steps from the configuration for a specific user without transaction.
+	 * @param userName the user name
+	 * @throws Exception 
+	 */
+	public void createSteps(final String userName) throws  Exception;
 
 	/**
 	 * execute the flow constructed using the configuration.

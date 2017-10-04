@@ -68,6 +68,7 @@ import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
+import chappy.services.servers.common.TransactionOperations;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -106,26 +107,11 @@ public class TransactionResources {
 	public Response login(@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName, @QueryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD) final String password, 
 			@QueryParam(IChappyServiceNamesConstants.PERSIST) final boolean persistence){
 		
-		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
+		IChappyCookie response = TransactionOperations.login(this.getClass(), userName, password, persistence);
+		
+		if (response == null) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
-		IChappyCookie response = CookieFactory.getFactory().newCookie(this.getClass(), userName);
-		
-		boolean allowedPersistence = SystemPolicyProvider.getInstance().getAuthenticationHandler().isAllowedPersistence(userName);
-		if (persistence != allowedPersistence) {
-			if (persistence) {
-				return Response.status(Status.FORBIDDEN).build();
-			}
-		}
-		
-		try {
-			 TransactionProviders.getInstance().startTransaction(response, persistence);
-		} catch (ForbiddenException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return Response.status(Status.FORBIDDEN).build();
-		}		
-		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     	String json;
 		try {

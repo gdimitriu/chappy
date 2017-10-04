@@ -25,6 +25,7 @@ import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.PersistenceProvider;
 import chappy.persistence.providers.TransactionStorageProvider;
+import chappy.providers.cookie.CookieFactory;
 
 /**
  * providers for transactions.
@@ -82,12 +83,13 @@ public class TransactionProviders {
 
 	/**
 	 * start a new transaction.
-	 * @param cookie that is identified
+	 * @param requester 
+	 * @param userName 
 	 * @param persistence true if it has persistence.
-	 * @return the transaction.
+	 * @return the cookie.
 	 * @throws ForbiddenException in case of transaction problem for persistence
 	 */
-	public ITransaction startTransaction(final IChappyCookie cookie, final boolean persistence) throws ForbiddenException {
+	public IChappyCookie startTransaction(final Class<?> requester, final String userName, final boolean persistence) throws ForbiddenException {
 		ITransaction transaction;
 		if (!persistence) {
 			transaction = new ChappyTransaction();
@@ -121,8 +123,9 @@ public class TransactionProviders {
 			}
 		}
 		transaction.setPersistence(persistence);
+		IChappyCookie cookie = CookieFactory.getFactory().newCookie(requester, userName);
 		storageProvider.putTransaction(cookie, transaction);
-		return transaction;
+		return cookie;
 	}
 	
 }

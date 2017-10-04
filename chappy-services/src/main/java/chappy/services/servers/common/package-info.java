@@ -21,4 +21,4 @@
  * @author Gabriel Dimitriu
  *
  */
-package chappy.services.servers.rest.resources.transform;
+package chappy.services.servers.common;

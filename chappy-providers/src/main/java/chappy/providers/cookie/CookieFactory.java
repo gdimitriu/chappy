@@ -52,6 +52,11 @@ public class CookieFactory {
 	 * @return cookie instance.
 	 */
 	public IChappyCookie newCookie(final Class<?> requester, final String userName) {
+		
+		if (requester == null) {
+			//special case for not transactional operations. 
+		}
+		
 		CookieTransactionsToken cookie = new CookieTransactionsToken(userName);
 		return cookie;
 	}

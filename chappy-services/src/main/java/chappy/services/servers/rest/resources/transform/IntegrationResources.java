@@ -53,6 +53,7 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieTransactionsToken;
+import chappy.policy.cookies.CookieUtils;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.utils.streams.StreamUtils;
@@ -93,10 +94,8 @@ public class IntegrationResources {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	IChappyCookie received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
 		
     	List<FormDataBodyPart> bodyParts = multipart.getFields(IChappyServiceNamesConstants.INPUT_DATA);
     	List<InputStream> inputValues = new ArrayList<InputStream>();
