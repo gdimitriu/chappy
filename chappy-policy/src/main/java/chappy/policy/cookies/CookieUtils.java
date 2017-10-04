@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.services.servers.rest.cookies;
+package chappy.policy.cookies;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -27,8 +27,6 @@ import javax.ws.rs.core.Cookie;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-
-import chappy.clients.cookies.CookieTransactionsToken;
 
 /**
  * @author Gabriel Dimitriu

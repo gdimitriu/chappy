@@ -5,4 +5,4 @@
  * @author Gabriel
  *
  */
-package chappy.clients.cookies;
+package chappy.policy.cookies;

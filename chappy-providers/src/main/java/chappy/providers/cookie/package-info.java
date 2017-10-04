@@ -17,37 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.cookies;
-
 /**
- * Interface for cookies.
  * @author Gabriel Dimitriu
  *
  */
-public interface IChappyCookie {
-
-	/**
-	 * get the user name
-	 * @return the user name
-	 */
-	String getUserName();
-
-	/**
-	 * get the transaction id.
-	 * @return transaction id
-	 */
-	String getTransactionId();
-
-	/**
-	 * set the transaction id.
-	 * @param transactionId transaction id
-	 */
-	void setTransactionId(String transactionId);
-
-	/**
-	 * generate the storage id.
-	 * @return storage id for the hash.
-	 */
-	String generateStorageId();
-
-}
+package chappy.providers.cookie;

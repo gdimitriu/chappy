@@ -50,7 +50,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import chappy.clients.cookies.CookieTransactionsToken;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
@@ -61,12 +61,13 @@ import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
+import chappy.policy.cookies.CookieUtils;
 import chappy.policy.provider.SystemPolicyProvider;
+import chappy.providers.cookie.CookieFactory;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
-import chappy.services.servers.rest.cookies.CookieUtils;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -108,8 +109,7 @@ public class TransactionResources {
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
-		CookieTransactionsToken response = new CookieTransactionsToken();
-		response.setUserName(userName);
+		IChappyCookie response = CookieFactory.getFactory().newCookie(this.getClass(), userName);
 		
 		boolean allowedPersistence = SystemPolicyProvider.getInstance().getAuthenticationHandler().isAllowedPersistence(userName);
 		if (persistence != allowedPersistence) {
@@ -152,7 +152,7 @@ public class TransactionResources {
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
     	
     	ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
     	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
@@ -179,7 +179,7 @@ public class TransactionResources {
 			@Context UriInfo uriInfo, @Context HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
     	
 		String transformerName = multipart.getField(IChappyServiceNamesConstants.TRANSFORMER_NAME).getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
@@ -207,7 +207,7 @@ public class TransactionResources {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-		CookieTransactionsToken received = CookieUtils.decodeCookie(cookie);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
     	
 		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
@@ -253,7 +253,7 @@ public class TransactionResources {
 	public Response listSteps(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
+		IChappyCookie receivedCookie = CookieUtils.decodeCookie(cookie);
 		ITransaction transaction = TransactionProviders.getInstance().getTransaction(receivedCookie);
 		List<String> listOfSteps = transaction.getListOfCustomTansformers();
 		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(listOfSteps){};
@@ -272,7 +272,7 @@ public class TransactionResources {
 	public Response getStatistics(@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-		CookieTransactionsToken receivedCookie = CookieUtils.decodeCookie(cookie);
+		IChappyCookie receivedCookie = CookieUtils.decodeCookie(cookie);
 		IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(receivedCookie);
 		if (statistics != null) {
 			List<StatisticLog> listOfStatistics = statistics.getAllStatistics();

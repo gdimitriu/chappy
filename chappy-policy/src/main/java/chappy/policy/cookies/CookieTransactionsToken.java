@@ -17,8 +17,31 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
+package chappy.policy.cookies;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
+ * Cookie for transactions.
  * @author Gabriel Dimitriu
  *
  */
-package chappy.services.servers.rest.cookies;
+
+@XmlRootElement
+public class CookieTransactionsToken extends CookieTransaction {
+
+	/**
+	 * cookie transaction token constructor
+	 * @param userName 
+	 */
+	public CookieTransactionsToken(final String userName) {
+		setUserName(userName);
+	}
+	
+	/**
+	 * default constructor.
+	 */
+	public CookieTransactionsToken() {
+		
+	}
+}

@@ -46,12 +46,13 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
-import chappy.clients.cookies.CookieTransactionsToken;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
+import chappy.policy.cookies.CookieTransactionsToken;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.utils.streams.StreamUtils;
@@ -93,7 +94,7 @@ public class IntegrationResources {
 		Map<String, Cookie> cookies = hh.getCookies();
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
+    	IChappyCookie received = new CookieTransactionsToken();
     	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
     	received=or.readValue(str);
 		

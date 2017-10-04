@@ -17,23 +17,42 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.clients.cookies;
+package chappy.providers.cookie;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import chappy.interfaces.cookies.IChappyCookie;
+import chappy.policy.cookies.CookieTransactionsToken;
+
 
 /**
- * Cookie for transactions.
+ * Cookie factory.
  * @author Gabriel Dimitriu
  *
  */
+public class CookieFactory {
 
-@XmlRootElement
-public class CookieTransactionsToken extends CookieTransaction {
-
+	private static CookieFactory factory = new CookieFactory();
 	/**
-	 * cookie transaction token constructor
+	 * constructor.
 	 */
-	public CookieTransactionsToken() {
-		// TODO Auto-generated constructor stub
+	private CookieFactory() {
+		
+	}
+	
+	/**
+	 * get the singleton factory.
+	 * @return the factory
+	 */
+	public static CookieFactory getFactory() {
+		return factory;
+	}
+	
+	/**
+	 * newCookie request.
+	 * @param requester
+	 * @return cookie instance.
+	 */
+	public IChappyCookie newCookie(final Class<?> requester, final String userName) {
+		CookieTransactionsToken cookie = new CookieTransactionsToken(userName);
+		return cookie;
 	}
 }
