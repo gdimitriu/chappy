@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -43,16 +42,12 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
-import chappy.policy.cookies.CookieTransactionsToken;
 import chappy.policy.cookies.CookieUtils;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
