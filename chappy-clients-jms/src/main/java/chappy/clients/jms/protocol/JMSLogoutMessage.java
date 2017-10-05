@@ -23,7 +23,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
+import chappy.interfaces.jms.protocol.IJMSStatus;
 
 /**
  * @author Gabriel Dimitriu
@@ -31,6 +33,17 @@ import chappy.interfaces.jms.protocol.IJMSProtocol;
  */
 public class JMSLogoutMessage implements IJMSProtocol {
 
+	/** cookie for the transaction */
+	private IChappyCookie cookie = null;
+	
+	/** reply message from chappy */
+	private String replyMessage = "";
+	
+	/** exception in case of internal server */ 
+	private Exception exception = null;
+	
+	/** status string */
+	private String status = IJMSStatus.FORBIDDEN;
 	
 	/**
 	 * default constructor. 
@@ -39,11 +52,53 @@ public class JMSLogoutMessage implements IJMSProtocol {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * @return the cookie
+	 */
+	public IChappyCookie getCookie() {
+		return cookie;
+	}
+
+	/**
+	 * @param cookie the cookie to set
+	 */
+	public void setCookie(final IChappyCookie cookie) {
+		this.cookie = cookie;
+	}
+
+	/**
+	 * @return the replyMessage
+	 */
+	public String getReplyMessage() {
+		return replyMessage;
+	}
+
+	/**
+	 * @param replyMessage the replyMessage to set
+	 */
+	public void setReplyMessage(final String replyMessage) {
+		this.replyMessage = replyMessage;
+	}
+
+	/**
+	 * @return the exception
+	 */
+	public Exception getException() {
+		return exception;
+	}
+
+	/**
+	 * @param exception the exception to set
+	 */
+	public void setException(final Exception exception) {
+		this.exception = exception;
+	}
+
 	/* (non-Javadoc)
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#encodeInboundMessage(javax.jms.Session)
 	 */
 	@Override
-	public Message encodeInboundMessage(Session session) throws JMSException {
+	public Message encodeInboundMessage(final Session session) throws JMSException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -52,7 +107,7 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeInbound(javax.jms.Message)
 	 */
 	@Override
-	public void decodeInbound(Message message) throws JMSException {
+	public void decodeInbound(final Message message) throws JMSException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -61,7 +116,7 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#encodeResponseMessage(javax.jms.Session)
 	 */
 	@Override
-	public Message encodeResponseMessage(Session session) throws JMSException {
+	public Message encodeResponseMessage(final Session session) throws JMSException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -70,7 +125,7 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeReply(javax.jms.Message)
 	 */
 	@Override
-	public void decodeReply(Message message) throws JMSException {
+	public void decodeReply(final Message message) throws JMSException {
 		// TODO Auto-generated method stub
 		
 	}

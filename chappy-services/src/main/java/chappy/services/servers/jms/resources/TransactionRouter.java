@@ -111,12 +111,18 @@ public class TransactionRouter extends JMSAbstractProducerConsumer {
 	 */
 	private void routeMessage(final Session session, final String route, final Message strMsg) 
 			throws JMSException {
-		
-		Destination destination = session.createQueue(route);
-		MessageProducer producer = session.createProducer(destination);
-		producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-		producer.send(strMsg);
-		session.commit();
+		try {
+			try {
+				Destination destination = session.createQueue(route);
+				MessageProducer producer = session.createProducer(destination);
+				producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+				producer.send(strMsg);
+			} catch (JMSException e) {
+				session.rollback();
+			}
+		} catch (JMSException e1) {
+			session.commit();
+		}
 	}
 
 }

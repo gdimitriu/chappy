@@ -29,6 +29,7 @@ import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
 import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
+import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.providers.cookie.CookieFactory;
 
 /**
@@ -56,7 +57,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	private Exception exception = null;
 	
 	/** status string */
-	private String status = "Forbidden";
+	private String status = IJMSStatus.FORBIDDEN;
 	
 	/**
 	 * default constructor.
@@ -103,7 +104,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	 * set the required persistence.
 	 * @param persistence true if persistence is required.
 	 */
-	public void setPersistence(boolean persistence) {
+	public void setPersistence(final boolean persistence) {
 		this.persistence = persistence;
 	}
 	
@@ -119,7 +120,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	 * set the replay message from chappy.
 	 * @param replyMessage the replyMessage to set
 	 */
-	public void setReplyMessage(String replyMessage) {
+	public void setReplyMessage(final String replyMessage) {
 		this.replyMessage = replyMessage;
 	}
 	
@@ -133,7 +134,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(final String status) {
 		this.status = status;
 	}
 
@@ -147,7 +148,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	/**
 	 * @param exception the exception to set
 	 */
-	public void setException(Exception exception) {
+	public void setException(final Exception exception) {
 		this.exception = exception;
 	}
 
@@ -173,7 +174,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	@Override
 	public void decodeReply(final Message message) throws JMSException {
 		if (message instanceof ObjectMessage) {
-			message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
+			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
 			ObjectMessage msg = (ObjectMessage) message;
 			@SuppressWarnings("unchecked")
 			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();
