@@ -27,7 +27,7 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
-import chappy.interfaces.jms.resources.IJMSCommands;
+import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.providers.jms.resources.JMSRouteProvider;
 

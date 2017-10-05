@@ -69,7 +69,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-clients</artifactId>
+			<artifactId>chappy-clients-jms</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
 	</dependencies>

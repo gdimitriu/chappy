@@ -86,10 +86,10 @@
 		<module>chappy-installer</module>
 		<module>chappy-statistics-logs</module>
 		<module>chappy-policy</module>
-		<module>chappy-persistence</module>
-		
+		<module>chappy-persistence</module>		
 		<module>chappy-exceptions</module>
-		<module>chappy-clients</module>
+		<module>chappy-clients-jms</module>
+		<module>chappy-clients-rest</module>
 	</modules>
 	<dependencies>
 	<!-- this is neeed by cassandra  -->

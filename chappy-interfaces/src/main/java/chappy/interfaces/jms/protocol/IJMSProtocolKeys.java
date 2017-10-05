@@ -17,41 +17,24 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.providers.jms.resources;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import chappy.interfaces.jms.protocol.IJMSCommands;
-import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
+package chappy.interfaces.jms.protocol;
 
 /**
+ * Keys for the protocol aggregates.
  * @author Gabriel Dimitriu
  *
  */
-public class JMSRouteProvider {
-	
-	private static JMSRouteProvider singleton = new JMSRouteProvider();
-	
-	private Map<String, String> routes = null;
+public interface IJMSProtocolKeys {
 
-	/**
-	 * 
-	 */
-	private JMSRouteProvider() {
-		routes = new HashMap<String, String>();
-		routes.put(IJMSCommands.LOGIN, IJMSQueueNameConstants.AUTHENTICATION);
-		routes.put(IJMSCommands.LOGOUT, IJMSQueueNameConstants.AUTHENTICATION);
-	}
+	/** cookie key for the protocol */
+	String COOKIE_KEY = "cookie";
 	
-	public static JMSRouteProvider getInstance() {
-		return singleton;
-	}
+	/** reply message key for the protocol */
+	String REPLY_MESSAGE_KEY = "reply_message";
 
-	public String getRouteQueueName(final String inputCommandName) {
-		if (routes.containsKey(inputCommandName)) {
-			return routes.get(inputCommandName);
-		}
-		return inputCommandName;
-	}
+	/** exception occured in chappy*/
+	String REPLY_EXCEPTION_KEY = "exception";
+	
+	/** status property */
+	String REPLY_STATUS_PROPERTY = "status";
 }

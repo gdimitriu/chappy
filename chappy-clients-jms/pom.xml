@@ -5,9 +5,9 @@
     <artifactId>chappy</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>chappy-clients</artifactId>
-  <name>chappy-clients</name>
-  <description>data and interfaces for client ussage</description>
+  <artifactId>chappy-clients-jms</artifactId>
+  <name>chappy-clients-jms</name>
+  <description>data and interfaces for jms client ussage</description>
 	<build>
 		<plugins>
 			<plugin>
@@ -36,6 +36,11 @@
 				<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-interfaces</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-providers</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
 	</dependencies>  

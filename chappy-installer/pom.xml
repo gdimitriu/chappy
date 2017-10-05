@@ -24,7 +24,7 @@
 						<configuration>
 							<excludeTransitive>false</excludeTransitive>
 							<includeArtifactIds>chappy-utils, chappy-interfaces, chappy-configurations, chappy-flows,
-								chappy-services, chappy-mappings, chappy-change-bytecode</includeArtifactIds>
+								chappy-services, chappy-mappings, chappy-change-bytecode, chappy-clients-jms</includeArtifactIds>
 							<outputDirectory>${install_folder}/lib</outputDirectory>
 						</configuration>
 					</execution>
