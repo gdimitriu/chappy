@@ -23,17 +23,20 @@ package chappy.interfaces.jms.protocol;
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSStatus {
+public interface IJMSMessages {
+	
+	/** chappy request has been received OK */
+	public static final String OK = "Chappy request had been received OK";
+	
+	/** reply not ready (chappy had not return the reply). */
+	public static final String REPLY_NOT_READY = "Reply not ready from Chappy";
+	
+	/** communication error */
+	public static final String COMMUNICATION_ERROR = "JMS Communication error";
 
-	/** ok status */
-	public static final String OK = "OK";
-	
-	/** forbidden access status */
-	public static final String FORBIDDEN = "Forbidden";
-	
-	/** reply not ready from chappy */
-	public static final String REPLY_NOT_READY = "Reply not ready";
-	
-	/** internal server error or communication error */
-	public static final String COMMUNICATION_SERVER_ERROR = "Communication Server error";
+	/** forbidden access or internal server error */
+	public static final String FORBIDDEN = "Access forbidden or internal server error";
+
+	/** internal server error for the server really internal problem */
+	public static final String INTERNAL_SERVER_ERROR = "Internal server error";
 }

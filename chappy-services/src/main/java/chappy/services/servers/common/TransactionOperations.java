@@ -38,8 +38,9 @@ public class TransactionOperations {
 	 * @param password the password for the user
 	 * @param persistence if the persistence is allowed
 	 * @return cookie.
+	 * @throws ForbiddenException 
 	 */
-	public static IChappyCookie login(final Class<?> requester, final String userName, final String password, final boolean persistence) {
+	public static IChappyCookie login(final Class<?> requester, final String userName, final String password, final boolean persistence) throws ForbiddenException {
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return null;
@@ -53,13 +54,7 @@ public class TransactionOperations {
 			}
 		}
 		
-		try {
-			 response = TransactionProviders.getInstance().startTransaction(requester, userName, persistence);
-		} catch (ForbiddenException e1) {
-			e1.printStackTrace();
-			return null;
-		}
-		
+		response = TransactionProviders.getInstance().startTransaction(requester, userName, persistence);
 		return response;
 	}
 }

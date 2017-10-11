@@ -28,7 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @XmlRootElement
-public class CookieTransactionsToken extends CookieTransaction {
+public class CookieTransactionsToken extends CookieTransaction{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * cookie transaction token constructor

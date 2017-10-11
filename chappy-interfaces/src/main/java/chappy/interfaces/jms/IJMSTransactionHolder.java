@@ -17,23 +17,39 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.protocol;
+package chappy.interfaces.jms;
+
+import javax.jms.Connection;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+
+import chappy.interfaces.transactions.IClientTransaction;
 
 /**
+ * This is the interface for the JMS transaction Holder for the clients.
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSStatus {
+public interface IJMSTransactionHolder extends IClientTransaction {
 
-	/** ok status */
-	public static final String OK = "OK";
+	/**
+	 * @return connection for transaction.
+	 */
+	public Connection getCurrentConnection();
 	
-	/** forbidden access status */
-	public static final String FORBIDDEN = "Forbidden";
+	/**
+	 * @return current session of the client transaction.
+	 */
+	public Session getCurrentSession();
 	
-	/** reply not ready from chappy */
-	public static final String REPLY_NOT_READY = "Reply not ready";
-	
-	/** internal server error or communication error */
-	public static final String COMMUNICATION_SERVER_ERROR = "Communication Server error";
+	/**
+	 * @return current message consumer for the transaction
+	 */
+	public MessageConsumer getCurrentMessageConsumer();
+			
+	/**
+	 * @return current message producer for transaction.
+	 */
+	public MessageProducer getCurrentMessageProducer();
 }

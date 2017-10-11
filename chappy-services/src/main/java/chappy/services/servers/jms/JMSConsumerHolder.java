@@ -84,7 +84,7 @@ public class JMSConsumerHolder {
 				sessions.add(session);
 				Queue queue = (Queue) jmsServer.lookup("queue/" + resource.getQueueName());
 				MessageConsumer consumer = session.createConsumer(queue);
-				consumer.setMessageListener(new JMSConsumer(resource));
+				consumer.setMessageListener(new JMSProducerConsumerSessionAware(session, resource, queue));
 			}
 
 			connection.start();

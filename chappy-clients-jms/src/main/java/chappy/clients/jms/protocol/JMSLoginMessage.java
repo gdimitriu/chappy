@@ -117,7 +117,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	}
 	
 	/**
-	 * set the replay message from chappy.
+	 * set the reply message from chappy.
 	 * @param replyMessage the replyMessage to set
 	 */
 	public void setReplyMessage(final String replyMessage) {
@@ -202,6 +202,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 	@Override
 	public Message encodeResponseMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
+		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
 		message.setJMSCorrelationID(cookie.getTransactionId());
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
@@ -210,6 +211,9 @@ public class JMSLoginMessage implements IJMSProtocol{
 		}
 		if (exception != null) {
 			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, exception);
+		}
+		if (replyMessage != null) {
+			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
 		}
 		message.setObject(map);
 		return message;
@@ -265,5 +269,17 @@ public class JMSLoginMessage implements IJMSProtocol{
 		JMSLoginMessage msg = new JMSLoginMessage();
 		msg.decodeReply(message);
 		return msg;
+	}
+	
+	/**
+	 * query if it has exception comming from chappy.
+	 * @return true if has exception from chappy.
+	 */
+	public boolean hasException() {
+		if (exception != null) {
+			return true;			
+		} else {
+			return false;
+		}
 	}
 }

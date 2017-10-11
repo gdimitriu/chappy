@@ -48,7 +48,7 @@ public interface IJMSRuntimeResource {
 	 * @return nr of number of instances allowed (-1) for infinite
 	 */
 	default public int getMaxConcurentInstances() {
-		return 10;
+		return 1;
 	}
 	
 	/**

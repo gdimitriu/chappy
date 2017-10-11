@@ -19,6 +19,8 @@
  */
 package chappy.policy.cookies;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import chappy.interfaces.cookies.IChappyCookie;
@@ -29,7 +31,12 @@ import chappy.interfaces.cookies.IChappyCookie;
  *
  */
 @XmlRootElement
-public abstract class CookieTransaction implements IChappyCookie {
+public abstract class CookieTransaction implements IChappyCookie, Serializable {
+
+	/**
+	 * default but is overriden in the implementation class.
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/** name of the user */
 	private String userName;

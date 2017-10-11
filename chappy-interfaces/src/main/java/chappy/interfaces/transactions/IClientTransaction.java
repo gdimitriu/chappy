@@ -17,23 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.protocol;
+package chappy.interfaces.transactions;
+
+import chappy.interfaces.cookies.IChappyCookie;
 
 /**
+ * Interface for client transaction.
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSStatus {
+public interface IClientTransaction {
 
-	/** ok status */
-	public static final String OK = "OK";
-	
-	/** forbidden access status */
-	public static final String FORBIDDEN = "Forbidden";
-	
-	/** reply not ready from chappy */
-	public static final String REPLY_NOT_READY = "Reply not ready";
-	
-	/** internal server error or communication error */
-	public static final String COMMUNICATION_SERVER_ERROR = "Communication Server error";
+	/**
+	 * @return cookie for the client transaction.
+	 */
+	public IChappyCookie getCookie();	
 }

@@ -28,6 +28,7 @@ import chappy.interfaces.services.IServiceServer;
 import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.services.servers.jms.ServerJMS;
 import chappy.services.servers.jms.resources.TransactionRouter;
+import chappy.services.servers.jms.resources.tranform.Authentication;
 
 /**
  * Server class for manual tests.
@@ -51,6 +52,7 @@ public class ProcessingJMSTestManualServer {
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		server = new ServerJMS();
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransactionRouter());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new Authentication());
 		server.configure(configuration);
 		Thread thread = new Thread() {
 			public void run() {

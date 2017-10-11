@@ -51,6 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
@@ -104,7 +105,13 @@ public class TransactionResources {
 	public Response login(@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName, @QueryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD) final String password, 
 			@QueryParam(IChappyServiceNamesConstants.PERSIST) final boolean persistence){
 		
-		IChappyCookie response = TransactionOperations.login(this.getClass(), userName, password, persistence);
+		IChappyCookie response = null;
+			try {
+				response = TransactionOperations.login(this.getClass(), userName, password, persistence);
+			} catch (ForbiddenException e1) {
+				e1.printStackTrace();
+				Response.status(Status.FORBIDDEN).build();
+			}
 		
 		if (response == null) {
 			return Response.status(Status.FORBIDDEN).build();

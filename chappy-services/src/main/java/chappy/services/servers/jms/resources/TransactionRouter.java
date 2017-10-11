@@ -71,7 +71,7 @@ public class TransactionRouter extends JMSAbstractProducerConsumer {
 			String command = message.getStringProperty(IJMSCommands.COMMAND_PROPERTY);
 			if (IJMSCommands.getAllCommands().contains(command)) {
 				String route = JMSRouteProvider.getInstance().getRouteQueueName(command);
-				routeMessage(session, route, message);
+				routeMessage(session, route, message);				
 			}
 		} catch (JMSException e) {
 			e.printStackTrace();
@@ -117,6 +117,7 @@ public class TransactionRouter extends JMSAbstractProducerConsumer {
 				MessageProducer producer = session.createProducer(destination);
 				producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 				producer.send(strMsg);
+				session.commit();
 			} catch (JMSException e) {
 				session.rollback();
 			}
