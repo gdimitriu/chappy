@@ -19,8 +19,6 @@
  */
 package chappy.policy.cookies;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import chappy.interfaces.cookies.IChappyCookie;
@@ -31,7 +29,7 @@ import chappy.interfaces.cookies.IChappyCookie;
  *
  */
 @XmlRootElement
-public abstract class CookieTransaction implements IChappyCookie, Serializable {
+public abstract class CookieTransaction implements IChappyCookie {
 
 	/**
 	 * default but is overriden in the implementation class.

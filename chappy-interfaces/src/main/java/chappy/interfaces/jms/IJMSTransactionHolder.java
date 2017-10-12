@@ -20,6 +20,7 @@
 package chappy.interfaces.jms;
 
 import javax.jms.Connection;
+import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -52,4 +53,10 @@ public interface IJMSTransactionHolder extends IClientTransaction {
 	 * @return current message producer for transaction.
 	 */
 	public MessageProducer getCurrentMessageProducer();
+	
+	
+	/**
+	 * @return current replyTo destination.
+	 */
+	public Destination getCurrentReplyToDestination();
 }

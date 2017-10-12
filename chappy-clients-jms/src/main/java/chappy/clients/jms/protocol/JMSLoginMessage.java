@@ -169,10 +169,10 @@ public class JMSLoginMessage implements IJMSProtocol{
 	}
 	
 	/* (non-Javadoc)
-	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeReply(javax.jms.Message)
+	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeReplyMessage(javax.jms.Message)
 	 */
 	@Override
-	public void decodeReply(final Message message) throws JMSException {
+	public void decodeReplyMessage(final Message message) throws JMSException {
 		if (message instanceof ObjectMessage) {
 			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
 			ObjectMessage msg = (ObjectMessage) message;
@@ -197,10 +197,10 @@ public class JMSLoginMessage implements IJMSProtocol{
 	}
 	
 	/* (non-Javadoc)
-	 * @see chappy.clients.jms.protocol.IJMSProtocol#encodeResponseMessage(javax.jms.Session)
+	 * @see chappy.clients.jms.protocol.IJMSProtocol#encodeReplyMessage(javax.jms.Session)
 	 */
 	@Override
-	public Message encodeResponseMessage(final Session session) throws JMSException {
+	public Message encodeReplyMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
 		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
 		message.setJMSCorrelationID(cookie.getTransactionId());
@@ -220,10 +220,10 @@ public class JMSLoginMessage implements IJMSProtocol{
 	}
 	
 	/* (non-Javadoc)
-	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeInbound(javax.jms.Message)
+	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeInboundMessage(javax.jms.Message)
 	 */
 	@Override
-	public void decodeInbound(final Message message) throws JMSException {
+	public void decodeInboundMessage(final Message message) throws JMSException {
 		if (message instanceof StreamMessage) {
 			StreamMessage strMsg = (StreamMessage) message;
 			this.userName = strMsg.readString();
@@ -253,26 +253,26 @@ public class JMSLoginMessage implements IJMSProtocol{
 	 * @return decoded message
 	 * @throws JMSException
 	 */
-	public static JMSLoginMessage decodeInboundMessage(final Message message) throws JMSException {
+	public static JMSLoginMessage createDecodedInboundMessage(final Message message) throws JMSException {
 		JMSLoginMessage msg = new JMSLoginMessage();
-		msg.decodeInbound(message);
+		msg.decodeInboundMessage(message);
 		return msg;
 	}
 	
 	/**
-	 * Create a decoded reply message from inbound comming from chappy.
+	 * Create a decoded reply message from inbound coming from chappy.
 	 * @param message received by JMS
 	 * @return decoded message
 	 * @throws JMSException
 	 */
-	public static JMSLoginMessage decodeReplyMessage(final Message message) throws JMSException {
+	public static JMSLoginMessage createDecodedReplyMessage(final Message message) throws JMSException {
 		JMSLoginMessage msg = new JMSLoginMessage();
-		msg.decodeReply(message);
+		msg.decodeReplyMessage(message);
 		return msg;
 	}
 	
 	/**
-	 * query if it has exception comming from chappy.
+	 * query if it has exception coming from chappy.
 	 * @return true if has exception from chappy.
 	 */
 	public boolean hasException() {

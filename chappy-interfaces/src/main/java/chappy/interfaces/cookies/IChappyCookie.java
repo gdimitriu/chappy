@@ -19,12 +19,14 @@
  */
 package chappy.interfaces.cookies;
 
+import java.io.Serializable;
+
 /**
  * Interface for cookies.
  * @author Gabriel Dimitriu
  *
  */
-public interface IChappyCookie {
+public interface IChappyCookie extends Serializable {
 
 	/**
 	 * get the user name

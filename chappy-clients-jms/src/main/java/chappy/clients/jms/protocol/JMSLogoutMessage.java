@@ -19,12 +19,16 @@
  */
 package chappy.clients.jms.protocol;
 
+import java.util.HashMap;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
-
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
+import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
 /**
@@ -79,6 +83,20 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	public void setReplyMessage(final String replyMessage) {
 		this.replyMessage = replyMessage;
 	}
+	
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(final String status) {
+		this.status = status;
+	}
 
 	/**
 	 * @return the exception
@@ -99,34 +117,106 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	 */
 	@Override
 	public Message encodeInboundMessage(final Session session) throws JMSException {
-		// TODO Auto-generated method stub
-		return null;
+		ObjectMessage message = session.createObjectMessage();
+		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.LOGOUT);
+		message.setObject(cookie);
+		return message;
 	}
 
 	/* (non-Javadoc)
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeInbound(javax.jms.Message)
 	 */
 	@Override
-	public void decodeInbound(final Message message) throws JMSException {
-		// TODO Auto-generated method stub
-		
+	public void decodeInboundMessage(final Message message) throws JMSException {
+		if (message instanceof ObjectMessage) {
+			cookie = (IChappyCookie) ((ObjectMessage) message).getObject();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#encodeResponseMessage(javax.jms.Session)
 	 */
 	@Override
-	public Message encodeResponseMessage(final Session session) throws JMSException {
-		// TODO Auto-generated method stub
-		return null;
+	public Message encodeReplyMessage(final Session session) throws JMSException {
+		ObjectMessage message = session.createObjectMessage();
+		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
+		message.setJMSCorrelationID(cookie.getTransactionId());
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
+		if (cookie != null) {
+			map.put(IJMSProtocolKeys.COOKIE_KEY, cookie);
+		}
+		if (exception != null) {
+			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, exception);
+		}
+		if (replyMessage != null) {
+			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
+		}
+		message.setObject(map);
+		return message;
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeReply(javax.jms.Message)
+	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeReplyMessage(javax.jms.Message)
 	 */
 	@Override
-	public void decodeReply(final Message message) throws JMSException {
-		// TODO Auto-generated method stub
-		
+	public void decodeReplyMessage(final Message message) throws JMSException {
+		if (message instanceof ObjectMessage) {
+			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
+			ObjectMessage msg = (ObjectMessage) message;
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();
+			if (map != null && !map.isEmpty()) {
+				if (map.containsKey(IJMSProtocolKeys.REPLY_MESSAGE_KEY)) {
+					this.replyMessage = (String) map.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY);
+				} else {
+					this.replyMessage = null;
+				}
+				if (map.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
+					this.cookie = (IChappyCookie) map.get(IJMSProtocolKeys.COOKIE_KEY);
+				} else {
+					this.cookie = null;
+				}
+				if (map.containsKey(IJMSProtocolKeys.REPLY_EXCEPTION_KEY)) {
+					this.exception = (Exception) map.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Create a decoded message from inbound received in chappy.
+	 * @param message received by JMS
+	 * @return decoded message
+	 * @throws JMSException
+	 */
+	public static JMSLogoutMessage createDecodedInboundMessage(final Message message) throws JMSException {
+		JMSLogoutMessage msg = new JMSLogoutMessage();
+		msg.decodeInboundMessage(message);
+		return msg;
+	}
+	
+	/**
+	 * Create a decoded reply message from inbound comming from chappy.
+	 * @param message received by JMS
+	 * @return decoded message
+	 * @throws JMSException
+	 */
+	public static JMSLogoutMessage createDecodedReplyMessage(final Message message) throws JMSException {
+		JMSLogoutMessage msg = new JMSLogoutMessage();
+		msg.decodeReplyMessage(message);
+		return msg;
+	}
+	
+	/**
+	 * query if it has exception coming from chappy.
+	 * @return true if has exception from chappy.
+	 */
+	public boolean hasException() {
+		if (exception != null) {
+			return true;			
+		} else {
+			return false;
+		}
 	}
 }

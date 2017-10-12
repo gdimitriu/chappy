@@ -19,8 +19,12 @@
  */
 package chappy.services.servers.common;
 
+import java.util.List;
+
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
+import chappy.interfaces.transactions.ITransaction;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.policy.provider.SystemPolicyProvider;
 import chappy.providers.transaction.TransactionProviders;
 
@@ -37,10 +41,11 @@ public class TransactionOperations {
 	 * @param userName the user name
 	 * @param password the password for the user
 	 * @param persistence if the persistence is allowed
+	 * @param transactionId the id of the transaction
 	 * @return cookie.
 	 * @throws ForbiddenException 
 	 */
-	public static IChappyCookie login(final Class<?> requester, final String userName, final String password, final boolean persistence) throws ForbiddenException {
+	public static IChappyCookie login(final Class<?> requester, final String userName, final String password, final boolean persistence, final String transactionId) throws ForbiddenException {
 		
 		if (!SystemPolicyProvider.getInstance().getAuthenticationHandler().isAuthenticate(userName, password)) {
 			return null;
@@ -54,7 +59,24 @@ public class TransactionOperations {
 			}
 		}
 		
-		response = TransactionProviders.getInstance().startTransaction(requester, userName, persistence);
+		response = TransactionProviders.getInstance().startTransaction(requester, userName, persistence, transactionId);
 		return response;
+	}
+	
+	/**
+	 * Utility for logout request.
+	 * @param received cookie
+	 */
+	public static ITransaction logout(IChappyCookie received) {
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		if (transaction == null) {
+			return null;
+		}
+    	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
+    	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
+    	
+    	TransactionProviders.getInstance().removeTransaction(received);
+    	transaction.commit();
+		return transaction;
 	}
 }

@@ -20,6 +20,7 @@
 package chappy.clients.jms;
 
 import javax.jms.Connection;
+import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -46,6 +47,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	/** current  producer for messages */
 	private MessageProducer currentMessageProducer = null;
 	
+	/** reply to destination */
+	private Destination replyTo = null;
+	
 	/** current cookie for chappy */
 	private IChappyCookie currentCookie = null;
 	
@@ -55,16 +59,18 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 * @param currentMessageConsumer
 	 * @param currentMessageProducer
 	 * @param currentCookie
+	 * @param replyTo 
 	 */
 	public JMSTransactionHolder(final Connection currentConnection, final Session currentSession,
 			final MessageConsumer currentMessageConsumer, final MessageProducer currentMessageProducer,
-			final IChappyCookie currentCookie) {
+			final IChappyCookie currentCookie, final Destination replyTo) {
 		super();
 		this.currentSession = currentSession;
 		this.currentConnection = currentConnection;
 		this.currentMessageConsumer = currentMessageConsumer;
 		this.currentMessageProducer = currentMessageProducer;
 		this.currentCookie = currentCookie;
+		this.replyTo = replyTo;
 	}
 
 
@@ -165,6 +171,15 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	public void setCookie(final IChappyCookie cookie) {
 		this.currentCookie = cookie;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.IJMSTransactionHolder#getCurrentReplyToDestination()
+	 */
+	@Override
+	public Destination getCurrentReplyToDestination() {
+		return replyTo;
 	}
 
 }

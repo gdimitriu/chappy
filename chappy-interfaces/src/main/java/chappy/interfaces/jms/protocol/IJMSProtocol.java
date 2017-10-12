@@ -42,7 +42,7 @@ public interface IJMSProtocol {
 	 * decode the inbound message.
 	 * @param message received by chappy
 	 */
-	public void decodeInbound(final Message message) throws JMSException;
+	public void decodeInboundMessage(final Message message) throws JMSException;
 	
 	/**
 	 * encode the response message to be send by chappy.
@@ -50,12 +50,12 @@ public interface IJMSProtocol {
 	 * @return message to be send.
 	 * @throws JMSException 
 	 */
-	public Message encodeResponseMessage(final Session session) throws JMSException;
+	public Message encodeReplyMessage(final Session session) throws JMSException;
 	
 	/**
 	 * decode the reply message.
 	 * @param message received from chappy
 	 * @throws JMSException
 	 */
-	public void decodeReply(final Message message) throws JMSException;
+	public void decodeReplyMessage(final Message message) throws JMSException;
 }

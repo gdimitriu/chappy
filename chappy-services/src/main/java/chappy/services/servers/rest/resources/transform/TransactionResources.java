@@ -60,7 +60,6 @@ import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
-import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.policy.cookies.CookieUtils;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
@@ -107,7 +106,7 @@ public class TransactionResources {
 		
 		IChappyCookie response = null;
 			try {
-				response = TransactionOperations.login(this.getClass(), userName, password, persistence);
+				response = TransactionOperations.login(this.getClass(), userName, password, persistence, null);
 			} catch (ForbiddenException e1) {
 				e1.printStackTrace();
 				Response.status(Status.FORBIDDEN).build();
@@ -144,14 +143,11 @@ public class TransactionResources {
 		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		IChappyCookie received = CookieUtils.decodeCookie(cookie);
     	
-    	ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
-    	List<String> listOfTransformers = transaction.getListOfCustomTansformers();
-    	CustomTransformerStorageProvider.getInstance().removeTransformers(received.getUserName(), listOfTransformers);
-    	
-    	TransactionProviders.getInstance().removeTransaction(received);
-    	transaction.commit();
-    	
-    	return Response.ok().build();
+		if (TransactionOperations.logout(received) != null) {
+			return Response.ok().build();
+		} else {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 	}
 	
 	/**

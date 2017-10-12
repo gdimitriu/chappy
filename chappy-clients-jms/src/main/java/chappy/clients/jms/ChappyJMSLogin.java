@@ -162,7 +162,7 @@ public class ChappyJMSLogin implements IJMSClient{
 	@Override
 	public void onMessage(Message message) {
 		try {
-			loginProtocol = JMSLoginMessage.decodeReplyMessage(message);
+			loginProtocol = JMSLoginMessage.createDecodedReplyMessage(message);
 		} catch (JMSException e) {
 			if (loginProtocol == null) {
 				loginProtocol = new JMSLoginMessage();
@@ -209,6 +209,6 @@ public class ChappyJMSLogin implements IJMSClient{
 	 */
 	@Override
 	public IJMSTransactionHolder createTransactionHolder() {
-		return new JMSTransactionHolder(connection, session, consumer, producer, loginProtocol.getCookie());
+		return new JMSTransactionHolder(connection, session, consumer, producer, loginProtocol.getCookie(), replyTo);
 	}
 }

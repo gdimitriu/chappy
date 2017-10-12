@@ -243,7 +243,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		persistenceFlowManager.makePersistent(persistedTransaction);		
 		setTransactionId(persistedTransaction.getTransactionId());
 		flowTransaction.commit();
-		cookie.setTransactionId(getTransactionId());
+		if (cookie.getTransactionId() == null) {
+			cookie.setTransactionId(getTransactionId());
+		}
 	}
 
 	@Override

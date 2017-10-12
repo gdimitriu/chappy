@@ -4,6 +4,7 @@
 package chappy.tests.manual.jms.transformers.test;
 
 import chappy.clients.jms.ChappyJMSLogin;
+import chappy.clients.jms.ChappyJMSLogout;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
@@ -24,11 +25,11 @@ public class ProcessingJMSTestManual {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new ProcessingJMSTestManual().firstLogin();
+		new ProcessingJMSTestManual().firstLoginLogout();
 
 	}
 
-	public void firstLogin() {
+	public void firstLoginLogout() {
 		ChappyJMSLogin login = new ChappyJMSLogin("system", "system", true);
 		try {
 			login.createConnectionToServer("localhost", 61616);
@@ -41,6 +42,12 @@ public class ProcessingJMSTestManual {
 				IJMSTransactionHolder transaction = login.createTransactionHolder();
 				System.out.println(transaction.getCookie().getTransactionId());
 				System.out.println(transaction.getCookie().getUserName());
+				ChappyJMSLogout logout = new ChappyJMSLogout(transaction);
+				logout.send();
+				while(logout.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+				System.out.println(logout.getStatus());
+				System.out.println(logout.getTransactionException());
+				System.out.println(logout.getTransactionErrorMessage());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

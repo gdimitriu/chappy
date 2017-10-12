@@ -89,7 +89,7 @@ public class TransactionProviders {
 	 * @return the cookie.
 	 * @throws ForbiddenException in case of transaction problem for persistence
 	 */
-	public IChappyCookie startTransaction(final Class<?> requester, final String userName, final boolean persistence) throws ForbiddenException {
+	public IChappyCookie startTransaction(final Class<?> requester, final String userName, final boolean persistence, final String transactionId) throws ForbiddenException {
 		ITransaction transaction;
 		if (!persistence) {
 			transaction = new ChappyTransaction();
@@ -124,6 +124,7 @@ public class TransactionProviders {
 		}
 		transaction.setPersistence(persistence);
 		IChappyCookie cookie = CookieFactory.getFactory().newCookie(requester, userName);
+		cookie.setTransactionId(transactionId);
 		storageProvider.putTransaction(cookie, transaction);
 		return cookie;
 	}
