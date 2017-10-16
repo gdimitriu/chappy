@@ -86,9 +86,10 @@
 		<module>chappy-installer</module>
 		<module>chappy-statistics-logs</module>
 		<module>chappy-policy</module>
-		<module>chappy-persistence</module>
-		
+		<module>chappy-persistence</module>		
 		<module>chappy-exceptions</module>
+		<module>chappy-clients-jms</module>
+		<module>chappy-clients-rest</module>
 	</modules>
 	<dependencies>
 	<!-- this is neeed by cassandra  -->
@@ -99,6 +100,100 @@
 			<scope>system</scope>
 			<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
 		</dependency>
+		<!--  common dependencies that are neeed to solve conflicts -->
+		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+		<dependency>
+    		<groupId>commons-beanutils</groupId>
+    		<artifactId>commons-beanutils</artifactId>
+    		<version>1.9.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils-core -->
+		<dependency>
+    		<groupId>commons-beanutils</groupId>
+    		<artifactId>commons-beanutils-core</artifactId>
+    		<version>1.8.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-collections/commons-collections -->
+ 		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.15.Final</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/cglib/cglib -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>3.2.5</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>[1.2, 1.3)</version>
+		</dependency>
+		
+		<!-- reflection package used for package query -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.11</version>
+		</dependency>
+		
+		<!-- HTTP/REST SERVER -->
+		<!-- Jetty server -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-http</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<!-- REST SERVER -->
+		<!-- jersey -->
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		
+		<!--  ACTIVEMQ JMS SERVER -->
+		<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-all</artifactId>
+			<version>5.15.0</version>
+			<type>pom</type>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.activemq/artemis-jms-server -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>artemis-jms-server</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		
 		<!-- jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -144,12 +239,6 @@
 			<version>${jackson.version}</version>
 			<type>pom</type>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/cglib/cglib -->
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>3.2.5</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
@@ -192,51 +281,7 @@
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>${javax.ws.rs.version}</version>
 		</dependency>
-		<!-- Jetty server -->
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlet</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-http</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-
-		<!-- jersey -->
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-servlet</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
-
-		<!-- reflection package used for package query -->
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.11</version>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>[1.2, 1.3)</version>
-		</dependency>
-
+		
 		<!-- DATANUCLEUS PERSISTANCE -->
 		<dependency>
 			<groupId>org.datanucleus</groupId>
@@ -283,7 +328,7 @@
 			<version>3.6</version>
 		</dependency>
 		<!-- ENABLE THIS FOR HBase -->
-		<dependency>
+ 		<dependency>
 			<groupId>org.datanucleus</groupId>
 			<artifactId>datanucleus-hbase</artifactId>
 			<version>[5.0.0-m1, 5.9)</version>
@@ -333,6 +378,6 @@
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
 			<version>3.0.2</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 </project>

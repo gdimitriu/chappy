@@ -20,6 +20,7 @@
 package chappy.policy.provider;
 
 import chappy.interfaces.policy.IUserPolicy;
+import chappy.policy.authentication.CredentialHolder;
 
 /**
  * provider for the authentication system.
@@ -53,5 +54,12 @@ public class SystemPolicyProvider {
 	public IUserPolicy getAuthenticationHandler() {
 		return new IUserPolicy() {
 		};
+	}
+	
+	public CredentialHolder getCredentialForSystemResource(final Object resource) {
+		if (JMSRuntimeResourceProvider.getInstance().isSystemRuntimeResource(resource)) {
+			return new CredentialHolder("system", "system");
+		}
+		return new CredentialHolder("guest","");
 	}
 }

@@ -41,7 +41,9 @@ import org.junit.Test;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
 
@@ -80,6 +82,7 @@ public class RestCallsForDigesterTransformationsTest {
 			}
 		};
 		thread.start();
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
 	/**
@@ -95,9 +98,9 @@ public class RestCallsForDigesterTransformationsTest {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart().field("data",
+		FormDataMultiPart multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.INPUT_DATA,
 				getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"), MediaType.APPLICATION_XML_TYPE)
-				.field("configuration", StreamUtils.getStringFromResource("xml2json2xml.xml"),
+				.field(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils.getStringFromResource("xml2json2xml.xml"),
 						MediaType.APPLICATION_XML_TYPE);
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
@@ -114,10 +117,10 @@ public class RestCallsForDigesterTransformationsTest {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart().field("data",
+		FormDataMultiPart multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.INPUT_DATA,
 				getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"), MediaType.APPLICATION_XML_TYPE);
 		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_DIGESTER)
-				.queryParam("configuration", StreamUtils.getStringFromResource("xml2json2xmlwithconfigurations.xml"))
+				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils.getStringFromResource("xml2json2xmlwithconfigurations.xml"))
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {
@@ -133,9 +136,9 @@ public class RestCallsForDigesterTransformationsTest {
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+				.field(IChappyServiceNamesConstants.INPUT_DATA, getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 						MediaType.APPLICATION_XML_TYPE)
-				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXsl.xml"),
+				.field(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils.getStringFromResource("processingOneStepXsl.xml"),
 						MediaType.APPLICATION_XML_TYPE)
 				.field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
 						MediaType.APPLICATION_XML_TYPE);
@@ -155,9 +158,9 @@ public class RestCallsForDigesterTransformationsTest {
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+				.field(IChappyServiceNamesConstants.INPUT_DATA, getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 						MediaType.APPLICATION_XML_TYPE)
-				.field("configuration", StreamUtils.getStringFromResource("processingTwoStepsXsl.xml"),
+				.field(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils.getStringFromResource("processingTwoStepsXsl.xml"),
 						MediaType.APPLICATION_XML_TYPE)
 				.field("processingMap.xsl", getClass().getClassLoader().getResourceAsStream("processingMap.xsl"),
 						MediaType.APPLICATION_XML_TYPE)
@@ -179,9 +182,9 @@ public class RestCallsForDigesterTransformationsTest {
 		WebTarget target = client.target(baseUri);
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+				.field(IChappyServiceNamesConstants.INPUT_DATA, getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
 						MediaType.APPLICATION_XML_TYPE)
-				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
+				.field(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
 						MediaType.APPLICATION_XML_TYPE)
 				.field("processingMapParameters.xsl",
 						getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),

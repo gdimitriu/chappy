@@ -37,12 +37,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import chappy.interfaces.cookies.CookieTransaction;
-import chappy.interfaces.cookies.CookieTransactionsToken;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.utils.streams.rest.RestStreamingOutput;
@@ -81,17 +80,17 @@ public class TransformResources {
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamFlow(final FormDataMultiPart multipart,
-			@QueryParam("user") final String userName,
+			@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName,
 			@Context UriInfo uriInfo) throws Exception {
-		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
+		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
 		String configuration = null;
 		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
 		if (queryParams != null) {
-			configuration = queryParams.getFirst("configuration");
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
 		}
 		if (configuration == null || "".equals(configuration)) {
-			configurationStream = multipart.getField("configuration").getEntityAs(InputStream.class);
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
 		} else {
 			configurationStream = new ByteArrayInputStream(configuration.getBytes());
 		}
@@ -108,10 +107,8 @@ public class TransformResources {
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaticFlow", configurationStream, multiData);
-		CookieTransaction cookie = new CookieTransactionsToken();
-		cookie.setUserName(userName);
-		runner.createSteps(cookie);
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+		runner.createSteps(userName);
 		runner.executeSteps(holder);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
@@ -132,15 +129,15 @@ public class TransformResources {
 	public Response processDataStreamDigesterOneStep(final FormDataMultiPart multipart,
 			@Context UriInfo uriInfo) throws Exception {
 		
-		InputStream inputValue = multipart.getField("data").getEntityAs(InputStream.class);
+		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
 		String configuration = null;
 		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
 		if (queryParams != null) {
-			configuration = queryParams.getFirst("configuration");
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
 		}
 		if (configuration == null || "".equals(configuration)) {
-			configurationStream = multipart.getField("configuration").getEntityAs(InputStream.class);
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
 		} else {
 			configurationStream = new ByteArrayInputStream(configuration.getBytes());
 		}
@@ -157,7 +154,7 @@ public class TransformResources {
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("DigesterFlow", configurationStream, multiData);
+				.createFlowRunner(IChappyServiceNamesConstants.DIGESTER_FLOW, configurationStream, multiData);
 		runner.createSteps();
 		StreamHolder output = runner.executeSteps(holder);
 		ByteArrayInputStreamWrapper inputStream = output.getInputStream();
@@ -177,8 +174,8 @@ public class TransformResources {
 	@Consumes({ MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON , MediaType.TEXT_XML})
 	@Produces({ MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON , MediaType.TEXT_XML})
 	public Response processDataStream(final InputStream inputValue,
-			@QueryParam("mode") final String mode,
-			@QueryParam("configuration") final String configuration) throws Exception {
+			@QueryParam(IChappyServiceNamesConstants.MODE) final String mode,
+			@QueryParam(IChappyServiceNamesConstants.CONFIGURATION) final String configuration) throws Exception {
 		
 		ByteArrayOutputStreamWrapper bos = WrapperUtils.fromInputStreamToOutputWrapper(inputValue);
 		
@@ -191,7 +188,7 @@ public class TransformResources {
 		bos = null;
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaxonSimpleFlow", null, null);
+				.createFlowRunner(IChappyServiceNamesConstants.STAXON_SIMPLE_FLOW, null, null);
 		runner.configure(mode, configuration);
 		StreamHolder result = runner.executeSteps(holder);
 		if (result == null) {

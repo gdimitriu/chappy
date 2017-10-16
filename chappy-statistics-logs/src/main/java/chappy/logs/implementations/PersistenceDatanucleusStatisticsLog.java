@@ -34,6 +34,11 @@ import chappy.interfaces.statisticslogs.StatisticLog;
 public class PersistenceDatanucleusStatisticsLog extends StatisticLog implements ISystemLogsPersistence {
 
 	/**
+	 * serial ID.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * 
 	 */
 	public PersistenceDatanucleusStatisticsLog() {

@@ -19,6 +19,7 @@
  */
 package chappy.interfaces.statisticslogs;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,8 +30,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement
-public class StatisticLog {
+public class StatisticLog implements Serializable{
 
+	/**
+	 * Serial ID.
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	/** field needs to be protected because they will be enhanced by persistence */
 	/** step name */
 	protected String stepName;

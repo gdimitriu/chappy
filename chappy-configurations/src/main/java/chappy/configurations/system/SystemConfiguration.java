@@ -71,4 +71,11 @@ public class SystemConfiguration {
 		return name;
 	}
 
+	/**
+	 * get the properties for this system configuration.
+	 * @return array of properties.
+	 */
+	public PropertyConfiguration[] getProperties() {
+		return property;
+	}
 }

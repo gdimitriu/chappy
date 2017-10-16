@@ -26,7 +26,7 @@ import org.apache.commons.digester3.Digester;
 import chappy.configurations.transformers.StaxonConfiguration;
 import chappy.flows.transformers.dynamicflows.DigesterStepsFactory;
 import chappy.flows.transformers.dynamicflows.MapOfStepsParametersFactory;
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.utils.streams.wrappers.StreamHolder;
@@ -110,16 +110,33 @@ public class DigesterFlowRunner implements IFlowRunner {
 		digester.addCallParam("*/step", 1, 1);
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#configure(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void configure(final String mode, final String configuration) {
 		//nothing to to for digester
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(chappy.interfaces.cookies.IChappyCookie)
+	 */
 	@Override
-	public void createSteps(final CookieTransaction cookie) throws Exception {
+	public void createSteps(final IChappyCookie cookie) throws Exception {
 		//nothing to do the the digester flow because this flow could not be overriden
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(java.lang.String)
+	 */
+	@Override
+	public void createSteps(final String userName) throws Exception {
+		//nothing to do the the digester flow because this flow could not be overriden
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#executeSteps(java.util.List)
+	 */
 	@Override
 	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
 		// does not implement it yet

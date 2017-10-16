@@ -55,4 +55,9 @@ public interface IServiceServer {
 	 */
 	String getName();
 
+	/**
+	 * get the server host name (default is localhost).
+	 * @return server host.
+	 */
+	String getServerHost();
 }

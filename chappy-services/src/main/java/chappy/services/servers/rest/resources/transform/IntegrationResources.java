@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -43,14 +42,13 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
-import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
+import chappy.policy.cookies.CookieUtils;
 import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.utils.streams.StreamUtils;
@@ -90,13 +88,11 @@ public class IntegrationResources {
 			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
 		
 		Map<String, Cookie> cookies = hh.getCookies();
-		Cookie cookie = cookies.get("userData");
-		ObjectReader or=new ObjectMapper().readerFor(CookieTransactionsToken.class);
-    	CookieTransactionsToken received = new CookieTransactionsToken();
-    	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
-    	received=or.readValue(str);
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		
-    	List<FormDataBodyPart> bodyParts = multipart.getFields("data");
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+		
+    	List<FormDataBodyPart> bodyParts = multipart.getFields(IChappyServiceNamesConstants.INPUT_DATA);
     	List<InputStream> inputValues = new ArrayList<InputStream>();
     	for (FormDataBodyPart bodyPart : bodyParts) {
     		inputValues.add(bodyPart.getEntityAs(InputStream.class));
@@ -105,10 +101,10 @@ public class IntegrationResources {
 		String configuration = null;
 		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
 		if (queryParams != null) {
-			configuration = queryParams.getFirst("configuration");
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
 		}
 		if (configuration == null || "".equals(configuration)) {
-			configurationStream = multipart.getField("configuration").getEntityAs(InputStream.class);
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
 		} else {
 			configurationStream = new ByteArrayInputStream(configuration.getBytes());
 		}
@@ -128,7 +124,7 @@ public class IntegrationResources {
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner("StaticFlow", configurationStream, multiData);
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
 		runner.createSteps(received);
 		runner.executeSteps(holders);
 		if (holders.size() > 1) {

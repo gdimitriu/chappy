@@ -25,7 +25,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.utils.streams.wrappers.StreamHolder;
 
@@ -54,13 +54,13 @@ public interface IStepSyncpoint extends ISystemFlowPersistence {
 	 * set the cookie.
 	 * @param cookie of this syncpoint
 	 */
-	void setCookie(final CookieTransaction cookie);
+	void setCookie(final IChappyCookie cookie);
 	
 	/**
 	 * get the cookie.
 	 * @return cookie of this syncpoint
 	 */
-	CookieTransaction getCookie();
+	IChappyCookie getCookie();
 	
 	/**
 	 * set the serialized configuration of the step.

@@ -19,13 +19,13 @@
  */
 package chappy.providers.transaction;
 
-import chappy.interfaces.cookies.CookieTransaction;
-import chappy.interfaces.cookies.CookieTransactionsToken;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.PersistenceProvider;
 import chappy.persistence.providers.TransactionStorageProvider;
+import chappy.providers.cookie.CookieFactory;
 
 /**
  * providers for transactions.
@@ -68,7 +68,7 @@ public class TransactionProviders {
 	 * @param cookie of the transaction
 	 * @return base transaction.
 	 */
-	public ITransaction getTransaction(final CookieTransaction cookie) {
+	public ITransaction getTransaction(final IChappyCookie cookie) {
 		return storageProvider.getTransaction(cookie);
 	}
 
@@ -76,19 +76,20 @@ public class TransactionProviders {
 	 * remove transaction from storage.
 	 * @param cookie of the transaction
 	 */
-	public void removeTransaction(final CookieTransactionsToken cookie) {
+	public void removeTransaction(final IChappyCookie cookie) {
 		storageProvider.removeTransaction(cookie);
 	}
 	
 
 	/**
 	 * start a new transaction.
-	 * @param cookie that is identified
+	 * @param requester 
+	 * @param userName 
 	 * @param persistence true if it has persistence.
-	 * @return the transaction.
+	 * @return the cookie.
 	 * @throws ForbiddenException in case of transaction problem for persistence
 	 */
-	public ITransaction startTransaction(final CookieTransaction cookie, final boolean persistence) throws ForbiddenException {
+	public IChappyCookie startTransaction(final Class<?> requester, final String userName, final boolean persistence, final String transactionId) throws ForbiddenException {
 		ITransaction transaction;
 		if (!persistence) {
 			transaction = new ChappyTransaction();
@@ -122,8 +123,10 @@ public class TransactionProviders {
 			}
 		}
 		transaction.setPersistence(persistence);
+		IChappyCookie cookie = CookieFactory.getFactory().newCookie(requester, userName);
+		cookie.setTransactionId(transactionId);
 		storageProvider.putTransaction(cookie, transaction);
-		return transaction;
+		return cookie;
 	}
 	
 }

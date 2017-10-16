@@ -34,6 +34,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
@@ -64,9 +65,9 @@ public class AddTransformResources {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response pushTransformer(final FormDataMultiPart multipart,
 			@Context UriInfo uriInfo) throws Exception {
-		String transformerName = multipart.getField("name").getValue();
+		String transformerName = multipart.getField(IChappyServiceNamesConstants.TRANSFORMER_NAME).getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
-				.getField("data").getValue());
+				.getField(IChappyServiceNamesConstants.TRANSFORMER_DATA).getValue());
 		CustomTransformerStorageProvider.getInstance().pushNewTransformer(transformerName, transformerData);
 		return Response.ok().build();
 	}
@@ -83,11 +84,11 @@ public class AddTransformResources {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response pushTransformer(final FormDataMultiPart multipart,
-			@QueryParam("user") final String userName,
+			@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName,
 			@Context UriInfo uriInfo) throws Exception {
-		String transformerName = multipart.getField("name").getValue();
+		String transformerName = multipart.getField(IChappyServiceNamesConstants.TRANSFORMER_NAME).getValue();
 		byte[] transformerData = Base64.getDecoder().decode(multipart
-				.getField("data").getValue());
+				.getField(IChappyServiceNamesConstants.TRANSFORMER_DATA).getValue());
 		CustomTransformerStorageProvider.getInstance().pushNewUserTransformer(userName, transformerName, transformerData);
 		return Response.ok().build();
 	}

@@ -41,6 +41,7 @@ import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
@@ -100,28 +101,28 @@ public class RestUserCallsForFlowTransformationsTest {
 	public void push3CustomTransformersByUserAndMakeTransformation() throws FileNotFoundException {
 		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
 		WebTarget target = client.target(baseUri);
-		FormDataMultiPart multipartEntity = new FormDataMultiPart().field("name", "PreProcessingStep").field("data",
+		FormDataMultiPart multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep").field(IChappyServiceNamesConstants.TRANSFORMER_DATA,
 				new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		Response response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
-				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam("user", "gdimitriu")
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		multipartEntity = new FormDataMultiPart().field("name", "PostProcessingStep").field("data",
+		multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep").field(IChappyServiceNamesConstants.TRANSFORMER_DATA,
 				new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
-				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam("user", "gdimitriu")
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		multipartEntity = new FormDataMultiPart().field("name", "ProcessingStep").field("data",
+		multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "ProcessingStep").field(IChappyServiceNamesConstants.TRANSFORMER_DATA,
 				new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
 		response = target.path(IRestPathConstants.PATH_TO_ADD_TRANSFORMER_TO_FLOW)
-				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam("user", "gdimitriu")
+				.path(IRestResourcesConstants.REST_TRANSFORMER_BY_USER).queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		multipartEntity = new FormDataMultiPart().field("data", "blabla");
+		multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.INPUT_DATA, "blabla");
 		target = client.target(baseUri).register(MultiPartFeature.class);
-		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam("user", "gdimitriu")
-				.queryParam("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
+		response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
+				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		if (response.getStatus() >= 0) {

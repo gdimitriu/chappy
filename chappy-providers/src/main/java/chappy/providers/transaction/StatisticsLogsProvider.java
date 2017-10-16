@@ -22,7 +22,7 @@ package chappy.providers.transaction;
 import java.util.HashMap;
 import java.util.Map;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.logs.LogsFactory;
@@ -66,7 +66,7 @@ public class StatisticsLogsProvider {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public IStatistics getStatistics(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+	public IStatistics getStatistics(final IChappyCookie cookie) throws InstantiationException, IllegalAccessException {
 		if (cookie == null) {
 			return null;
 		}
@@ -85,7 +85,7 @@ public class StatisticsLogsProvider {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public ILogs getLogs(final CookieTransaction cookie) throws InstantiationException, IllegalAccessException {
+	public ILogs getLogs(final IChappyCookie cookie) throws InstantiationException, IllegalAccessException {
 		if (cookie == null) {
 			return null;
 		}

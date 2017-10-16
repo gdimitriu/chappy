@@ -27,7 +27,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import chappy.interfaces.cookies.CookieTransaction;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
@@ -90,7 +90,7 @@ public class TransactionStorageProvider {
 	 * @param cookie
 	 * @return transaction.
 	 */
-	public ITransaction getTransaction(final CookieTransaction cookie) {
+	public ITransaction getTransaction(final IChappyCookie cookie) {
 		if (mapOfTransactionTransientData.containsKey(cookie.generateStorageId())) {
 			return mapOfTransactionTransientData.get(cookie.generateStorageId());
 		} else if (mapOfTransactionPersistedData.containsKey(cookie.generateStorageId())) {
@@ -103,7 +103,7 @@ public class TransactionStorageProvider {
 	 * remove a transaction.
 	 * @param cookie
 	 */
-	public void removeTransaction(final CookieTransaction cookie) {
+	public void removeTransaction(final IChappyCookie cookie) {
 		if (mapOfTransactionTransientData.containsKey(cookie.generateStorageId())) {
 			mapOfTransactionTransientData.remove(cookie.generateStorageId());
 		} else if (mapOfTransactionPersistedData.containsKey(cookie.generateStorageId())) {
@@ -133,7 +133,7 @@ public class TransactionStorageProvider {
 	 * @param cookie
 	 * @param transaction
 	 */
-	public void putTransaction(final CookieTransaction cookie, final ITransaction transaction) {
+	public void putTransaction(final IChappyCookie cookie, final ITransaction transaction) {
 		transaction.generateTransactionId(cookie);
 		if (transaction.isPersistence()) {
 			mapOfTransactionPersistedData.put(cookie.generateStorageId(), transaction);

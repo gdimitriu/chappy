@@ -30,6 +30,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import chappy.interfaces.services.IChappyServiceNamesConstants;
+
 /**
  * @author Gabriel Dimitriu
  *
@@ -57,7 +59,7 @@ public class UpgradeTransformResources {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response pushTransformer(final FormDataMultiPart multipart,
-			@QueryParam("user") String user,
+			@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) String user,
 			@Context UriInfo uriInfo) throws Exception {
 		
 		return Response.ok().build();
