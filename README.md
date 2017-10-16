@@ -1,11 +1,13 @@
 # chappy
 
-Chappy has been design as a test-bed for long running servers.
+Chappy has been design as a test-bed for long running servers and application server.
 
 The transformation server was choose as type of long running server. The transformation server will take request using REST.
 
 Chappy wish to implement the following characteristics of the long running server:
 - REST server using Jersey and Jetty.
+- JMS server using ActiveMQ.
+- Internal tansaction (a user could logon the system using JMS/REST and it will receive a cookie which will be used in the rest of the process). Transaction is persisted until the user logout.
 - Predefined service for transformation using staxon and saxon.
 - Hot-plugin of the transformation steps.
 - Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. On logout the custom transformers are deleted from system.
@@ -18,6 +20,7 @@ Chappy wish to implement the following characteristics of the long running serve
 Chappy uses the following libraries and technologies:
 - Jetty for the embedded http server.
 - Jersey for the REST server.
+- ActiveMQ for the JMS server.
 - Staxon for json2xml and xml2json transformations.
 - Saxon for xml2xml mapping.
 - Apache Digester for running a flow in one step.
