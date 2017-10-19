@@ -17,33 +17,40 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms;
+package chappy.clients.rest;
 
-import javax.jms.JMSException;
-import javax.jms.MessageListener;
+import chappy.clients.common.AbstractChappyLogout;
+import chappy.interfaces.cookies.IChappyCookie;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSClient extends MessageListener {
+public class ChappyRESTLogout extends AbstractChappyLogout {
 
 	/**
-	 * send the data to Chappy.
-	 * @throws JMSException
+	 * 
 	 */
-	public void send() throws JMSException;
-	
-	/**
-	 * close all connections.
-	 * This should be called only once.
-	 * @return message confirmation.
+	public ChappyRESTLogout() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getCookie()
 	 */
-	public String closeAll();
-	
-	/**
-	 * This contains everithing neeed to continue communication to chappy.
-	 * @return Transaction Holder for JMS
+	@Override
+	public IChappyCookie getCookie() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getStatus()
 	 */
-	public IJMSTransactionHolder createTransactionHolder();
+	@Override
+	public String getStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

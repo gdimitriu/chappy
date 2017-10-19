@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.github.gdimitriu.chappy</groupId>
-    <artifactId>chappy</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>chappy-clients-jms</artifactId>
-  <name>chappy-clients-jms</name>
-  <description>data and interfaces for jms client ussage</description>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.gdimitriu.chappy</groupId>
+		<artifactId>chappy</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>chappy-clients-common</artifactId>
+	<name>chappy-clients-common</name>
+	<description>common part for the chappy clients</description>
 	<build>
 		<plugins>
 			<plugin>
@@ -25,11 +25,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-utils</artifactId>
-			<version>${chappy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-configurations</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
@@ -38,15 +33,5 @@
 			<artifactId>chappy-interfaces</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-providers</artifactId>
-			<version>${chappy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-clients-common</artifactId>
-			<version>${chappy.version}</version>
-		</dependency>
-	</dependencies>  
+	</dependencies>  	
 </project>

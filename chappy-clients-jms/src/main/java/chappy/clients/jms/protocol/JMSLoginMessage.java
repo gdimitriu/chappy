@@ -25,6 +25,8 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
+
+import chappy.clients.common.protocol.AbstractChappyLoginMessage;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
@@ -33,28 +35,11 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.providers.cookie.CookieFactory;
 
 /**
+ * JMS Login message implementation.
  * @author Gabriel Dimitriu
  *
  */
-public class JMSLoginMessage implements IJMSProtocol{
-
-	/** user name */
-	private String userName = null;
-	
-	/** user password */
-	private String password = null;
-	
-	/** user persistence required */
-	private boolean persistence = false;
-	
-	/** cookie for the transaction */
-	private IChappyCookie cookie = null;
-	
-	/** reply message from chappy */
-	private String replyMessage = "";
-	
-	/** exception in case of internal server */ 
-	private Exception exception = null;
+public class JMSLoginMessage extends AbstractChappyLoginMessage implements IJMSProtocol{
 	
 	/** status string */
 	private String status = IJMSStatus.FORBIDDEN;
@@ -71,59 +56,11 @@ public class JMSLoginMessage implements IJMSProtocol{
 	 * @param password of login user
 	 */
 	public JMSLoginMessage(final String userName, final String password) {
-		this.userName = userName;
-		this.password = password;
+		super(userName, password);
 	}
 	
-	/**
-	 * get the userName of the login user.
-	 * @return userName of the login user.
-	 */
-	public String getUserName() {
-		return this.userName;
-	}
-	
-	/**
-	 * get the password of the login user.
-	 * @return password of the login user.
-	 */
-	public String getPassword() {
-		return this.password;
-	}
-	
-	/**
-	 * get the persistence flag;
-	 * @return true if persistence is required.
-	 */
-	public boolean isPersistence() {
-		return persistence;
-	}
-	
-	
-	/**
-	 * set the required persistence.
-	 * @param persistence true if persistence is required.
-	 */
-	public void setPersistence(final boolean persistence) {
-		this.persistence = persistence;
-	}
-	
-	/**
-	 * get the reply message from the chappy.
-	 * @return the replyMessage
-	 */
-	public String getReplyMessage() {
-		return replyMessage;
-	}
-	
-	/**
-	 * set the reply message from chappy.
-	 * @param replyMessage the replyMessage to set
-	 */
-	public void setReplyMessage(final String replyMessage) {
-		this.replyMessage = replyMessage;
-	}
-	
+
+
 	/**
 	 * @return the status
 	 */
@@ -138,35 +75,7 @@ public class JMSLoginMessage implements IJMSProtocol{
 		this.status = status;
 	}
 
-	/**
-	 * @return the exception
-	 */
-	public Exception getException() {
-		return exception;
-	}
 
-	/**
-	 * @param exception the exception to set
-	 */
-	public void setException(final Exception exception) {
-		this.exception = exception;
-	}
-
-	/**
-	 * set the cookie that correspond to this login
-	 * @param cookie that correspond to this login.
-	 */
-	public void setCookie(final IChappyCookie cookie) {
-		this.cookie = cookie;
-	}
-	
-	/**
-	 * get the cookie for this login.
-	 * @return cookie for this login.
-	 */
-	public IChappyCookie getCookie() {
-		return this.cookie;
-	}
 	
 	/* (non-Javadoc)
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#decodeReplyMessage(javax.jms.Message)
@@ -180,17 +89,17 @@ public class JMSLoginMessage implements IJMSProtocol{
 			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();
 			if (map != null && !map.isEmpty()) {
 				if (map.containsKey(IJMSProtocolKeys.REPLY_MESSAGE_KEY)) {
-					this.replyMessage = (String) map.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY);
+					setReplyMessage((String) map.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY));
 				} else {
-					this.replyMessage = null;
+					setReplyMessage(null);
 				}
 				if (map.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
-					this.cookie = (IChappyCookie) map.get(IJMSProtocolKeys.COOKIE_KEY);
+					setCookie((IChappyCookie) map.get(IJMSProtocolKeys.COOKIE_KEY));
 				} else {
-					this.cookie = null;
+					setCookie(null);
 				}
 				if (map.containsKey(IJMSProtocolKeys.REPLY_EXCEPTION_KEY)) {
-					this.exception = (Exception) map.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY);
+					setException((Exception) map.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY));
 				}
 			}
 		}
@@ -203,17 +112,17 @@ public class JMSLoginMessage implements IJMSProtocol{
 	public Message encodeReplyMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
 		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
-		message.setJMSCorrelationID(cookie.getTransactionId());
+		message.setJMSCorrelationID(getCookie().getTransactionId());
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
-		if (cookie != null) {
-			map.put(IJMSProtocolKeys.COOKIE_KEY, cookie);
+		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
+		if (getCookie() != null) {
+			map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
 		}
-		if (exception != null) {
-			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, exception);
+		if (getException() != null) {
+			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, getException());
 		}
-		if (replyMessage != null) {
-			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
+		if (getReplyMessage() != null) {
+			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
 		}
 		message.setObject(map);
 		return message;
@@ -226,11 +135,11 @@ public class JMSLoginMessage implements IJMSProtocol{
 	public void decodeInboundMessage(final Message message) throws JMSException {
 		if (message instanceof StreamMessage) {
 			StreamMessage strMsg = (StreamMessage) message;
-			this.userName = strMsg.readString();
-			this.password = strMsg.readString();
-			this.persistence = strMsg.readBoolean();
-			cookie = CookieFactory.getFactory().newCookie(this.getClass(), userName);
-			cookie.setTransactionId(message.getJMSMessageID());
+			setUserName(strMsg.readString());
+			setPassword(strMsg.readString());
+			setPersistence(strMsg.readBoolean());
+			setCookie( CookieFactory.getFactory().newCookie(this.getClass(), getUserName()));
+			getCookie().setTransactionId(message.getJMSMessageID());
 		}
 	}
 	
@@ -241,9 +150,9 @@ public class JMSLoginMessage implements IJMSProtocol{
 	public Message encodeInboundMessage(final Session session) throws JMSException {		
 		StreamMessage message = session.createStreamMessage();
 		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.LOGIN);
-		message.writeString(this.userName);
-		message.writeString(this.password);
-		message.writeBoolean(this.persistence);		
+		message.writeString(getUserName());
+		message.writeString(getPassword());
+		message.writeBoolean(isPersistence());		
 		return message;
 	}
 	
@@ -271,15 +180,5 @@ public class JMSLoginMessage implements IJMSProtocol{
 		return msg;
 	}
 	
-	/**
-	 * query if it has exception coming from chappy.
-	 * @return true if has exception from chappy.
-	 */
-	public boolean hasException() {
-		if (exception != null) {
-			return true;			
-		} else {
-			return false;
-		}
-	}
+
 }

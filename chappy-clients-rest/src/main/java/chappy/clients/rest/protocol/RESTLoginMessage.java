@@ -17,33 +17,30 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms;
+package chappy.clients.rest.protocol;
 
-import javax.jms.JMSException;
-import javax.jms.MessageListener;
+import chappy.clients.common.protocol.AbstractChappyLoginMessage;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSClient extends MessageListener {
+public class RESTLoginMessage extends AbstractChappyLoginMessage {
 
 	/**
-	 * send the data to Chappy.
-	 * @throws JMSException
+	 * 
 	 */
-	public void send() throws JMSException;
-	
+	public RESTLoginMessage() {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
-	 * close all connections.
-	 * This should be called only once.
-	 * @return message confirmation.
+	 * @param userName
+	 * @param password
 	 */
-	public String closeAll();
-	
-	/**
-	 * This contains everithing neeed to continue communication to chappy.
-	 * @return Transaction Holder for JMS
-	 */
-	public IJMSTransactionHolder createTransactionHolder();
+	public RESTLoginMessage(String userName, String password) {
+		super(userName, password);
+		// TODO Auto-generated constructor stub
+	}
+
 }

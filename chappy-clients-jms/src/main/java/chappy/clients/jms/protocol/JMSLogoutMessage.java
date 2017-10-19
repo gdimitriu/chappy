@@ -25,6 +25,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+
+import chappy.clients.common.protocol.AbstractChappyLogoutMessage;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
@@ -32,20 +34,12 @@ import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
 /**
+ * Implementation of the JMS logout message.
  * @author Gabriel Dimitriu
  *
  */
-public class JMSLogoutMessage implements IJMSProtocol {
+public class JMSLogoutMessage extends AbstractChappyLogoutMessage implements IJMSProtocol {
 
-	/** cookie for the transaction */
-	private IChappyCookie cookie = null;
-	
-	/** reply message from chappy */
-	private String replyMessage = "";
-	
-	/** exception in case of internal server */ 
-	private Exception exception = null;
-	
 	/** status string */
 	private String status = IJMSStatus.FORBIDDEN;
 	
@@ -54,34 +48,6 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	 */
 	public JMSLogoutMessage() {
 		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @return the cookie
-	 */
-	public IChappyCookie getCookie() {
-		return cookie;
-	}
-
-	/**
-	 * @param cookie the cookie to set
-	 */
-	public void setCookie(final IChappyCookie cookie) {
-		this.cookie = cookie;
-	}
-
-	/**
-	 * @return the replyMessage
-	 */
-	public String getReplyMessage() {
-		return replyMessage;
-	}
-
-	/**
-	 * @param replyMessage the replyMessage to set
-	 */
-	public void setReplyMessage(final String replyMessage) {
-		this.replyMessage = replyMessage;
 	}
 	
 	/**
@@ -98,20 +64,6 @@ public class JMSLogoutMessage implements IJMSProtocol {
 		this.status = status;
 	}
 
-	/**
-	 * @return the exception
-	 */
-	public Exception getException() {
-		return exception;
-	}
-
-	/**
-	 * @param exception the exception to set
-	 */
-	public void setException(final Exception exception) {
-		this.exception = exception;
-	}
-
 	/* (non-Javadoc)
 	 * @see chappy.clients.jms.protocol.IJMSProtocol#encodeInboundMessage(javax.jms.Session)
 	 */
@@ -119,7 +71,7 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	public Message encodeInboundMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
 		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.LOGOUT);
-		message.setObject(cookie);
+		message.setObject(getCookie());
 		return message;
 	}
 
@@ -129,7 +81,7 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	@Override
 	public void decodeInboundMessage(final Message message) throws JMSException {
 		if (message instanceof ObjectMessage) {
-			cookie = (IChappyCookie) ((ObjectMessage) message).getObject();
+			setCookie((IChappyCookie) ((ObjectMessage) message).getObject());
 		}
 	}
 
@@ -140,17 +92,17 @@ public class JMSLogoutMessage implements IJMSProtocol {
 	public Message encodeReplyMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
 		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
-		message.setJMSCorrelationID(cookie.getTransactionId());
+		message.setJMSCorrelationID(getCookie().getTransactionId());
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
-		if (cookie != null) {
-			map.put(IJMSProtocolKeys.COOKIE_KEY, cookie);
+		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
+		if (getCookie() != null) {
+			map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
 		}
-		if (exception != null) {
-			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, exception);
+		if (getException() != null) {
+			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, getException());
 		}
-		if (replyMessage != null) {
-			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, replyMessage);
+		if (getReplyMessage() != null) {
+			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
 		}
 		message.setObject(map);
 		return message;
@@ -168,17 +120,17 @@ public class JMSLogoutMessage implements IJMSProtocol {
 			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();
 			if (map != null && !map.isEmpty()) {
 				if (map.containsKey(IJMSProtocolKeys.REPLY_MESSAGE_KEY)) {
-					this.replyMessage = (String) map.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY);
+					setReplyMessage((String) map.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY));
 				} else {
-					this.replyMessage = null;
+					setReplyMessage(null);
 				}
 				if (map.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
-					this.cookie = (IChappyCookie) map.get(IJMSProtocolKeys.COOKIE_KEY);
+					setCookie((IChappyCookie) map.get(IJMSProtocolKeys.COOKIE_KEY));
 				} else {
-					this.cookie = null;
+					setCookie(null);
 				}
 				if (map.containsKey(IJMSProtocolKeys.REPLY_EXCEPTION_KEY)) {
-					this.exception = (Exception) map.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY);
+					setException((Exception) map.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY));
 				}
 			}
 		}
@@ -208,15 +160,4 @@ public class JMSLogoutMessage implements IJMSProtocol {
 		return msg;
 	}
 	
-	/**
-	 * query if it has exception coming from chappy.
-	 * @return true if has exception from chappy.
-	 */
-	public boolean hasException() {
-		if (exception != null) {
-			return true;			
-		} else {
-			return false;
-		}
-	}
 }

@@ -17,33 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms;
-
-import javax.jms.JMSException;
-import javax.jms.MessageListener;
+package chappy.clients.common.transaction;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSClient extends MessageListener {
+public class RESTTransactionHolder {
 
 	/**
-	 * send the data to Chappy.
-	 * @throws JMSException
+	 * 
 	 */
-	public void send() throws JMSException;
-	
-	/**
-	 * close all connections.
-	 * This should be called only once.
-	 * @return message confirmation.
-	 */
-	public String closeAll();
-	
-	/**
-	 * This contains everithing neeed to continue communication to chappy.
-	 * @return Transaction Holder for JMS
-	 */
-	public IJMSTransactionHolder createTransactionHolder();
+	public RESTTransactionHolder() {
+		// TODO Auto-generated constructor stub
+	}
+
 }
