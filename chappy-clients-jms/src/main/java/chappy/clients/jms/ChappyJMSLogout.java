@@ -46,8 +46,8 @@ public class ChappyJMSLogout extends AbstractChappyLogout implements IJMSClient 
 	 */
 	public ChappyJMSLogout(final IClientTransaction client) {
 		clientTransaction = (IJMSTransactionHolder) client;
-		setLogoutProtocol(new JMSLogoutMessage());
-		getLogoutProtocol().setCookie(client.getCookie());
+		setProtocol(new JMSLogoutMessage());
+		getProtocol().setCookie(client.getCookie());
 	}
 
 	/* (non-Javadoc)
@@ -55,11 +55,11 @@ public class ChappyJMSLogout extends AbstractChappyLogout implements IJMSClient 
 	 */
 	@Override
 	public void send() throws JMSException {
-		Message message = ((JMSLogoutMessage) getLogoutProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
+		Message message = ((JMSLogoutMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
 		message.setJMSReplyTo(clientTransaction.getCurrentReplyToDestination());
 		clientTransaction.getCurrentMessageProducer().send(message);
 		clientTransaction.getCurrentMessageConsumer().setMessageListener(this);		
-		setLogoutProtocol(null);
+		setProtocol(null);
 		
 	}
 	/* (non-Javadoc)
@@ -68,13 +68,13 @@ public class ChappyJMSLogout extends AbstractChappyLogout implements IJMSClient 
 	@Override
 	public void onMessage(final Message message) {
 		try {
-			setLogoutProtocol(JMSLogoutMessage.createDecodedReplyMessage(message));
+			setProtocol(JMSLogoutMessage.createDecodedReplyMessage(message));
 		} catch (JMSException e) {
-			if (getLogoutProtocol() == null) {
-				setLogoutProtocol(new JMSLogoutMessage());
+			if (getProtocol() == null) {
+				setProtocol(new JMSLogoutMessage());
 			}
-			getLogoutProtocol().setReplyMessage(e.getLocalizedMessage());
-			getLogoutProtocol().setException(e);
+			getProtocol().setReplyMessage(e.getLocalizedMessage());
+			getProtocol().setException(e);
 		}
 		
 	}
@@ -84,7 +84,7 @@ public class ChappyJMSLogout extends AbstractChappyLogout implements IJMSClient 
 	 */
 	@Override
 	public IChappyCookie getCookie() {
-		if (getLogoutProtocol() == null) {
+		if (getProtocol() == null) {
 			return null;
 		}
 		return clientTransaction.getCookie();
@@ -135,9 +135,31 @@ public class ChappyJMSLogout extends AbstractChappyLogout implements IJMSClient 
 	 */
 	@Override
 	public String getStatus() {
-		if (getLogoutProtocol() == null) {
+		if (getProtocol() == null) {
 			return IJMSStatus.REPLY_NOT_READY;
 		}
-		return ((JMSLogoutMessage) getLogoutProtocol()).getStatus();
+		return ((JMSLogoutMessage) getProtocol()).getStatus();
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getStatusCode()
+	 */
+	@Override
+	public int getStatusCode() {
+		if (getProtocol() == null) {
+			return -1;
+		}
+		return 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getTransactionErrorMessage()
+	 */
+	@Override
+	public String getTransactionErrorMessage() {
+		if (getProtocol() == null) {
+			return IJMSStatus.REPLY_NOT_READY;
+		}
+		return getProtocol().getReplyMessage();
 	}
 }

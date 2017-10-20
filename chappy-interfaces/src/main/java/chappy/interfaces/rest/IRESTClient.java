@@ -17,45 +17,29 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.services;
-
-import chappy.interfaces.cookies.IChappyCookie;
+package chappy.interfaces.rest;
 
 /**
- * Base interface for Chappy clients.
  * @author Gabriel Dimitriu
  *
  */
-public interface IChappyClient {
+public interface IRESTClient {
 
 	/**
-	 * @return the cookie received from chappy
+	 * send the data to Chappy.
 	 */
-	IChappyCookie getCookie();
-
-	/**
-	 * @return status of chappy clienttransaction.
-	 */
-	String getStatus();
+	public void send();
 	
 	/**
-	 * @return status code
+	 * close all connections.
+	 * This should be called only once.
+	 * @return message confirmation.
 	 */
-	int getStatusCode();
-
+	public String closeAll();
+	
 	/**
-	 * @return true if has exception.
+	 * This contains everything need to continue communication to chappy.
+	 * @return Transaction Holder for REST
 	 */
-	boolean hasException();
-
-	/**
-	 * @return reply message from Chappy.
-	 */
-	String getTransactionErrorMessage();
-
-	/**
-	 * @return transaction exception from chappy
-	 */
-	Exception getTransactionException();
-
+	public IRESTTransactionHolder createTransactionHolder();
 }

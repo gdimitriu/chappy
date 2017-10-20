@@ -19,37 +19,34 @@
  */
 package chappy.clients.common;
 
-import chappy.clients.common.protocol.AbstractChappyLogoutMessage;
+import chappy.clients.common.protocol.AbstractChappyAddTransformerMessage;
+import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.services.IChappyClient;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyLogout implements IChappyClient{
-	
-	/** internal handler for logout protocol */
-	private AbstractChappyLogoutMessage protocol = null;
+public abstract class AbstractChappyAddTransformer implements IChappyClient {
 
+	private AbstractChappyAddTransformerMessage protocol = null;
 	/**
 	 * 
 	 */
-	public AbstractChappyLogout() {
+	public AbstractChappyAddTransformer() {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @return the protocol
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getCookie()
 	 */
-	public AbstractChappyLogoutMessage getProtocol() {
-		return protocol;
-	}
-
-	/**
-	 * @param protocol the protocol to set
-	 */
-	public void setProtocol(final AbstractChappyLogoutMessage logoutProtocol) {
-		this.protocol = logoutProtocol;
+	@Override
+	public IChappyCookie getCookie() {
+		if (protocol == null) {
+			return null;
+		}
+		return protocol.getCookie();
 	}
 
 	/* (non-Javadoc)
@@ -64,6 +61,17 @@ public abstract class AbstractChappyLogout implements IChappyClient{
 	}
 
 	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getTransactionErrorMessage()
+	 */
+	@Override
+	public String getTransactionErrorMessage() {
+		if (protocol == null) {
+			return IJMSMessages.REPLY_NOT_READY;
+		}
+		return protocol.getReplyMessage();
+	}
+
+	/* (non-Javadoc)
 	 * @see chappy.interfaces.services.IChappyClient#getTransactionException()
 	 */
 	@Override
@@ -73,4 +81,19 @@ public abstract class AbstractChappyLogout implements IChappyClient{
 		}
 		return protocol.getException();
 	}
+
+	/**
+	 * @return the protocol
+	 */
+	public AbstractChappyAddTransformerMessage getProtocol() {
+		return protocol;
+	}
+
+	/**
+	 * @param protocol the protocol to set
+	 */
+	public void setProtocol(final AbstractChappyAddTransformerMessage protocol) {
+		this.protocol = protocol;
+	}
+
 }

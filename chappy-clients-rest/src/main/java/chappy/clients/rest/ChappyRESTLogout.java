@@ -19,20 +19,36 @@
  */
 package chappy.clients.rest;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import chappy.clients.common.AbstractChappyLogout;
+import chappy.clients.rest.protocol.RESTLogoutMessage;
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.rest.IRESTClient;
+import chappy.interfaces.rest.IRESTTransactionHolder;
+import chappy.interfaces.transactions.IClientTransaction;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyRESTLogout extends AbstractChappyLogout {
+public class ChappyRESTLogout extends AbstractChappyLogout implements IRESTClient {
 
+	/** client tansaction */
+	IRESTTransactionHolder clientTransaction = null;
+	
+	/** http response for REST client */
+	private Response response = null;
 	/**
 	 * 
 	 */
-	public ChappyRESTLogout() {
-		// TODO Auto-generated constructor stub
+	public ChappyRESTLogout(final IClientTransaction client){
+		clientTransaction = (IRESTTransactionHolder) client;
+		setProtocol(new RESTLogoutMessage());
+		getProtocol().setCookie(client.getCookie());
 	}
 
 	/* (non-Javadoc)
@@ -40,8 +56,10 @@ public class ChappyRESTLogout extends AbstractChappyLogout {
 	 */
 	@Override
 	public IChappyCookie getCookie() {
-		// TODO Auto-generated method stub
-		return null;
+		if (getProtocol() == null) {
+			return null;
+		}
+		return clientTransaction.getCookie();
 	}
 
 	/* (non-Javadoc)
@@ -49,8 +67,43 @@ public class ChappyRESTLogout extends AbstractChappyLogout {
 	 */
 	@Override
 	public String getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((RESTLogoutMessage) getProtocol()).getStatus().getReasonPhrase();
 	}
 
+	@Override
+	public void send() {
+		RESTLogoutMessage logout = (RESTLogoutMessage) getProtocol();
+		try {
+			response = logout.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			logout.setException(e);
+		}
+		logout.decodeReplyMessage(response);
+	}
+
+	@Override
+	public String closeAll() {
+		clientTransaction.getRestClient().close();
+		return "Chappy:= has been stopped ok.";
+	}
+
+	@Override
+	public IRESTTransactionHolder createTransactionHolder() {
+		return clientTransaction;
+	}
+
+	@Override
+	public int getStatusCode() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getTransactionErrorMessage() {
+		if (getProtocol() == null) {
+			return Status.NO_CONTENT.getReasonPhrase();
+		}
+		return getProtocol().getReplyMessage();
+	}
 }

@@ -34,6 +34,7 @@ import chappy.clients.common.transaction.JMSTransactionHolder;
 import chappy.clients.jms.protocol.JMSLoginMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
+import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 
@@ -65,8 +66,8 @@ public class ChappyJMSLogin extends AbstractChappyLogin implements IJMSClient{
 	 * @param passwd the code
 	 */
 	public ChappyJMSLogin(final String userName, final String passwd, final boolean persistence) {
-		setLoginProtocol(new JMSLoginMessage(userName, passwd));
-		getLoginProtocol().setPersistence(persistence);
+		setProtocol(new JMSLoginMessage(userName, passwd));
+		getProtocol().setPersistence(persistence);
 	}
 	
 	/**
@@ -89,26 +90,26 @@ public class ChappyJMSLogin extends AbstractChappyLogin implements IJMSClient{
 		producer = session.createProducer(destination);
 		replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
 		connection.start();
-		Message message = ((JMSLoginMessage) getLoginProtocol()).encodeInboundMessage(session);
+		Message message = ((JMSLoginMessage) getProtocol()).encodeInboundMessage(session);
 		message.setJMSReplyTo(replyTo);
 		producer.send(message);
 		String messageID = message.getJMSMessageID();						
 		consumer = session.createConsumer(replyTo, "JMSCorrelationID = '" + 
 				messageID + "'");
 		consumer.setMessageListener(this);		
-		setLoginProtocol(null);
+		setProtocol(null);
 	}
 	
 	@Override
 	public void onMessage(Message message) {
 		try {
-			setLoginProtocol(JMSLoginMessage.createDecodedReplyMessage(message));
+			setProtocol(JMSLoginMessage.createDecodedReplyMessage(message));
 		} catch (JMSException e) {
-			if (getLoginProtocol() == null) {
-				setLoginProtocol(new JMSLoginMessage());
+			if (getProtocol() == null) {
+				setProtocol(new JMSLoginMessage());
 			}
-			getLoginProtocol().setReplyMessage(e.getLocalizedMessage());
-			getLoginProtocol().setException(e);
+			getProtocol().setReplyMessage(e.getLocalizedMessage());
+			getProtocol().setException(e);
 		}
 	}
 	
@@ -157,9 +158,27 @@ public class ChappyJMSLogin extends AbstractChappyLogin implements IJMSClient{
 	 */
 	@Override
 	public String getStatus() {
-		if (getLoginProtocol() == null) {
+		if (getProtocol() == null) {
 			return IJMSStatus.REPLY_NOT_READY;
 		}
-		return ((JMSLoginMessage )getLoginProtocol()).getStatus();
+		return ((JMSLoginMessage )getProtocol()).getStatus();
 	}
+
+	@Override
+	public int getStatusCode() {
+		if (getProtocol() == null) {
+			return -1;
+		}
+		return 0;
+	}
+
+	@Override
+	public String getTransactionErrorMessage() {
+		if (getProtocol() == null) {
+			return IJMSMessages.REPLY_NOT_READY;
+		}
+		return getProtocol().getReplyMessage();
+	}
+	
+	
 }

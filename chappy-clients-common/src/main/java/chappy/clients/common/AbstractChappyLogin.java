@@ -21,7 +21,6 @@ package chappy.clients.common;
 
 import chappy.clients.common.protocol.AbstractChappyLoginMessage;
 import chappy.interfaces.cookies.IChappyCookie;
-import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.services.IChappyClient;
 
 /**
@@ -31,7 +30,7 @@ import chappy.interfaces.services.IChappyClient;
 public abstract class AbstractChappyLogin implements IChappyClient {
 
 	/** abstract handler for login protocol */
-	private AbstractChappyLoginMessage loginProtocol = null;
+	private AbstractChappyLoginMessage protocol = null;
 	
 	/**
 	 * 
@@ -40,17 +39,17 @@ public abstract class AbstractChappyLogin implements IChappyClient {
 	}
 
 	/**
-	 * @return the loginProtocol
+	 * @return the protocol
 	 */
-	public AbstractChappyLoginMessage getLoginProtocol() {
-		return loginProtocol;
+	public AbstractChappyLoginMessage getProtocol() {
+		return protocol;
 	}
 
 	/**
-	 * @param loginProtocol the loginProtocol to set
+	 * @param protocol the protocol to set
 	 */
-	public void setLoginProtocol(final AbstractChappyLoginMessage loginProtocol) {
-		this.loginProtocol = loginProtocol;
+	public void setProtocol(final AbstractChappyLoginMessage loginProtocol) {
+		this.protocol = loginProtocol;
 	}
 
 	/* (non-Javadoc)
@@ -58,10 +57,10 @@ public abstract class AbstractChappyLogin implements IChappyClient {
 	 */
 	@Override
 	public IChappyCookie getCookie() {
-		if (loginProtocol == null) {
+		if (protocol == null) {
 			return null;
 		}
-		return loginProtocol.getCookie();
+		return protocol.getCookie();
 	}
 	
 	
@@ -70,33 +69,21 @@ public abstract class AbstractChappyLogin implements IChappyClient {
 	 */
 	@Override
 	public boolean hasException() {
-		if (loginProtocol == null) {
+		if (protocol == null) {
 			return false;
 		}
-		return loginProtocol.hasException();
+		return protocol.hasException();
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.jms.IJMSClient#getTransactionErrorMessage()
-	 */
-	@Override
-	public String getTransactionErrorMessage() {
-		if (loginProtocol == null) {
-			return IJMSMessages.REPLY_NOT_READY;
-		}
-		return loginProtocol.getReplyMessage();
-	}
-	
+		
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.services.IChappyClient#getTransactionException()
 	 */
 	@Override
 	public Exception getTransactionException() {
-		if (loginProtocol == null) {
+		if (protocol == null) {
 			return null;
 		}
-		return loginProtocol.getException();		
+		return protocol.getException();		
 	}
 	
 }
