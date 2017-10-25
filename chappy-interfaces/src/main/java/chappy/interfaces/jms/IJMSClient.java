@@ -22,13 +22,11 @@ package chappy.interfaces.jms;
 import javax.jms.JMSException;
 import javax.jms.MessageListener;
 
-import chappy.interfaces.services.IChappyClient;
-
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSClient extends MessageListener, IChappyClient{
+public interface IJMSClient extends MessageListener {
 
 	/**
 	 * send the data to Chappy.

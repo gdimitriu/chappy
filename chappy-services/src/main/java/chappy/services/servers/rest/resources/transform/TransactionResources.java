@@ -47,9 +47,6 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.flows.IFlowRunner;
@@ -115,16 +112,11 @@ public class TransactionResources {
 		if (response == null) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
-		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    	String json;
 		try {
-			json = ow.writeValueAsString(response);
+			return Response.ok().cookie(CookieUtils.encodeCookie(response)).build();
 		} catch (JsonProcessingException e) {
 			return Response.status(Status.FORBIDDEN).build();
 		}
-    	byte[] base64json=Base64.getEncoder().encode(json.getBytes());
-		NewCookie cookie = new NewCookie(IChappyServiceNamesConstants.COOKIE_USER_DATA, new String(base64json));
-		return Response.ok().cookie(cookie).build();
 	}
 	
 	/**

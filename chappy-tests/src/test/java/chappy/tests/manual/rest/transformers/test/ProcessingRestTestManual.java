@@ -22,6 +22,7 @@ package chappy.tests.manual.rest.transformers.test;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,8 +55,12 @@ import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
+import chappy.clients.rest.ChappyRESTAddTransformer;
+import chappy.clients.rest.ChappyRESTLogin;
+import chappy.clients.rest.ChappyRESTLogout;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
@@ -338,6 +343,43 @@ public class ProcessingRestTestManual {
 		}
 	}
 	
+	private static final String CONFIGURATION_AUTOPRIMITIVE = "<?xml version=\"1.0\"?><configuration><autoPrimitive>false</autoPrimitive><autoArray>false</autoArray></configuration>";
+
+	public void xml2jsonStepTest() {
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON).queryParam("mode", "xml2json")
+				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_XML)
+				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
+						MediaType.APPLICATION_XML));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("xml2json2xml.json"),
+					StreamUtils.toStringFromStream(inputStream));
+		}
+	}
+	
+	public void xml2xmlXsltOneStepWParametersTest() {
+		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
+		WebTarget target = client.target(baseUri);
+		@SuppressWarnings("resource")
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
+						MediaType.APPLICATION_XML_TYPE)
+				.field("processingMapParameters.xsl",
+						getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
+						MediaType.APPLICATION_XML_TYPE);
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam("param1", "buru")
+				.queryParam("param2", "-1000").request(new String[] { MediaType.MULTIPART_FORM_DATA })
+				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("processingOutputParameters.xml"),
+					StreamUtils.toStringFromStream(inputStream));
+		}
+	}
 	
 	@SuppressWarnings("resource")
 	public void push3CustomTransformersByTransactionAndMakeTransformationGetStatistics() throws FileNotFoundException {
@@ -414,48 +456,42 @@ public class ProcessingRestTestManual {
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 	}
-	private static final String CONFIGURATION_AUTOPRIMITIVE = "<?xml version=\"1.0\"?><configuration><autoPrimitive>false</autoPrimitive><autoArray>false</autoArray></configuration>";
-
-	public void xml2jsonStepTest() {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(baseUri).register(MultiPartFeature.class);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_STAXON).queryParam("mode", "xml2json")
-				.queryParam("configuration", CONFIGURATION_AUTOPRIMITIVE).request(MediaType.APPLICATION_XML)
-				.put(Entity.entity(getClass().getClassLoader().getResourceAsStream("xml2json2xml.xml"),
-						MediaType.APPLICATION_XML));
-		if (response.getStatus() >= 0) {
-			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("xml2json2xml.json"),
-					StreamUtils.toStringFromStream(inputStream));
-		}
-	}
 	
-	public void xml2xmlXsltOneStepWParametersTest() {
-		Client client = ClientBuilder.newClient().register(MultiPartFeature.class).register(MultiPartWriter.class);
-		WebTarget target = client.target(baseUri);
-		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field("data", getClass().getClassLoader().getResourceAsStream("processingInput.xml"),
-						MediaType.APPLICATION_XML_TYPE)
-				.field("configuration", StreamUtils.getStringFromResource("processingOneStepXslParameters.xml"),
-						MediaType.APPLICATION_XML_TYPE)
-				.field("processingMapParameters.xsl",
-						getClass().getClassLoader().getResourceAsStream("processingMapParameters.xsl"),
-						MediaType.APPLICATION_XML_TYPE);
-		Response response = target.path(IRestPathConstants.PATH_TO_TRANSFORM_FLOW).queryParam("param1", "buru")
-				.queryParam("param2", "-1000").request(new String[] { MediaType.MULTIPART_FORM_DATA })
-				.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		if (response.getStatus() >= 0) {
-			InputStream inputStream = response.readEntity(InputStream.class);
-			assertEquals(StreamUtils.getStringFromResourceWithoutSpaces("processingOutputParameters.xml"),
-					StreamUtils.toStringFromStream(inputStream));
+	public void clientLoginLogout() {
+		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
+		try {
+			login.createConnectionToServer("localhost", port);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		login.send();
+		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
+		System.out.println(login.getCookie().getUserName());
+		System.out.println(login.getCookie().getTransactionId());
+		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		
+		ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer("PreProcessingStep", transaction);
+		try {
+			addTransformer.setTransformer("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ChappyRESTLogout logout = new ChappyRESTLogout(transaction);
+		logout.send();
+		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		System.out.println(logout.getStatus());
 	}
+
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
 		//test.push3CustomTransformersByTransactionAndMakeTransformation();
 		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
-		test.xml2xmlXsltOneStepWParametersTest();
+		//test.xml2xmlXsltOneStepWParametersTest();
+		test.clientLoginLogout();
 	}
+
+	
 
 }

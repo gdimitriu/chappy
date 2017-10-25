@@ -57,8 +57,8 @@ public class ClassUtils {
 	public String getClassAsString(final String className, final String packageName) throws FileNotFoundException {
 		String classPath = null;
 		Reflections ref = new Reflections(packageName);
-		Set<Class<? extends AbstractStep>> trasnformers = ref.getSubTypesOf(AbstractStep.class);
-		for (Class<? extends AbstractStep> cl : trasnformers) {
+		Set<Class<? extends AbstractStep>> transformers = ref.getSubTypesOf(AbstractStep.class);
+		for (Class<? extends AbstractStep> cl : transformers) {
 			if (cl.getSimpleName().equals(className)){
 				classPath = cl.getCanonicalName();
 			}

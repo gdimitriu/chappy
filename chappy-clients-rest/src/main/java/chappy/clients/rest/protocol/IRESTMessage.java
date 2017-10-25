@@ -17,45 +17,40 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.services;
+package chappy.clients.rest.protocol;
 
-import chappy.interfaces.cookies.IChappyCookie;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.StatusType;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 /**
- * Base interface for Chappy clients.
+ * 
  * @author Gabriel Dimitriu
  *
  */
-public interface IChappyClient {
+public interface IRESTMessage {
 
 	/**
-	 * @return the cookie received from chappy
+	 * @param target
+	 * @return
 	 */
-	IChappyCookie getCookie();
+	Invocation encodeInboundMessage(final WebTarget target) throws JsonProcessingException;
 
 	/**
-	 * @return status of chappy clienttransaction.
+	 * @param response
 	 */
-	String getStatus();
-	
-	/**
-	 * @return status code
-	 */
-	int getStatusCode();
+	void decodeReplyMessage(final Response response);
 
 	/**
-	 * @return true if has exception.
+	 * @return the status
 	 */
-	boolean hasException();
+	StatusType getStatus();
 
 	/**
-	 * @return reply message from Chappy.
+	 * @param status the status to set
 	 */
-	String getTransactionErrorMessage();
-
-	/**
-	 * @return transaction exception from chappy
-	 */
-	Exception getTransactionException();
+	void setStatus(final StatusType status);
 
 }

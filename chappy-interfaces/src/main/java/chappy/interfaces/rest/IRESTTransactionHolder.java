@@ -19,6 +19,11 @@
  */
 package chappy.interfaces.rest;
 
+import java.net.URI;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
@@ -28,4 +33,18 @@ import chappy.interfaces.transactions.IClientTransaction;
  */
 public interface IRESTTransactionHolder extends IClientTransaction {
 
+	/**
+	 * @return the restClient
+	 */
+	public Client getRestClient();
+	
+	/**
+	 * @return the baseUri
+	 */
+	public URI getBaseUri();
+	
+	/**
+	 * @return the restTarget
+	 */
+	public WebTarget getRestTarget();
 }

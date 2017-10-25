@@ -21,6 +21,7 @@ package chappy.clients.jms.protocol;
 
 /**
  * 
+ * Chappy add transformer request protocol message implementation for JMS.
  * @author Gabriel Dimitriu
  *
  */

@@ -90,6 +90,7 @@
 		<module>chappy-exceptions</module>
 		<module>chappy-clients-jms</module>
 		<module>chappy-clients-rest</module>
+		<module>chappy-clients-common</module>
 	</modules>
 	<dependencies>
 	<!-- this is neeed by cassandra  -->

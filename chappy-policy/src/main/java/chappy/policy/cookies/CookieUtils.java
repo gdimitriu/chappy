@@ -23,10 +23,15 @@ import java.io.IOException;
 import java.util.Base64;
 
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.NewCookie;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 
 /**
  * @author Gabriel Dimitriu
@@ -44,11 +49,25 @@ public final class CookieUtils {
 	 * @throws IOException
 	 * @throws JsonProcessingException
 	 */
-	public static CookieTransactionsToken decodeCookie(Cookie cookie) throws IOException, JsonProcessingException {
+	public static IChappyCookie decodeCookie(final Cookie cookie) throws IOException, JsonProcessingException {
 		ObjectReader or = new ObjectMapper().readerFor(CookieTransactionsToken.class);
     	CookieTransactionsToken received = new CookieTransactionsToken();
     	String str=new String(Base64.getDecoder().decode(cookie.getValue().getBytes()));
     	received=or.readValue(str);
 		return received;
 	}
+	
+	/**
+	 * encode the cookie
+	 * @param cookie comming from chappy
+	 * @return encoded chappy REST cookie
+	 * @throws JsonProcessingException
+	 */
+	public static NewCookie encodeCookie(final IChappyCookie cookie) throws JsonProcessingException {
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    	String json = ow.writeValueAsString(cookie);
+    	byte[] base64json=Base64.getEncoder().encode(json.getBytes());
+    	return new NewCookie(IChappyServiceNamesConstants.COOKIE_USER_DATA, new String(base64json));
+	}
+
 }
