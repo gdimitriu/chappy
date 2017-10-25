@@ -34,7 +34,7 @@ import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
 /**
- * Implementation of the JMS logout message.
+ * Chappy logout request protocol message implementation for JMS.
  * @author Gabriel Dimitriu
  *
  */

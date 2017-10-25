@@ -22,7 +22,7 @@ package chappy.clients.common.protocol;
 import chappy.interfaces.cookies.IChappyCookie;
 
 /**
- * Abstract implementation of the logout message for chappy.
+ * Chappy logout request protocol message abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */

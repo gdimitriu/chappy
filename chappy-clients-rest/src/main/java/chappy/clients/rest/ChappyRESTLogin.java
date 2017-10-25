@@ -43,6 +43,7 @@ import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.rest.LocalDateTimeContextResolver;
 
 /**
+ * Chappy login request client for REST.
  * @author Gabriel Dimitriu
  *
  */

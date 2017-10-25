@@ -20,6 +20,7 @@
 package chappy.clients.jms.protocol;
 
 /**
+ * Chappy statistics request protocol message implementation for JMS.
  * @author Gabriel Dimitriu
  *
  */

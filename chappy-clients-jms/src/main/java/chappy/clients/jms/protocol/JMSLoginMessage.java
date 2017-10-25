@@ -35,7 +35,7 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.providers.cookie.CookieFactory;
 
 /**
- * JMS Login message implementation.
+ * Chappy login request protocol message implementation for JMS.
  * @author Gabriel Dimitriu
  *
  */

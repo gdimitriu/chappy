@@ -31,7 +31,7 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * client for the Chappy transaction logout on JMS.
+ * Chappy logout request client for JMS.
  * @author Gabriel Dimitriu
  *
  */

@@ -19,12 +19,14 @@
  */
 package chappy.clients.common;
 
+import java.io.IOException;
+
 import chappy.clients.common.protocol.AbstractChappyAddTransformerMessage;
 import chappy.interfaces.cookies.IChappyCookie;
-import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.services.IChappyClient;
 
 /**
+ * Chappy add transformer request wrapper abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
@@ -61,17 +63,6 @@ public abstract class AbstractChappyAddTransformer implements IChappyClient {
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#getTransactionErrorMessage()
-	 */
-	@Override
-	public String getTransactionErrorMessage() {
-		if (protocol == null) {
-			return IJMSMessages.REPLY_NOT_READY;
-		}
-		return protocol.getReplyMessage();
-	}
-
-	/* (non-Javadoc)
 	 * @see chappy.interfaces.services.IChappyClient#getTransactionException()
 	 */
 	@Override
@@ -94,6 +85,16 @@ public abstract class AbstractChappyAddTransformer implements IChappyClient {
 	 */
 	public void setProtocol(final AbstractChappyAddTransformerMessage protocol) {
 		this.protocol = protocol;
+	}
+	
+	/**
+	 * set Transformer code to be send to chappy.
+	 * @param transformerClassName
+	 * @param packageName
+	 * @throws IOException
+	 */
+	public void setTransformer(final String transformerClassName, final String packageName) throws IOException {
+		this.protocol.setTransformerFromClassPath(transformerClassName, packageName);
 	}
 
 }

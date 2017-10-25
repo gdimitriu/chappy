@@ -22,7 +22,7 @@ package chappy.clients.common.protocol;
 import chappy.interfaces.cookies.IChappyCookie;
 
 /**
- * Abstract class for encapsulation of the login message.
+ * Chappy login request protocol message abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */

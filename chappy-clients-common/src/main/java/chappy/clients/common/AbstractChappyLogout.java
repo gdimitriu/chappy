@@ -19,10 +19,14 @@
  */
 package chappy.clients.common;
 
+import javax.ws.rs.core.Response.Status;
+
 import chappy.clients.common.protocol.AbstractChappyLogoutMessage;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.services.IChappyClient;
 
 /**
+ * Chappy logout request wrapper abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
@@ -72,5 +76,24 @@ public abstract class AbstractChappyLogout implements IChappyClient{
 			return null;
 		}
 		return protocol.getException();
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getCookie()
+	 */
+	@Override
+	public IChappyCookie getCookie() {
+		if (protocol == null) {
+			return null;
+		}
+		return protocol.getCookie();
+	}
+	
+	@Override
+	public String getTransactionErrorMessage() {
+		if (getProtocol() == null) {
+			return Status.NO_CONTENT.getReasonPhrase();
+		}
+		return getProtocol().getReplyMessage();
 	}
 }

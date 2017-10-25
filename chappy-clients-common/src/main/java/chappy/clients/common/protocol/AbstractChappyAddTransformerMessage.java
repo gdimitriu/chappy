@@ -34,6 +34,7 @@ import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.transformers.AbstractStep;
 
 /**
+ *  Chappy add transformer request protocol message abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
@@ -154,17 +155,19 @@ public abstract class AbstractChappyAddTransformerMessage {
 	private String getClassFromClassPathAsString(final String className, final String packageName) throws IOException {
 		String classPath = null;
 		Reflections ref = new Reflections(packageName);
-		Set<Class<? extends AbstractStep>> trasnformers = ref.getSubTypesOf(AbstractStep.class);
-		for (Class<? extends AbstractStep> cl : trasnformers) {
+		Set<Class<? extends AbstractStep>> transformers = ref.getSubTypesOf(AbstractStep.class);
+		Class<?> actualClass = null;
+		for (Class<? extends AbstractStep> cl : transformers) {
 			if (cl.getSimpleName().equals(className)){
+				actualClass = cl;
 				classPath = cl.getCanonicalName();
 			}
 		}
-		if (classPath == null) {
+		if (classPath == null || actualClass == null) {
 			throw new FileNotFoundException("file not found on client side");
 		}
 		classPath = classPath.replace(".", "/");
-		classPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + classPath  + ".class";
+		classPath = actualClass.getProtectionDomain().getCodeSource().getLocation().getPath() + classPath  + ".class";
 		InputStream is = new FileInputStream(new File(classPath));
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		byte[] buffer = new byte[1024];

@@ -39,7 +39,7 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 
 /**
- * client for the chappy transaction login on JMS. 
+ * Chappy login request client for JMS
  * @author Gabriel Dimitriu
  *
  */

@@ -38,6 +38,7 @@ import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieUtils;
 
 /**
+ * Chappy logout request protocol message implementation for REST.
  * @author Gabriel Dimitriu
  *
  */

@@ -39,6 +39,7 @@ import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieUtils;
 
 /**
+ * Chappy add transformer request protocol message implementation for REST.
  * @author Gabriel Dimitriu
  *
  */
@@ -81,7 +82,7 @@ public class RESTAddTransformerMessage extends AbstractChappyAddTransformerMessa
 	}
 
 	@Override
-	public Invocation encodeInboundMessage(WebTarget target) throws JsonProcessingException {
+	public Invocation encodeInboundMessage(final WebTarget target) throws JsonProcessingException {
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, getTransformerName())
@@ -94,8 +95,8 @@ public class RESTAddTransformerMessage extends AbstractChappyAddTransformerMessa
 	}
 
 	@Override
-	public void decodeReplyMessage(Response response) {
-		// TODO Auto-generated method stub
-		
+	public void decodeReplyMessage(final Response response) {
+		setStatus(response.getStatusInfo());
+		//TODO: No response yet, it should be the package name or something like this.
 	}
 }

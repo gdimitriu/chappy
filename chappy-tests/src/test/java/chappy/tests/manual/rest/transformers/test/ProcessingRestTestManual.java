@@ -22,6 +22,7 @@ package chappy.tests.manual.rest.transformers.test;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
+import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTLogin;
 import chappy.clients.rest.ChappyRESTLogout;
 import chappy.configurations.system.SystemConfiguration;
@@ -463,15 +465,22 @@ public class ProcessingRestTestManual {
 			e.printStackTrace();
 		}
 		login.send();
-		assertEquals("wrong authentication", login.getStatus(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
 		System.out.println(login.getCookie().getUserName());
 		System.out.println(login.getCookie().getTransactionId());
 		IRESTTransactionHolder transaction = login.createTransactionHolder();
 		
+		ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer("PreProcessingStep", transaction);
+		try {
+			addTransformer.setTransformer("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction);
 		logout.send();
-		assertEquals("could not logout", logout.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
 		System.out.println(logout.getStatus());
 	}
 

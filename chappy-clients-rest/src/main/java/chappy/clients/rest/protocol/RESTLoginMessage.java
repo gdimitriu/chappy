@@ -36,6 +36,7 @@ import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieUtils;
 
 /**
+ * Chappy login request protocol message implementation for REST.
  * @author Gabriel Dimitriu
  *
  */
