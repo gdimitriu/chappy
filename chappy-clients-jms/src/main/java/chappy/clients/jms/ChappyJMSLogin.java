@@ -29,7 +29,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
-import chappy.clients.common.AbstractChappyLogin;
+import chappy.clients.common.AbstractChappyClient;
 import chappy.clients.common.transaction.JMSTransactionHolder;
 import chappy.clients.jms.protocol.JMSLoginMessage;
 import chappy.interfaces.jms.IJMSClient;
@@ -43,7 +43,7 @@ import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyJMSLogin extends AbstractChappyLogin implements IJMSClient{
+public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	
 	/** session used by chappy */
 	private Session session = null;
@@ -67,7 +67,7 @@ public class ChappyJMSLogin extends AbstractChappyLogin implements IJMSClient{
 	 */
 	public ChappyJMSLogin(final String userName, final String passwd, final boolean persistence) {
 		setProtocol(new JMSLoginMessage(userName, passwd));
-		getProtocol().setPersistence(persistence);
+		((JMSLoginMessage) getProtocol()).setPersistence(persistence);
 	}
 	
 	/**

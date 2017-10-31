@@ -19,18 +19,35 @@
  */
 package chappy.clients.common.protocol;
 
+import java.util.List;
+
 /**
- * Chappy logout request protocol message abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyLogoutMessage extends AbstractChappyProtocolMessage {
+public abstract class AbstractChappyListTransformersMessage extends AbstractChappyProtocolMessage {
 
+	/** list of the transformers */
+	private List<String> transformersName;
 	/**
-	 * default constructor
+	 * 
 	 */
-	public AbstractChappyLogoutMessage() {
+	public AbstractChappyListTransformersMessage() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	/**
+	 * @return the transformers
+	 */
+	public List<String> getTransformersName() {
+		return transformersName;
+	}
+	
+	/**
+	 * @param transformers the transformers to set
+	 */
+	public void setTransformersName(final List<String> transformers) {
+		this.transformersName = transformers;
 	}
 
 }

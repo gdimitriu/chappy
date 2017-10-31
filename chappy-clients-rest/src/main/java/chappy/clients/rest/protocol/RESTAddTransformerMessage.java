@@ -67,20 +67,26 @@ public class RESTAddTransformerMessage extends AbstractChappyAddTransformerMessa
 		setTransformerFromClassPath(transformerClassName, packageName);
 	}
 
-	/**
-	 * @return the status
+	
+	/* (non-Javadoc)
+	 * @see chappy.clients.rest.protocol.IRESTMessage#getStatus()
 	 */
+	@Override
 	public StatusType getStatus() {
 		return status;
 	}
 
-	/**
-	 * @param status the status to set
+	/* (non-Javadoc)
+	 * @see chappy.clients.rest.protocol.IRESTMessage#setStatus(javax.ws.rs.core.Response.StatusType)
 	 */
+	@Override
 	public void setStatus(final StatusType status) {
 		this.status = status;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.clients.rest.protocol.IRESTMessage#encodeInboundMessage(javax.ws.rs.client.WebTarget)
+	 */
 	@Override
 	public Invocation encodeInboundMessage(final WebTarget target) throws JsonProcessingException {
 		@SuppressWarnings("resource")
@@ -94,6 +100,9 @@ public class RESTAddTransformerMessage extends AbstractChappyAddTransformerMessa
 		return builder;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.clients.rest.protocol.IRESTMessage#decodeReplyMessage(javax.ws.rs.core.Response)
+	 */
 	@Override
 	public void decodeReplyMessage(final Response response) {
 		setStatus(response.getStatusInfo());

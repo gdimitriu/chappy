@@ -26,6 +26,12 @@ package chappy.interfaces.rest;
 public interface IRESTClient {
 
 	/**
+	 * This contains everything need to continue communication to chappy.
+	 * @return Transaction Holder for REST
+	 */
+	public IRESTTransactionHolder createTransactionHolder();
+	
+	/**
 	 * send the data to Chappy.
 	 */
 	public void send();
@@ -36,10 +42,4 @@ public interface IRESTClient {
 	 * @return message confirmation.
 	 */
 	public String closeAll();
-	
-	/**
-	 * This contains everything need to continue communication to chappy.
-	 * @return Transaction Holder for REST
-	 */
-	public IRESTTransactionHolder createTransactionHolder();
 }

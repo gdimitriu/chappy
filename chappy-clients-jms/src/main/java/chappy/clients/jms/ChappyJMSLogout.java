@@ -22,7 +22,7 @@ package chappy.clients.jms;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import chappy.clients.common.AbstractChappyLogout;
+import chappy.clients.common.AbstractChappyClient;
 import chappy.clients.jms.protocol.JMSLogoutMessage;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.IJMSClient;
@@ -35,7 +35,7 @@ import chappy.interfaces.transactions.IClientTransaction;
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyJMSLogout extends AbstractChappyLogout implements IJMSClient {
+public class ChappyJMSLogout extends AbstractChappyClient implements IJMSClient {
 
 	/** client transaction coming from login */
 	private IJMSTransactionHolder clientTransaction = null;

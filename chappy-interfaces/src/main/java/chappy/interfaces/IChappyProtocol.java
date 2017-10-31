@@ -17,56 +17,55 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.services;
+package chappy.interfaces;
 
-import chappy.interfaces.IChappyProtocol;
 import chappy.interfaces.cookies.IChappyCookie;
 
 /**
- * Base interface for Chappy clients.
+ * Chappy message protocol interface.
  * @author Gabriel Dimitriu
  *
  */
-public interface IChappyClient {
+public interface IChappyProtocol {
 
 	/**
-	 * @return the cookie received from chappy
+	 * get the reply message from the chappy.
+	 * @return the replyMessage
+	 */
+	String getReplyMessage();
+
+	/**
+	 * set the reply message from chappy.
+	 * @param replyMessage the replyMessage to set
+	 */
+	void setReplyMessage(String replyMessage);
+
+	/**
+	 * @return the exception
+	 */
+	Exception getException();
+
+	/**
+	 * @param exception the exception to set
+	 */
+	void setException(Exception exception);
+
+	/**
+	 * set the cookie that correspond to this login
+	 * @param cookie that correspond to this login.
+	 */
+	void setCookie(IChappyCookie cookie);
+
+	/**
+	 * get the cookie for this login.
+	 * @return cookie for this login.
 	 */
 	IChappyCookie getCookie();
 
 	/**
-	 * @return status of chappy clienttransaction.
-	 */
-	String getStatus();
-	
-	/**
-	 * @return status code
-	 */
-	int getStatusCode();
-
-	/**
-	 * @return true if has exception.
+	 * query if it has exception coming from chappy.
+	 * @return true if has exception from chappy.
 	 */
 	boolean hasException();
 
-	/**
-	 * @return reply message from Chappy.
-	 */
-	String getTransactionErrorMessage();
-
-	/**
-	 * @return transaction exception from chappy
-	 */
-	Exception getTransactionException();
-	
-	/**
-	 * @param protocol message to be set
-	 */
-	public void setProtocol(final IChappyProtocol protocol);
-
-	
-	/**
-	 * @return the protocol message 
-	 */
-	public IChappyProtocol getProtocol();
 }

@@ -19,41 +19,32 @@
  */
 package chappy.clients.rest.protocol;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.StatusType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import chappy.clients.common.protocol.AbstractChappyLogoutMessage;
-import chappy.interfaces.rest.resources.IRestPathConstants;
-import chappy.interfaces.rest.resources.IRestResourcesConstants;
-import chappy.interfaces.services.IChappyServiceNamesConstants;
-import chappy.policy.cookies.CookieUtils;
+import chappy.clients.common.protocol.AbstractChappyListTransformersMessage;
 
 /**
- * Chappy logout request protocol message implementation for REST.
+ * Chappy list transformers request protocol message implementation for REST.
  * @author Gabriel Dimitriu
  *
  */
-public class RESTLogoutMessage extends AbstractChappyLogoutMessage implements IRESTMessage {
+public class RESTListTransformersMessage extends AbstractChappyListTransformersMessage implements IRESTMessage {
 
 	/** status of the REST transaction */
 	private StatusType status = null;
-
+	
 	/**
 	 * 
 	 */
-	public RESTLogoutMessage() {
+	public RESTListTransformersMessage() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see chappy.clients.rest.protocol.IRESTMessage#getStatus()
 	 */
@@ -69,34 +60,23 @@ public class RESTLogoutMessage extends AbstractChappyLogoutMessage implements IR
 	public void setStatus(final StatusType status) {
 		this.status = status;
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see chappy.clients.rest.protocol.IRESTMessage#encodeInboundMessage(javax.ws.rs.client.WebTarget)
 	 */
 	@Override
-	public Invocation encodeInboundMessage(final WebTarget target ) throws JsonProcessingException {
-		return  target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(CookieUtils.encodeCookie(getCookie())).buildGet();
+	public Invocation encodeInboundMessage(WebTarget target) throws JsonProcessingException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see chappy.clients.rest.protocol.IRESTMessage#decodeReplyMessage(javax.ws.rs.core.Response)
 	 */
 	@Override
-	public void decodeReplyMessage(final Response response) {
-		setStatus(response.getStatusInfo());
-		if(response.getStatus() == Status.OK.getStatusCode()) {
-			Map<String, NewCookie> cookies = response.getCookies();
-			NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
-			if (cookie != null) {
-				try {
-					setCookie(CookieUtils.decodeCookie(cookie));
-				} catch (IOException e) {
-					e.printStackTrace();
-					setException(e);
-				}
-			}
-		}
+	public void decodeReplyMessage(Response response) {
+		// TODO Auto-generated method stub
+
 	}
+
 }

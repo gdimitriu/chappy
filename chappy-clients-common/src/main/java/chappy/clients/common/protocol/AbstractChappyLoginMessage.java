@@ -19,14 +19,12 @@
  */
 package chappy.clients.common.protocol;
 
-import chappy.interfaces.cookies.IChappyCookie;
-
 /**
  * Chappy login request protocol message abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyLoginMessage {
+public abstract class AbstractChappyLoginMessage extends AbstractChappyProtocolMessage {
 	
 	/** user name */
 	private String userName = null;
@@ -36,15 +34,6 @@ public abstract class AbstractChappyLoginMessage {
 	
 	/** user persistence required */
 	private boolean persistence = false;
-	
-	/** cookie for the transaction */
-	private IChappyCookie cookie = null;
-	
-	/** reply message from chappy */
-	private String replyMessage = "";
-	
-	/** exception in case of internal server */ 
-	private Exception exception = null;
 	
 	/**
 	 * default constructor
@@ -108,61 +97,4 @@ public abstract class AbstractChappyLoginMessage {
 		this.persistence = persistence;
 	}
 	
-	/**
-	 * get the reply message from the chappy.
-	 * @return the replyMessage
-	 */
-	public String getReplyMessage() {
-		return replyMessage;
-	}
-	
-	/**
-	 * set the reply message from chappy.
-	 * @param replyMessage the replyMessage to set
-	 */
-	public void setReplyMessage(final String replyMessage) {
-		this.replyMessage = replyMessage;
-	}
-	
-	/**
-	 * @return the exception
-	 */
-	public Exception getException() {
-		return exception;
-	}
-
-	/**
-	 * @param exception the exception to set
-	 */
-	public void setException(final Exception exception) {
-		this.exception = exception;
-	}
-
-	/**
-	 * set the cookie that correspond to this login
-	 * @param cookie that correspond to this login.
-	 */
-	public void setCookie(final IChappyCookie cookie) {
-		this.cookie = cookie;
-	}
-	
-	/**
-	 * get the cookie for this login.
-	 * @return cookie for this login.
-	 */
-	public IChappyCookie getCookie() {
-		return this.cookie;
-	}
-	
-	/**
-	 * query if it has exception coming from chappy.
-	 * @return true if has exception from chappy.
-	 */
-	public boolean hasException() {
-		if (exception != null) {
-			return true;			
-		} else {
-			return false;
-		}
-	}
 }

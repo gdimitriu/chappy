@@ -59,6 +59,22 @@ public class RESTLoginMessage extends AbstractChappyLoginMessage implements IRES
 	public RESTLoginMessage(String userName, String password) {
 		super(userName, password);
 	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.clients.rest.protocol.IRESTMessage#getStatus()
+	 */
+	@Override
+	public StatusType getStatus() {
+		return status;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.clients.rest.protocol.IRESTMessage#setStatus(javax.ws.rs.core.Response.StatusType)
+	 */
+	@Override
+	public void setStatus(final StatusType status) {
+		this.status = status;
+	}	
 
 	/* (non-Javadoc)
 	 * @see chappy.clients.rest.protocol.IRESTMessage#encodeInboundMessage(javax.ws.rs.client.WebTarget)
@@ -89,20 +105,4 @@ public class RESTLoginMessage extends AbstractChappyLoginMessage implements IRES
 		}
 		
 	}
-
-	/* (non-Javadoc)
-	 * @see chappy.clients.rest.protocol.IRESTMessage#getStatus()
-	 */
-	@Override
-	public StatusType getStatus() {
-		return status;
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.clients.rest.protocol.IRESTMessage#setStatus(javax.ws.rs.core.Response.StatusType)
-	 */
-	@Override
-	public void setStatus(final StatusType status) {
-		this.status = status;
-	}	
 }

@@ -20,34 +20,30 @@
 package chappy.clients.rest;
 
 import javax.ws.rs.core.Response;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
-import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.rest.protocol.RESTLogoutMessage;
+import chappy.clients.common.AbstractChappyListTransformers;
 import chappy.interfaces.rest.IRESTTransactionHolder;
-import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * Chappy logout request client for REST.
+ * Chappy list transformers request client for REST.
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRESTClient {
+public class ChappyRESTListTransformers extends AbstractChappyListTransformers implements IChappyRESTClient {
 
 	/** client transaction */
 	IRESTTransactionHolder clientTransaction = null;
 	
 	/** http response for REST client */
 	private Response response = null;
+	
 	/**
 	 * 
 	 */
-	public ChappyRESTLogout(final IClientTransaction client){
-		clientTransaction = (IRESTTransactionHolder) client;
-		setProtocol(new RESTLogoutMessage());
-		getProtocol().setCookie(client.getCookie());
+	public ChappyRESTListTransformers() {
+		// TODO Auto-generated constructor stub
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
@@ -56,21 +52,21 @@ public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRES
 		return clientTransaction;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#send()
+	 */
 	@Override
 	public void send() {
-		RESTLogoutMessage logout = (RESTLogoutMessage) getProtocol();
-		try {
-			response = logout.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			logout.setException(e);
-		}
-		logout.decodeReplyMessage(response);
+		// TODO Auto-generated method stub
+
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#closeAll()
+	 */
 	@Override
 	public String closeAll() {
-		clientTransaction.getRestClient().close();
-		return "Chappy:= has been stopped ok.";
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
