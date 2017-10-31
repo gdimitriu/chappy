@@ -43,6 +43,7 @@ public abstract class AbstractChappyClient implements IChappyClient {
 	/**
 	 * @return the protocol
 	 */
+	@Override
 	public AbstractChappyProtocolMessage getProtocol() {
 		return (AbstractChappyProtocolMessage) protocol;
 	}
@@ -50,6 +51,7 @@ public abstract class AbstractChappyClient implements IChappyClient {
 	/**
 	 * @param protocol the protocol to set
 	 */
+	@Override
 	public void setProtocol(final IChappyProtocol protocol) {
 		this.protocol = (AbstractChappyProtocolMessage) protocol;
 	}
