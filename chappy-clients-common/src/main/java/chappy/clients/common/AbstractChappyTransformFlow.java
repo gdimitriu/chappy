@@ -21,19 +21,19 @@ package chappy.clients.common;
 
 import java.util.List;
 
-import chappy.clients.common.protocol.AbstractChappyListTransformersMessage;
+import chappy.clients.common.protocol.AbstractChappyTransformFlowMessage;
 
 /**
- * Abstract chappy client for list the transformers from a transaction.
+ * Chappy transform message using flow request wrapper, abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyListTransformers extends AbstractChappyClient {
+public abstract class AbstractChappyTransformFlow extends AbstractChappyClient {
 
 	/**
 	 * 
 	 */
-	public AbstractChappyListTransformers() {
+	public AbstractChappyTransformFlow() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -41,22 +41,29 @@ public abstract class AbstractChappyListTransformers extends AbstractChappyClien
 	 * @see chappy.clients.common.AbstractChappyClient#getProtocol()
 	 */
 	@Override
-	public AbstractChappyListTransformersMessage getProtocol() {
-		return (AbstractChappyListTransformersMessage) super.getProtocol();
+	public AbstractChappyTransformFlowMessage getProtocol() {
+		return (AbstractChappyTransformFlowMessage) super.getProtocol();
 	}
 	
 	/**
-	 * set the list of transformers.
-	 * @param transformers that exist in chappy transaction.
+	 * @param message to be added as input
 	 */
-	public void setTransformersNameList(final List<String> transformers) {
-		getProtocol().setListOfTransformersName(transformers);
+	public void addStringInputMessage(final String message) {
+		getProtocol().addInputString(message);
 	}
-
+	
 	/**
-	 * @return list of transformers names that exist in chappy transaction.
+	 * @param config the flow configuration string
 	 */
-	public List<String> getListOfTransformersName() {
-		return getProtocol().getListOfTransformersName();
+	public void addStringConfiguration(final String config) {
+		getProtocol().setStringConfiguration(config);
+	}
+	
+	/**
+	 * get the result of the transformation as list of strings.
+	 * @return the list of output string.
+	 */
+	public List<String> getOutputResultAsString() {
+		return getProtocol().getOutputs();
 	}
 }

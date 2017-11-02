@@ -24,7 +24,7 @@ import java.io.IOException;
 import chappy.clients.common.protocol.AbstractChappyAddTransformerMessage;
 
 /**
- * Chappy add transformer request wrapper abstract implementation for all services.
+ * Chappy add transformer request wrapper, abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */

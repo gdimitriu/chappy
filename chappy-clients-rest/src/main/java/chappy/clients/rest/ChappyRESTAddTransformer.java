@@ -42,7 +42,8 @@ public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer imple
 	private Response response = null;
 	
 	/**
-	 * 
+	 * @param transformerName the name of the transformer to be added
+	 * @param client (the chappy client transaction)
 	 */
 	public ChappyRESTAddTransformer(final String transformerName, final IClientTransaction client) {
 		clientTransaction = (IRESTTransactionHolder) client;

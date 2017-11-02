@@ -25,7 +25,7 @@ import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.services.IChappyClient;
 
 /**
- * Chappy login request wrapper abstract implementation for all services.
+ * Chappy login request wrapper, abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */

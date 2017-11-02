@@ -21,8 +21,12 @@ package chappy.clients.rest;
 
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import chappy.clients.common.AbstractChappyListTransformers;
+import chappy.clients.rest.protocol.RESTListTransformersMessage;
 import chappy.interfaces.rest.IRESTTransactionHolder;
+import chappy.interfaces.transactions.IClientTransaction;
 
 /**
  * Chappy list transformers request client for REST.
@@ -38,10 +42,12 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 	private Response response = null;
 	
 	/**
-	 * 
+	 * @param client the chappy client transaction
 	 */
-	public ChappyRESTListTransformers() {
-		// TODO Auto-generated constructor stub
+	public ChappyRESTListTransformers(final IClientTransaction client) {
+		clientTransaction = (IRESTTransactionHolder) client;
+		setProtocol(new RESTListTransformersMessage());
+		getProtocol().setCookie(clientTransaction.getCookie());
 	}
 
 	/* (non-Javadoc)
@@ -57,8 +63,14 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 	 */
 	@Override
 	public void send() {
-		// TODO Auto-generated method stub
-
+		RESTListTransformersMessage listTransformer = (RESTListTransformersMessage) getProtocol();
+		try {
+			response = listTransformer.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			getProtocol().setException(e);
+		}
+		listTransformer.decodeReplyMessage(response);
 	}
 
 	/* (non-Javadoc)
@@ -66,7 +78,7 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 	 */
 	@Override
 	public String closeAll() {
-		// TODO Auto-generated method stub
-		return null;
+		clientTransaction.getRestClient().close();
+		return "Chappy:= has been stopped ok.";
 	}
 }

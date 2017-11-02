@@ -19,32 +19,33 @@
  */
 package chappy.clients.rest.protocol;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.StatusType;
 
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import chappy.clients.common.protocol.AbstractChappyListTransformersMessage;
+import chappy.clients.common.protocol.AbstractChappyTransformFlowMessage;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieUtils;
+import chappy.utils.streams.StreamUtils;
 
 /**
- * Chappy list transformers request protocol message implementation for REST.
  * @author Gabriel Dimitriu
  *
  */
-public class RESTListTransformersMessage extends AbstractChappyListTransformersMessage implements IRESTMessage {
+public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage implements IRESTMessage {
 
 	/** status of the REST transaction */
 	private StatusType status = null;
@@ -52,10 +53,18 @@ public class RESTListTransformersMessage extends AbstractChappyListTransformersM
 	/**
 	 * 
 	 */
-	public RESTListTransformersMessage() {
+	public RESTTransformFlowMessage() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
+	/**
+	 * @param input
+	 * @param config
+	 */
+	public RESTTransformFlowMessage(final String input, final String config) {
+		super(input, config);
+	}
+
 	/* (non-Javadoc)
 	 * @see chappy.clients.rest.protocol.IRESTMessage#getStatus()
 	 */
@@ -72,39 +81,32 @@ public class RESTListTransformersMessage extends AbstractChappyListTransformersM
 		this.status = status;
 	}
 
-	/* (non-Javadoc)
-	 * @see chappy.clients.rest.protocol.IRESTMessage#encodeInboundMessage(javax.ws.rs.client.WebTarget)
-	 */
 	@Override
 	public Invocation encodeInboundMessage(final WebTarget target) throws JsonProcessingException {
-		return target.path(IRestPathConstants.PATH_TO_TRANSACTION)
-				.path(IRestResourcesConstants.REST_LIST)
-				.request()
-				.cookie(CookieUtils.encodeCookie(getCookie()))
-				.buildGet();
+		@SuppressWarnings("resource")
+		FormDataMultiPart multipartEntity = new FormDataMultiPart();
+		for (String str : getInputs()) {
+			multipartEntity = multipartEntity.field(IChappyServiceNamesConstants.INPUT_DATA, str);
+		}
+		Invocation builder =target.path(IRestPathConstants.PATH_TO_INTEGRATION).path(IRestResourcesConstants.REST_FLOW)
+				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, getConfiguration())
+				.request(new String[] { MediaType.MULTIPART_FORM_DATA }).cookie(CookieUtils.encodeCookie(getCookie()))
+				.buildPut(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		return builder;
 	}
 
-	/* (non-Javadoc)
-	 * @see chappy.clients.rest.protocol.IRESTMessage#decodeReplyMessage(javax.ws.rs.core.Response)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void decodeReplyMessage(final Response response) {
 		setStatus(response.getStatusInfo());
-		if(response.getStatus() == Status.OK.getStatusCode()) {
-			Map<String, NewCookie> cookies = response.getCookies();
-			NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);			
-			if (cookie != null) {
-				try {
-					setCookie(CookieUtils.decodeCookie(cookie));
-					@SuppressWarnings("unchecked")
-					List<String> transformers = response.readEntity(new ArrayList<String>().getClass());
-					setListOfTransformersName(transformers);
-				} catch (IOException e) {
-					e.printStackTrace();
-					setException(e);
-				}
-			}
+		List<String> outputs = new ArrayList<>();
+		try {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			outputs.add(StreamUtils.toStringFromStream(inputStream));			
+		} catch (ProcessingException e) {
+			outputs = response.readEntity(new ArrayList<String>().getClass());
 		}
+		setOutputs(outputs);
 	}
 
 }

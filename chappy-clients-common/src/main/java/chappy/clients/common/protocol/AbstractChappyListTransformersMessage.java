@@ -28,7 +28,7 @@ import java.util.List;
 public abstract class AbstractChappyListTransformersMessage extends AbstractChappyProtocolMessage {
 
 	/** list of the transformers */
-	private List<String> transformersName;
+	private List<String> listOfTransformersName;
 	/**
 	 * 
 	 */
@@ -39,15 +39,15 @@ public abstract class AbstractChappyListTransformersMessage extends AbstractChap
 	/**
 	 * @return the transformers
 	 */
-	public List<String> getTransformersName() {
-		return transformersName;
+	public List<String> getListOfTransformersName() {
+		return listOfTransformersName;
 	}
 	
 	/**
 	 * @param transformers the transformers to set
 	 */
-	public void setTransformersName(final List<String> transformers) {
-		this.transformersName = transformers;
+	public void setListOfTransformersName(final List<String> transformers) {
+		this.listOfTransformersName = transformers;
 	}
 
 }
