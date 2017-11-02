@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.transformers.AbstractStep;
 
 /**
@@ -38,7 +37,7 @@ import chappy.interfaces.transformers.AbstractStep;
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyAddTransformerMessage {
+public abstract class AbstractChappyAddTransformerMessage extends AbstractChappyProtocolMessage {
 
 	/** transformer name as it will be in flow */
 	private String transformerName = null;
@@ -52,66 +51,12 @@ public abstract class AbstractChappyAddTransformerMessage {
 	/** transformer data as it will be in flow */
 	private String transformerData = null;
 	
-	/** cookie for the transaction */
-	private IChappyCookie cookie = null;
-	
-	/** exception received from chappy */
-	private Exception exception = null;
-	
-	/** reply message received from chappy */
-	private String replyMessage = null;
-	
 	/**
 	 * there will be no default constructor.
 	 */
 	public AbstractChappyAddTransformerMessage(final String transformerName) {
 		this.transformerName = transformerName;
 	}
-
-	
-	/**
-	 * @return cookie for chappy transaction.
-	 */
-	public IChappyCookie getCookie() {
-		return cookie;
-	}
-	
-	/**
-	 * set the cookie for this transaction.
-	 * @param cookie of the chappy transaction.
-	 */
-	public void setCookie(final IChappyCookie cookie) {
-		this.cookie = cookie;
-	}
-
-	/**
-	 * @return true if the request has exception.
-	 */
-	public boolean hasException() {
-		if (exception != null) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @return the reply message from chappy.
-	 */
-	public String getReplyMessage() {
-		if (replyMessage != null) {
-			return replyMessage;
-		}
-		return null;
-	}
-
-	
-	/**
-	 * @return exception received from chappy.
-	 */
-	public Exception getException() {
-		return exception;
-	}
-
 
 	/**
 	 * @return the transformerName
@@ -187,21 +132,4 @@ public abstract class AbstractChappyAddTransformerMessage {
 	public String getTransformerPackageName() {
 		return transformerPackageName;
 	}
-
-
-	/**
-	 * @param exception the exception to set
-	 */
-	public void setException(final Exception exception) {
-		this.exception = exception;
-	}
-
-
-	/**
-	 * @param replyMessage the replyMessage to set
-	 */
-	public void setReplyMessage(final String replyMessage) {
-		this.replyMessage = replyMessage;
-	}
-
 }

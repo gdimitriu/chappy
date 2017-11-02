@@ -19,41 +19,44 @@
  */
 package chappy.clients.common;
 
-import java.io.IOException;
+import java.util.List;
 
-import chappy.clients.common.protocol.AbstractChappyAddTransformerMessage;
+import chappy.clients.common.protocol.AbstractChappyListTransformersMessage;
 
 /**
- * Chappy add transformer request wrapper, abstract implementation for all services.
+ * Abstract chappy client for list the transformers from a transaction.
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyAddTransformer extends AbstractChappyClient {
+public abstract class AbstractChappyListTransformers extends AbstractChappyClient {
 
 	/**
 	 * 
 	 */
-	public AbstractChappyAddTransformer() {
+	public AbstractChappyListTransformers() {
 		// TODO Auto-generated constructor stub
 	}
 
-
-	/**
-	 * @return the protocol
+	/* (non-Javadoc)
+	 * @see chappy.clients.common.AbstractChappyClient#getProtocol()
 	 */
 	@Override
-	public AbstractChappyAddTransformerMessage getProtocol() {
-		return (AbstractChappyAddTransformerMessage) super.getProtocol();
+	public AbstractChappyListTransformersMessage getProtocol() {
+		return (AbstractChappyListTransformersMessage) super.getProtocol();
+	}
+	
+	/**
+	 * set the list of transformers.
+	 * @param transformers that exist in chappy transaction.
+	 */
+	public void setTransformersNameList(final List<String> transformers) {
+		getProtocol().setListOfTransformersName(transformers);
 	}
 
 	/**
-	 * set Transformer code to be send to chappy.
-	 * @param transformerClassName
-	 * @param packageName
-	 * @throws IOException
+	 * @return list of transformers names that exist in chappy transaction.
 	 */
-	public void setTransformer(final String transformerClassName, final String packageName) throws IOException {
-		getProtocol().setTransformerFromClassPath(transformerClassName, packageName);
+	public List<String> getListOfTransformersName() {
+		return getProtocol().getListOfTransformersName();
 	}
-
 }

@@ -20,35 +20,38 @@
 package chappy.clients.rest;
 
 import javax.ws.rs.core.Response;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.rest.protocol.RESTLogoutMessage;
+import chappy.clients.common.AbstractChappyTransformFlow;
+import chappy.clients.rest.protocol.RESTTransformFlowMessage;
+import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * Chappy logout request client for REST.
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRESTClient {
+public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow implements IChappyRESTClient {
 
 	/** client transaction */
 	IRESTTransactionHolder clientTransaction = null;
 	
 	/** http response for REST client */
 	private Response response = null;
-
+	
 	/**
+	 * @param input string for the transformation
+	 * @param configuration of the transformation flow
 	 * @param client the chappy client transaction
 	 */
-	public ChappyRESTLogout(final IClientTransaction client){
+	public ChappyRESTTransformFlow(final String input, final String configuration, final IClientTransaction client) {
 		clientTransaction = (IRESTTransactionHolder) client;
-		setProtocol(new RESTLogoutMessage());
-		getProtocol().setCookie(client.getCookie());
+		setProtocol(new RESTTransformFlowMessage(input, configuration));
+		getProtocol().setCookie(clientTransaction.getCookie());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
@@ -57,21 +60,38 @@ public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRES
 		return clientTransaction;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#send()
+	 */
 	@Override
 	public void send() {
-		RESTLogoutMessage logout = (RESTLogoutMessage) getProtocol();
+		RESTTransformFlowMessage transformer = (RESTTransformFlowMessage) getProtocol();
 		try {
-			response = logout.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
+			response = transformer.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-			logout.setException(e);
+			getProtocol().setException(e);
 		}
-		logout.decodeReplyMessage(response);
+		transformer.decodeReplyMessage(response);
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#closeAll()
+	 */
 	@Override
 	public String closeAll() {
 		clientTransaction.getRestClient().close();
 		return "Chappy:= has been stopped ok.";
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getCookie()
+	 */
+	@Override
+	public IChappyCookie getCookie() {
+		if (getProtocol() == null) {
+			return null;
+		}
+		return clientTransaction.getCookie();
 	}
 }

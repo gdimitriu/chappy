@@ -20,35 +20,36 @@
 package chappy.clients.rest;
 
 import javax.ws.rs.core.Response;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.rest.protocol.RESTLogoutMessage;
+import chappy.clients.common.AbstractChappyListTransformers;
+import chappy.clients.rest.protocol.RESTListTransformersMessage;
 import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * Chappy logout request client for REST.
+ * Chappy list transformers request client for REST.
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRESTClient {
+public class ChappyRESTListTransformers extends AbstractChappyListTransformers implements IChappyRESTClient {
 
 	/** client transaction */
 	IRESTTransactionHolder clientTransaction = null;
 	
 	/** http response for REST client */
 	private Response response = null;
-
+	
 	/**
 	 * @param client the chappy client transaction
 	 */
-	public ChappyRESTLogout(final IClientTransaction client){
+	public ChappyRESTListTransformers(final IClientTransaction client) {
 		clientTransaction = (IRESTTransactionHolder) client;
-		setProtocol(new RESTLogoutMessage());
-		getProtocol().setCookie(client.getCookie());
+		setProtocol(new RESTListTransformersMessage());
+		getProtocol().setCookie(clientTransaction.getCookie());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
@@ -57,18 +58,24 @@ public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRES
 		return clientTransaction;
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#send()
+	 */
 	@Override
 	public void send() {
-		RESTLogoutMessage logout = (RESTLogoutMessage) getProtocol();
+		RESTListTransformersMessage listTransformer = (RESTListTransformersMessage) getProtocol();
 		try {
-			response = logout.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
+			response = listTransformer.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-			logout.setException(e);
+			getProtocol().setException(e);
 		}
-		logout.decodeReplyMessage(response);
+		listTransformer.decodeReplyMessage(response);
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#closeAll()
+	 */
 	@Override
 	public String closeAll() {
 		clientTransaction.getRestClient().close();

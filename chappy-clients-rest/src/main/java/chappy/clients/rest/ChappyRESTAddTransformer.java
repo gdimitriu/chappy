@@ -20,14 +20,11 @@
 package chappy.clients.rest;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import chappy.clients.common.AbstractChappyAddTransformer;
 import chappy.clients.rest.protocol.RESTAddTransformerMessage;
 import chappy.interfaces.cookies.IChappyCookie;
-import chappy.interfaces.rest.IRESTClient;
 import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.transactions.IClientTransaction;
 
@@ -36,7 +33,7 @@ import chappy.interfaces.transactions.IClientTransaction;
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer implements IRESTClient {
+public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer implements IChappyRESTClient {
 
 	/** client transaction */
 	IRESTTransactionHolder clientTransaction = null;
@@ -45,28 +42,13 @@ public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer imple
 	private Response response = null;
 	
 	/**
-	 * 
+	 * @param transformerName the name of the transformer to be added
+	 * @param client (the chappy client transaction)
 	 */
 	public ChappyRESTAddTransformer(final String transformerName, final IClientTransaction client) {
 		clientTransaction = (IRESTTransactionHolder) client;
 		setProtocol(new RESTAddTransformerMessage(transformerName));
 		getProtocol().setCookie(clientTransaction.getCookie());
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#getStatus()
-	 */
-	@Override
-	public String getStatus() {
-		return ((RESTAddTransformerMessage) getProtocol()).getStatus().getReasonPhrase();
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#getStatusCode()
-	 */
-	@Override
-	public int getStatusCode() {
-		return ((RESTAddTransformerMessage) getProtocol()).getStatus().getStatusCode();
 	}
 
 	/* (non-Javadoc)
@@ -99,14 +81,6 @@ public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer imple
 	@Override
 	public IRESTTransactionHolder createTransactionHolder() {
 		return clientTransaction;
-	}
-	
-	@Override
-	public String getTransactionErrorMessage() {
-		if (getProtocol() == null) {
-			return Status.NO_CONTENT.getReasonPhrase();
-		}
-		return getProtocol().getReplyMessage();
 	}
 	
 	/* (non-Javadoc)

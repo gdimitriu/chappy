@@ -20,6 +20,7 @@
 package chappy.tests.manual.rest.transformers.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -56,8 +57,10 @@ import org.xml.sax.SAXException;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.clients.rest.ChappyRESTAddTransformer;
+import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogin;
 import chappy.clients.rest.ChappyRESTLogout;
+import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.rest.IRESTTransactionHolder;
@@ -470,14 +473,42 @@ public class ProcessingRestTestManual {
 		System.out.println(login.getCookie().getTransactionId());
 		IRESTTransactionHolder transaction = login.createTransactionHolder();
 		
-		ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer("PreProcessingStep", transaction);
+		ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer("SplitterStep", transaction);
 		try {
-			addTransformer.setTransformer("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY);
+			addTransformer.setTransformer("SplitterStep", CUSTOM_TRANSFORMERS_DUMMY);
+			addTransformer.send();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		addTransformer = new ChappyRESTAddTransformer("EnveloperStep", transaction);
+		try {
+			addTransformer.setTransformer("EnveloperStep", CUSTOM_TRANSFORMERS_DUMMY);
+			addTransformer.send();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ChappyRESTListTransformers listTransformer = new ChappyRESTListTransformers(transaction);
+		listTransformer.send();
+		List<String> transformers = listTransformer.getListOfTransformersName();
+		for(String str : transformers) {
+			System.out.println(str);
+		}
 		
+		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
+				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
+				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterEnveloperStep.xml"),
+				transaction);
+		transformer.send();
+		if (transformer.getStatusCode() >= 0) {
+			List<String> list = transformer.getOutputResultAsString();
+			assertEquals(list.size(), 1);
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
+						list.get(0));
+		} else {
+			fail("processing error on server");
+		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction);
 		logout.send();
 		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());

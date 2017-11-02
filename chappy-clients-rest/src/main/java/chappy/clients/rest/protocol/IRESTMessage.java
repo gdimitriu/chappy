@@ -33,6 +33,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public interface IRESTMessage {
 
 	/**
+	 * @return the status
+	 */
+	StatusType getStatus();
+
+	/**
+	 * @param status the status to set
+	 */
+	void setStatus(final StatusType status);
+	
+	/**
 	 * @param target
 	 * @return
 	 */
@@ -42,15 +52,4 @@ public interface IRESTMessage {
 	 * @param response
 	 */
 	void decodeReplyMessage(final Response response);
-
-	/**
-	 * @return the status
-	 */
-	StatusType getStatus();
-
-	/**
-	 * @param status the status to set
-	 */
-	void setStatus(final StatusType status);
-
 }

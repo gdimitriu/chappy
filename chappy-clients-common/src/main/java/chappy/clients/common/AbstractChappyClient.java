@@ -19,67 +19,45 @@
  */
 package chappy.clients.common;
 
-import javax.ws.rs.core.Response.Status;
-
-import chappy.clients.common.protocol.AbstractChappyLogoutMessage;
+import chappy.clients.common.protocol.AbstractChappyProtocolMessage;
+import chappy.interfaces.IChappyProtocol;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.services.IChappyClient;
 
 /**
- * Chappy logout request wrapper abstract implementation for all services.
+ * Chappy login request wrapper, abstract implementation for all services.
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractChappyLogout implements IChappyClient{
-	
-	/** internal handler for logout protocol */
-	private AbstractChappyLogoutMessage protocol = null;
+public abstract class AbstractChappyClient implements IChappyClient {
 
+	/** abstract handler for login protocol */
+	private AbstractChappyProtocolMessage protocol = null;
+	
 	/**
 	 * 
 	 */
-	public AbstractChappyLogout() {
-		// TODO Auto-generated constructor stub
+	public AbstractChappyClient(){
 	}
 
 	/**
 	 * @return the protocol
 	 */
-	public AbstractChappyLogoutMessage getProtocol() {
-		return protocol;
+	@Override
+	public AbstractChappyProtocolMessage getProtocol() {
+		return (AbstractChappyProtocolMessage) protocol;
 	}
 
 	/**
 	 * @param protocol the protocol to set
 	 */
-	public void setProtocol(final AbstractChappyLogoutMessage logoutProtocol) {
-		this.protocol = logoutProtocol;
+	@Override
+	public void setProtocol(final IChappyProtocol protocol) {
+		this.protocol = (AbstractChappyProtocolMessage) protocol;
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#hasException()
-	 */
-	@Override
-	public boolean hasException() {
-		if (protocol == null) {
-			return false;
-		}
-		return protocol.hasException();
-	}
-
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#getTransactionException()
-	 */
-	@Override
-	public Exception getTransactionException() {
-		if (protocol == null) {
-			return null;
-		}
-		return protocol.getException();
-	}
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#getCookie()
+	 * @see chappy.interfaces.jms.IJMSClient#getCookie()
 	 */
 	@Override
 	public IChappyCookie getCookie() {
@@ -89,11 +67,27 @@ public abstract class AbstractChappyLogout implements IChappyClient{
 		return protocol.getCookie();
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.IJMSClient#hasException()
+	 */
 	@Override
-	public String getTransactionErrorMessage() {
-		if (getProtocol() == null) {
-			return Status.NO_CONTENT.getReasonPhrase();
+	public boolean hasException() {
+		if (protocol == null) {
+			return false;
 		}
-		return getProtocol().getReplyMessage();
+		return protocol.hasException();
 	}
+		
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getTransactionException()
+	 */
+	@Override
+	public Exception getTransactionException() {
+		if (protocol == null) {
+			return null;
+		}
+		return protocol.getException();		
+	}
+	
 }
