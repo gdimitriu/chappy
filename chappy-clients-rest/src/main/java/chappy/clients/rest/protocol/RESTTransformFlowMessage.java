@@ -19,11 +19,9 @@
  */
 package chappy.clients.rest.protocol;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
@@ -39,7 +37,6 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieUtils;
-import chappy.utils.streams.StreamUtils;
 
 /**
  * @author Gabriel Dimitriu
@@ -88,7 +85,7 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 		for (String str : getInputs()) {
 			multipartEntity = multipartEntity.field(IChappyServiceNamesConstants.INPUT_DATA, str);
 		}
-		Invocation builder =target.path(IRestPathConstants.PATH_TO_INTEGRATION).path(IRestResourcesConstants.REST_FLOW)
+		Invocation builder =target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW_MULTI)
 				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, getConfiguration())
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA }).cookie(CookieUtils.encodeCookie(getCookie()))
 				.buildPut(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
@@ -100,12 +97,7 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 	public void decodeReplyMessage(final Response response) {
 		setStatus(response.getStatusInfo());
 		List<String> outputs = new ArrayList<>();
-		try {
-			InputStream inputStream = response.readEntity(InputStream.class);
-			outputs.add(StreamUtils.toStringFromStream(inputStream));			
-		} catch (ProcessingException e) {
-			outputs = response.readEntity(new ArrayList<String>().getClass());
-		}
+		outputs = response.readEntity(new ArrayList<String>().getClass());
 		setOutputs(outputs);
 	}
 

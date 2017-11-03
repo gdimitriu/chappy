@@ -66,4 +66,12 @@ public abstract class AbstractChappyTransformFlow extends AbstractChappyClient {
 	public List<String> getOutputResultAsString() {
 		return getProtocol().getOutputs();
 	}
+	
+	/**
+	 * add a list of inputs.
+	 * @param inputs list of inputs
+	 */
+	public void addListOfInputs(final List<String> inputs) {
+		getProtocol().setInputs(inputs);
+	}
 }

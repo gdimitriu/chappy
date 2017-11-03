@@ -54,14 +54,15 @@ public class ChappyJMSLogout extends AbstractChappyClient implements IJMSClient 
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public void send() throws JMSException {
+	public ChappyJMSLogout send() throws JMSException {
 		Message message = ((JMSLogoutMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
 		message.setJMSReplyTo(clientTransaction.getCurrentReplyToDestination());
 		clientTransaction.getCurrentMessageProducer().send(message);
 		clientTransaction.getCurrentMessageConsumer().setMessageListener(this);		
 		setProtocol(null);
-		
+		return this;
 	}
+	
 	/* (non-Javadoc)
 	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
 	 */

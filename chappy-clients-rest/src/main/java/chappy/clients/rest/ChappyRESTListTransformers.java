@@ -62,7 +62,7 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 	 * @see chappy.interfaces.rest.IRESTClient#send()
 	 */
 	@Override
-	public void send() {
+	public ChappyRESTListTransformers send() {
 		RESTListTransformersMessage listTransformer = (RESTListTransformersMessage) getProtocol();
 		try {
 			response = listTransformer.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
@@ -71,6 +71,7 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 			getProtocol().setException(e);
 		}
 		listTransformer.decodeReplyMessage(response);
+		return this;
 	}
 
 	/* (non-Javadoc)

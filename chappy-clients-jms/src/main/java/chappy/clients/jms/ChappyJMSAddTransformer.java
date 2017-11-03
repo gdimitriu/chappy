@@ -83,9 +83,9 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public void send() throws JMSException {
+	public ChappyJMSAddTransformer send() throws JMSException {
 		// TODO Auto-generated method stub
-
+		return this;
 	}
 
 	/* (non-Javadoc)

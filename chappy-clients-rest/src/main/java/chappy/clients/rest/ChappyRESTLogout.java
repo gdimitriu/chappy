@@ -58,7 +58,7 @@ public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRES
 	}
 
 	@Override
-	public void send() {
+	public ChappyRESTLogout send() {
 		RESTLogoutMessage logout = (RESTLogoutMessage) getProtocol();
 		try {
 			response = logout.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
@@ -67,6 +67,7 @@ public class ChappyRESTLogout extends AbstractChappyClient implements IChappyRES
 			logout.setException(e);
 		}
 		logout.decodeReplyMessage(response);
+		return this;
 	}
 
 	@Override

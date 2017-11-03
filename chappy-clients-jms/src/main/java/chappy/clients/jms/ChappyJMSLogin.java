@@ -85,7 +85,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public void send() throws JMSException {
+	public ChappyJMSLogin send() throws JMSException {
 		Destination destination = session.createQueue(IJMSQueueNameConstants.TRANSACTION);		
 		producer = session.createProducer(destination);
 		replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
@@ -98,6 +98,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 				messageID + "'");
 		consumer.setMessageListener(this);		
 		setProtocol(null);
+		return this;
 	}
 	
 	@Override
