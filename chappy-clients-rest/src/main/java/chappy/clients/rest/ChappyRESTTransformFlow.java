@@ -19,6 +19,7 @@
  */
 package chappy.clients.rest;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,6 +52,27 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 		setProtocol(new RESTTransformFlowMessage(input, configuration));
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
+	
+	/**
+	 * @param input string for the transformation
+	 * @param configuration of the transformation flow
+	 * @param client the chappy client transaction
+	 */
+	public ChappyRESTTransformFlow(final String input, final MediaType type, final String configuration,
+			final IClientTransaction client) {
+		clientTransaction = (IRESTTransactionHolder) client;
+		setProtocol(new RESTTransformFlowMessage(input, type, configuration));
+		getProtocol().setCookie(clientTransaction.getCookie());
+	}
+	
+	/**
+	 * @param client the chappy client transaction
+	 */
+	public ChappyRESTTransformFlow(final IClientTransaction client) {
+		clientTransaction = (IRESTTransactionHolder) client;
+		setProtocol(new RESTTransformFlowMessage());
+		getProtocol().setCookie(clientTransaction.getCookie());
+	}
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
@@ -64,7 +86,7 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 	 * @see chappy.interfaces.rest.IRESTClient#send()
 	 */
 	@Override
-	public void send() {
+	public ChappyRESTTransformFlow send() {
 		RESTTransformFlowMessage transformer = (RESTTransformFlowMessage) getProtocol();
 		try {
 			response = transformer.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
@@ -73,6 +95,7 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 			getProtocol().setException(e);
 		}
 		transformer.decodeReplyMessage(response);
+		return this;
 	}
 
 	/* (non-Javadoc)

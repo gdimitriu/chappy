@@ -22,6 +22,7 @@ package chappy.services.servers.rest.resources.transform;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -63,6 +65,7 @@ import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.services.servers.common.TransactionOperations;
+import chappy.utils.streams.StreamUtils;
 import chappy.utils.streams.rest.RestStreamingOutput;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.ByteArrayOutputStreamWrapper;
@@ -217,6 +220,68 @@ public class TransactionResources {
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
 		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
 		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
+	}
+	
+	/**
+	 * request to run a flow with multiple input-output elements.
+	 * @param multipart input data
+	 * @param uriInfo
+	 * @param hh response
+	 * @return
+	 * @throws Exception
+	 */
+	@Path(IRestResourcesConstants.REST_TRANSFORM + "/" + IRestResourcesConstants.REST_FLOW_MULTI)
+	@PUT
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response runFlowIntegration(final FormDataMultiPart multipart,
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+		
+    	List<FormDataBodyPart> bodyParts = multipart.getFields(IChappyServiceNamesConstants.INPUT_DATA);
+    	List<InputStream> inputValues = new ArrayList<InputStream>();
+    	for (FormDataBodyPart bodyPart : bodyParts) {
+    		inputValues.add(bodyPart.getEntityAs(InputStream.class));
+    	}
+		InputStream configurationStream = null;
+		String configuration = null;
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
+		if (queryParams != null) {
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
+		}
+		if (configuration == null || "".equals(configuration)) {
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
+		} else {
+			configurationStream = new ByteArrayInputStream(configuration.getBytes());
+		}
+		
+		/* create the list of input stream holders */
+		List<StreamHolder> holders = new ArrayList<StreamHolder>();
+		for (InputStream input : inputValues) {
+			ByteArrayOutputStreamWrapper bos = WrapperUtils.fromInputStreamToOutputWrapper(input);
+		
+			holders.add(new StreamHolder(new ByteArrayInputStreamWrapper(bos.getBuffer(), 0, bos.size())));
+			try {
+				bos.close();
+			} catch (IOException e) {
+			}
+		}
+		
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+		runner.createSteps(received);
+		runner.executeSteps(holders);
+		List<String> retList = new ArrayList<String>();
+		for (StreamHolder holder : holders) {
+			retList.add(StreamUtils.toStringFromStream(holder.getInputStream()));
+		}
+		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(retList){};
+		return Response.ok().type(MediaType.APPLICATION_JSON).entity(returnList).cookie(new NewCookie(cookie)).build();
 	}
 	
 	/**

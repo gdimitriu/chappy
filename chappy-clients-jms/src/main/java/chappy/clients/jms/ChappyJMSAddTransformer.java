@@ -23,9 +23,13 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import chappy.clients.common.AbstractChappyAddTransformer;
+import chappy.clients.jms.protocol.JMSAddTransformerMessage;
+import chappy.clients.jms.protocol.JMSLogoutMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSMessages;
+import chappy.interfaces.jms.protocol.IJMSStatus;
+import chappy.interfaces.transactions.IClientTransaction;
 
 /**
  * Chappy add transformer request wrapper for JMS.
@@ -34,11 +38,16 @@ import chappy.interfaces.jms.protocol.IJMSMessages;
  */
 public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implements IJMSClient {
 
+	/** client transaction coming from login */
+	private IJMSTransactionHolder clientTransaction = null;
+	
 	/**
 	 * 
 	 */
-	public ChappyJMSAddTransformer() {
-		// TODO Auto-generated constructor stub
+	public ChappyJMSAddTransformer(final IClientTransaction client, final String transformerName) {
+		clientTransaction = (IJMSTransactionHolder) client;
+		setProtocol(new JMSAddTransformerMessage(transformerName));
+		getProtocol().setCookie(client.getCookie());
 	}
 	
 	/* (non-Javadoc)
@@ -56,9 +65,16 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
 	 */
 	@Override
-	public void onMessage(Message arg0) {
-		// TODO Auto-generated method stub
-
+	public void onMessage(final Message message) {
+		try {
+			setProtocol(JMSAddTransformerMessage.createDecodedReplyMessage(message));
+		} catch (JMSException e) {
+			if (getProtocol() == null) {
+				setProtocol(new JMSLogoutMessage());
+			}
+			getProtocol().setReplyMessage(e.getLocalizedMessage());
+			getProtocol().setException(e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -66,8 +82,10 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 */
 	@Override
 	public String getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		if (getProtocol() == null) {
+			return IJMSStatus.REPLY_NOT_READY;
+		}
+		return ((JMSAddTransformerMessage) getProtocol()).getStatus();
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +93,9 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 */
 	@Override
 	public int getStatusCode() {
-		// TODO Auto-generated method stub
+		if (getProtocol() == null) {
+			return -1;
+		}
 		return 0;
 	}
 
@@ -83,9 +103,13 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public void send() throws JMSException {
-		// TODO Auto-generated method stub
-
+	public ChappyJMSAddTransformer send() throws JMSException {
+		Message message = ((JMSAddTransformerMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
+		message.setJMSReplyTo(clientTransaction.getCurrentReplyToDestination());
+		clientTransaction.getCurrentMessageProducer().send(message);
+		clientTransaction.getCurrentMessageConsumer().setMessageListener(this);		
+		setProtocol(null);
+		return this;
 	}
 
 	/* (non-Javadoc)
@@ -102,8 +126,7 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 */
 	@Override
 	public IJMSTransactionHolder createTransactionHolder() {
-		// TODO Auto-generated method stub
-		return null;
+		return clientTransaction;
 	}
 
 }

@@ -36,6 +36,8 @@ public interface IRestResourcesConstants {
 	String REST_UPGRADE = "upgrade";
 
 	String REST_FLOW = "flow";
+	
+	String REST_FLOW_MULTI = "flowMultiOutputs";
 
 	String REST_DIGESTER_FLOW = "digesterFlow";
 

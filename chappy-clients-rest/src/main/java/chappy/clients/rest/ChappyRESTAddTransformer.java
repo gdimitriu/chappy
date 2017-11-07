@@ -55,7 +55,7 @@ public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer imple
 	 * @see chappy.interfaces.rest.IRESTClient#send()
 	 */
 	@Override
-	public void send() {
+	public ChappyRESTAddTransformer send() {
 		RESTAddTransformerMessage addTransformer = (RESTAddTransformerMessage) getProtocol();
 		try {
 			response = addTransformer.encodeInboundMessage(clientTransaction.getRestTarget()).invoke();
@@ -64,6 +64,7 @@ public class ChappyRESTAddTransformer extends AbstractChappyAddTransformer imple
 			getProtocol().setException(e);
 		}
 		addTransformer.decodeReplyMessage(response);
+		return this;
 	}
 
 	/* (non-Javadoc)

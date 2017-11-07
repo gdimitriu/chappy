@@ -78,7 +78,7 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 				.register(MultiPartFeature.class)
 				.register(MultiPartWriter.class)
 				.register(JacksonJaxbJsonProvider.class)
-				.register(LocalDateTimeContextResolver.class);;
+				.register(LocalDateTimeContextResolver.class);
 		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://" + serverName + ":" + port + "/" }, false);
 		target = client.target(baseUri);
 	}
@@ -92,13 +92,14 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	}
 	
 	@Override
-	public void send() {
+	public ChappyRESTLogin send() {
 		try {
 			response = ((IRESTMessage) getProtocol()).encodeInboundMessage(target).invoke();
 		} catch (JsonProcessingException e) {
 			//Nothing to do for login.
 		}
 		((IRESTMessage) getProtocol()).decodeReplyMessage(response);
+		return this;
 	}
 	
 	@Override

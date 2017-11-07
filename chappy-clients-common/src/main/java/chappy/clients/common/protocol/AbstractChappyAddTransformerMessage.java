@@ -51,8 +51,16 @@ public abstract class AbstractChappyAddTransformerMessage extends AbstractChappy
 	/** transformer data as it will be in flow */
 	private String transformerData = null;
 	
+	
 	/**
-	 * there will be no default constructor.
+	 * default constructor need for reply messages.
+	 */
+	public AbstractChappyAddTransformerMessage() {
+		
+	}
+	/**
+	 * set the transformer name
+	 * @param transformerName
 	 */
 	public AbstractChappyAddTransformerMessage(final String transformerName) {
 		this.transformerName = transformerName;
@@ -63,6 +71,15 @@ public abstract class AbstractChappyAddTransformerMessage extends AbstractChappy
 	 */
 	public String getTransformerName() {
 		return transformerName;
+	}
+	
+	
+	/**
+	 * set the transformer name.
+	 * @param name of the transformer
+	 */
+	public void setTransformerName(final String name) {
+		this.transformerName = name;
 	}
 
 

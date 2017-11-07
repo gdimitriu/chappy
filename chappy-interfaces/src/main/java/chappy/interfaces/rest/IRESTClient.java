@@ -33,8 +33,9 @@ public interface IRESTClient {
 	
 	/**
 	 * send the data to Chappy.
+	 * @return the client
 	 */
-	public void send();
+	public Object send();
 	
 	/**
 	 * close all connections.
