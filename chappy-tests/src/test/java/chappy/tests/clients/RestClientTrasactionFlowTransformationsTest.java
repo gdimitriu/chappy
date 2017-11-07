@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.junit.After;
@@ -285,7 +286,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 	 * 	- add 2 custom transformers
 	 *  - validate that they are on the server
 	 *  - fail-over on the server side
-	 *  - add 1 custom trasnformer
+	 *  - add 1 custom transformer
 	 *  - validat that all 3 custom transformers are on the server
 	 *  - run the flow with one input message 
 	 *  - validate the return data
@@ -341,5 +342,105 @@ public class RestClientTrasactionFlowTransformationsTest {
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+	}
+	
+	/**
+	 * test chappy exception: 
+	 * 	- login
+	 *  - run the flow with one input message (the transformer is missing)
+	 *  - Chappy should return exception 412 with precondition failed.
+	 *  - validate the return data
+	 *  - logout
+	 * 
+	 */
+	@Test
+	public void exceptionMissingTransformerInTransactionException() {
+		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
+		try {
+			login.createConnectionToServer("localhost", port);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		login.send();
+		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
+		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		
+		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
+				StreamUtils.getStringFromResource("exceptions/missingtransformer.xml"),
+				MediaType.APPLICATION_XML_TYPE,
+				StreamUtils.getStringFromResource("exceptions/missingtransformer.xml"),
+				transaction).send();
+		
+		assertEquals("status should be 412", Status.PRECONDITION_FAILED.getStatusCode(), transformer.getStatusCode());
+		assertEquals(StreamUtils.getStringFromResource("exceptions/missingtransformer.out"),
+				transformer.getTransactionErrorMessage());
+		
+		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
+		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+	}
+	
+	/**
+	 * test chappy exception: 
+	 * 	- login
+	 *  - run the flow with one input message (the configuration xml is wrong for one step not supported tag in configuration)
+	 *  - Chappy should return exception 403 with forbidden.
+	 *  - validate the return data
+	 *  - logout
+	 * 
+	 */
+	@Test
+	public void exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration() {
+		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
+		try {
+			login.createConnectionToServer("localhost", port);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		login.send();
+		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
+		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		
+		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
+				StreamUtils.getStringFromResource("xml2json2xml.xml"),
+				StreamUtils.getStringFromResource("exceptions/xml2json2xmlwithconfigurations.xml"),
+				transaction).send();
+				
+		assertEquals("Status should be 403", Status.FORBIDDEN.getStatusCode(), transformer.getStatusCode());
+		assertEquals(StreamUtils.getStringFromResource("exceptions/xml2json2xmlwithconfiguration.out"),
+				transformer.getTransactionErrorMessage());
+	}
+	
+	/**
+	 * test chappy exception: 
+	 * 	- login
+	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 intead of parameters)
+	 *  - Chappy should return exception 403 with forbidden.
+	 *  - validate the return data
+	 *  - logout
+	 * 
+	 */
+	@Test
+	public void exceptionXml2json2xmlStepsWrongXMLConfigurationTest() {
+		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
+		try {
+			login.createConnectionToServer("localhost", port);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		login.send();
+		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
+		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		
+		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
+				StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),
+				StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),
+				transaction).send();
+		
+		assertEquals("Status should be 403", Status.FORBIDDEN.getStatusCode(), transformer.getStatusCode());
+		assertEquals(StreamUtils.getStringFromResource("exceptions/xml2json2xml.out"),
+				transformer.getTransactionErrorMessage());
 	}
 }

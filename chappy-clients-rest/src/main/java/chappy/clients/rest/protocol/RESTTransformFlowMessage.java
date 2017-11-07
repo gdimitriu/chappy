@@ -19,6 +19,7 @@
  */
 package chappy.clients.rest.protocol;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.StatusType;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -37,6 +39,7 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.policy.cookies.CookieUtils;
+import chappy.utils.streams.StreamUtils;
 
 /**
  * @author Gabriel Dimitriu
@@ -46,6 +49,9 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 
 	/** status of the REST transaction */
 	private StatusType status = null;
+	
+	/** media type for input message */
+	private MediaType inputType = null;
 	
 	/**
 	 * 
@@ -60,6 +66,15 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 	 */
 	public RESTTransformFlowMessage(final String input, final String config) {
 		super(input, config);
+	}
+
+	/**
+	 * @param input
+	 * @param configuration
+	 */
+	public RESTTransformFlowMessage(final String input, final MediaType inputType, final  String configuration) {
+		super(input, configuration);
+		this.inputType = inputType;
 	}
 
 	/* (non-Javadoc)
@@ -83,7 +98,11 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart();
 		for (String str : getInputs()) {
-			multipartEntity = multipartEntity.field(IChappyServiceNamesConstants.INPUT_DATA, str);
+			if (inputType != null) {
+				multipartEntity = multipartEntity.field(IChappyServiceNamesConstants.INPUT_DATA, str, inputType);
+			} else {
+				multipartEntity = multipartEntity.field(IChappyServiceNamesConstants.INPUT_DATA, str);
+			}
 		}
 		Invocation builder =target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW_MULTI)
 				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, getConfiguration())
@@ -96,9 +115,14 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 	@Override
 	public void decodeReplyMessage(final Response response) {
 		setStatus(response.getStatusInfo());
-		List<String> outputs = new ArrayList<>();
-		outputs = response.readEntity(new ArrayList<String>().getClass());
-		setOutputs(outputs);
+		if (response.getStatus() == Status.OK.getStatusCode()) {
+			List<String> outputs = new ArrayList<>();
+			outputs = response.readEntity(new ArrayList<String>().getClass());
+			setOutputs(outputs);
+		} else {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			setReplyMessage(StreamUtils.toStringFromStream(inputStream));
+		}
 	}
 
 }
