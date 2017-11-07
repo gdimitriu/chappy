@@ -19,16 +19,110 @@
  */
 package chappy.clients.jms.protocol;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import chappy.clients.common.protocol.AbstractChappyAddTransformerMessage;
+import chappy.interfaces.jms.protocol.IJMSProtocol;
+import chappy.interfaces.jms.protocol.IJMSStatus;
+
 /**
  * 
  * Chappy add transformer request protocol message implementation for JMS.
  * @author Gabriel Dimitriu
  *
  */
-public class JMSAddTransformerMessage {
+public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessage implements IJMSProtocol{
 
+	/** status string */
+	private String status = IJMSStatus.FORBIDDEN;
+	
+	/**
+	 * default constructor used for reply messages.
+	 */
 	public JMSAddTransformerMessage() {
-		// TODO Auto-generated constructor stub
+		
+	}
+	
+	/**
+	 * @param transformerName
+	 */
+	public JMSAddTransformerMessage(final String transformerName) {
+		super(transformerName);
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
 	}
 
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(final String status) {
+		this.status = status;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.protocol.IJMSProtocol#encodeInboundMessage(javax.jms.Session)
+	 */
+	@Override
+	public Message encodeInboundMessage(final Session session) throws JMSException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.protocol.IJMSProtocol#decodeInboundMessage(javax.jms.Message)
+	 */
+	@Override
+	public void decodeInboundMessage(final Message message) throws JMSException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.protocol.IJMSProtocol#encodeReplyMessage(javax.jms.Session)
+	 */
+	@Override
+	public Message encodeReplyMessage(final Session session) throws JMSException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.protocol.IJMSProtocol#decodeReplyMessage(javax.jms.Message)
+	 */
+	@Override
+	public void decodeReplyMessage(final Message message) throws JMSException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * created the decoded reply message from chappy.
+	 * @param message from JMS
+	 * @return this as a factory.
+	 * @throws JMSException
+	 */
+	public static JMSAddTransformerMessage createDecodedReplyMessage(final Message message) throws JMSException {
+		JMSAddTransformerMessage transformer = new JMSAddTransformerMessage();
+		transformer.decodeReplyMessage(message);
+		return transformer;
+	}
+
+	/**
+	 * Create a decoded message from inbound received in chappy.
+	 * @param message received by JMS
+	 * @return decoded message
+	 * @throws JMSException
+	 */
+	public static JMSAddTransformerMessage createDecodedInboundMessage(final Message message) throws JMSException {
+		JMSAddTransformerMessage msg = new JMSAddTransformerMessage();
+		msg.decodeInboundMessage(message);
+		return msg;
+	}
 }
