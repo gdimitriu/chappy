@@ -19,18 +19,84 @@
  */
 package chappy.clients.jms.protocol;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import chappy.clients.common.protocol.AbstractChappyTransformFlowMessage;
+import chappy.interfaces.IChappyProtocol;
+import chappy.interfaces.jms.protocol.IJMSProtocol;
+import chappy.interfaces.jms.protocol.IJMSStatus;
+
 /**
  * Chappy transform request protocol message implementation for JMS.
  * @author Gabriel Dimitriu
  *
  */
-public class JMSTransformFlowMessage {
+public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage implements IJMSProtocol {
 
+	/** status string */
+	private String status = IJMSStatus.FORBIDDEN;
+	
 	/**
 	 * 
 	 */
+	public JMSTransformFlowMessage(final String configuration) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public JMSTransformFlowMessage() {
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public Message encodeInboundMessage(final Session session) throws JMSException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void decodeInboundMessage(final Message message) throws JMSException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Message encodeReplyMessage(final Session session) throws JMSException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void decodeReplyMessage(final Message message) throws JMSException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * created the decoded reply message from chappy.
+	 * @param message from JMS
+	 * @return this as a factory.
+	 * @throws JMSException
+	 */
+	public static IChappyProtocol createDecodedReplyMessage(final Message message) throws JMSException {
+		JMSTransformFlowMessage transformer = new JMSTransformFlowMessage();
+		transformer.decodeReplyMessage(message);
+		return transformer;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+	
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(final String status) {
+		this.status = status;
 	}
 
 }
