@@ -30,6 +30,8 @@ public class ForbiddenException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 6638776595077106669L;
+	
+	private String chappyMessage = null; 
 
 	/**
 	 * 
@@ -39,11 +41,19 @@ public class ForbiddenException extends Exception {
 	}
 
 	/**
+	 * @param message from chappy
+	 * @param local (the localized local message eg: transformerName)
+	 */
+	public ForbiddenException(final String local, final String message) {
+		super(message);
+		this.chappyMessage = local;
+	}
+	
+	/**
 	 * @param message
 	 */
-	public ForbiddenException(String message) {
+	public ForbiddenException(final String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -74,4 +84,10 @@ public class ForbiddenException extends Exception {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * @return localized message
+	 */
+	public String getChapyMessage() {
+		return this.chappyMessage;
+	}
 }

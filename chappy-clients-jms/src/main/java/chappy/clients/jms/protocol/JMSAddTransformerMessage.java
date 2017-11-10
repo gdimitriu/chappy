@@ -19,12 +19,17 @@
  */
 package chappy.clients.jms.protocol;
 
+import java.util.HashMap;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
-
 import chappy.clients.common.protocol.AbstractChappyAddTransformerMessage;
+import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
+import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
 /**
@@ -71,8 +76,14 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 	 */
 	@Override
 	public Message encodeInboundMessage(final Session session) throws JMSException {
-		// TODO Auto-generated method stub
-		return null;
+		ObjectMessage message = session.createObjectMessage();
+		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.ADD_TRANSFORMER);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
+		map.put(IJMSProtocolKeys.TRANSFORMER_NAME, getTransformerName());
+		map.put(IJMSProtocolKeys.TRANSFORMER_BYTECODE, getTransformerData());
+		message.setObject(map);
+		return message;
 	}
 
 	/* (non-Javadoc)
@@ -80,8 +91,14 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 	 */
 	@Override
 	public void decodeInboundMessage(final Message message) throws JMSException {
-		// TODO Auto-generated method stub
-		
+		ObjectMessage objMsg = (ObjectMessage) message;
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> retObj = (HashMap<String, Object>) ((ObjectMessage) objMsg).getObject();
+		if (retObj.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
+			setCookie((IChappyCookie) retObj.get(IJMSProtocolKeys.COOKIE_KEY));
+		}
+		setTransformerName((String) retObj.get(IJMSProtocolKeys.TRANSFORMER_NAME));
+		setTransformerData((String) retObj.get(IJMSProtocolKeys.TRANSFORMER_BYTECODE));
 	}
 
 	/* (non-Javadoc)
@@ -89,8 +106,22 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 	 */
 	@Override
 	public Message encodeReplyMessage(final Session session) throws JMSException {
-		// TODO Auto-generated method stub
-		return null;
+		ObjectMessage message = session.createObjectMessage();
+		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
+		message.setJMSCorrelationID(getCookie().getTransactionId());
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
+		if (getCookie() != null) {
+			map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
+		}
+		if (getException() != null) {
+			map.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, getException());
+		}
+		if (getReplyMessage() != null) {
+			map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
+		}
+		message.setObject(map);
+		return message;
 	}
 
 	/* (non-Javadoc)
@@ -98,8 +129,27 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 	 */
 	@Override
 	public void decodeReplyMessage(final Message message) throws JMSException {
-		// TODO Auto-generated method stub
-		
+		if (message instanceof ObjectMessage) {
+			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
+			ObjectMessage msg = (ObjectMessage) message;
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();
+			if (map != null && !map.isEmpty()) {
+				if (map.containsKey(IJMSProtocolKeys.REPLY_MESSAGE_KEY)) {
+					setReplyMessage((String) map.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY));
+				} else {
+					setReplyMessage(null);
+				}
+				if (map.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
+					setCookie((IChappyCookie) map.get(IJMSProtocolKeys.COOKIE_KEY));
+				} else {
+					setCookie(null);
+				}
+				if (map.containsKey(IJMSProtocolKeys.REPLY_EXCEPTION_KEY)) {
+					setException((Exception) map.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY));
+				}
+			}
+		}
 	}
 
 	/**

@@ -21,10 +21,16 @@ package chappy.tests.clients;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jms.JMSException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSLogin;
 import chappy.clients.jms.ChappyJMSLogout;
 import chappy.configurations.providers.SystemConfigurationProvider;
@@ -36,7 +42,10 @@ import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.services.servers.jms.ServerJMS;
 import chappy.services.servers.jms.resources.TransactionRouter;
+import chappy.services.servers.jms.resources.tranform.AddTransformer;
 import chappy.services.servers.jms.resources.tranform.Authentication;
+import chappy.services.servers.jms.resources.tranform.TransformFlow;
+import chappy.tests.rest.transformers.test.RestCallsUtils;
 
 /**
  * Functional tests for Chappy clients with JMS protocol.
@@ -64,6 +73,8 @@ public class JMSClientTransactionFlowTransformationsTest {
 		server = new ServerJMS();
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransactionRouter());
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new Authentication());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddTransformer());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransformFlow());
 		server.configure(configuration);
 		Thread thread = new Thread() {
 			public void run() {
@@ -106,6 +117,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		if (!login.hasException()) {
 			 IJMSTransactionHolder transaction =  login.createTransactionHolder();
 			 assertEquals("user should be system", "system", transaction.getCookie().getUserName());
+			 return transaction;
 		}
 		return null;
 	}
@@ -127,6 +139,30 @@ public class JMSClientTransactionFlowTransformationsTest {
 	}
 	
 	/**
+	 * login and add custom transformers and list and validate them.
+	 * @return chappy transaction holder
+	 */
+	private IJMSTransactionHolder chappyJMSAddCustomTransformers(final List<String> addTransformers,
+			final IJMSTransactionHolder transaction) {
+		
+		// add transformers in transaction
+		for (String transf : addTransformers) {
+			ChappyJMSAddTransformer addTransformer = new ChappyJMSAddTransformer(transf, transaction);
+			try {
+				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
+				addTransformer.send();
+				while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+				assertEquals("add transformer " + transf + " exception", addTransformer.getStatus(),
+						IJMSStatus.OK);
+			} catch (IOException | JMSException | InterruptedException e) {
+				e.printStackTrace();
+				fail("exception occured at add transformer" + e.getLocalizedMessage());
+			}
+		}
+		return transaction;
+	}
+	
+	/**
 	 * chappy test:
 	 * 	- login in chappy using jms
 	 * 	- logout from chappy using jms
@@ -135,6 +171,19 @@ public class JMSClientTransactionFlowTransformationsTest {
 	public void jmsChappyLoginLogout() {
 		try {
 			IJMSTransactionHolder transaction = jmsChappyLogin();
+			jmsChappyLogout(transaction);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+	}
+	
+	@Test
+	public void jmsChappyAddTransformer() {
+		try {
+			IJMSTransactionHolder transaction = jmsChappyLogin();
+			List<String> addTransformers = new ArrayList<>();
+			addTransformers.add("PreProcessingStep");
+			chappyJMSAddCustomTransformers(addTransformers, transaction);
 			jmsChappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());

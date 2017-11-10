@@ -37,4 +37,10 @@ public interface IJMSProtocolKeys {
 	
 	/** status property */
 	String REPLY_STATUS_PROPERTY = "status";
+	
+	/** transformer name */
+	String TRANSFORMER_NAME = "transformer_name";
+	
+	/** trnasformer bytecode to be instantiated */
+	String TRANSFORMER_BYTECODE = "transformer_bytecode";
 }

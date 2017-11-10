@@ -24,7 +24,6 @@ import javax.jms.Message;
 
 import chappy.clients.common.AbstractChappyAddTransformer;
 import chappy.clients.jms.protocol.JMSAddTransformerMessage;
-import chappy.clients.jms.protocol.JMSLogoutMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSMessages;
@@ -44,7 +43,7 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	/**
 	 * 
 	 */
-	public ChappyJMSAddTransformer(final IClientTransaction client, final String transformerName) {
+	public ChappyJMSAddTransformer(final String transformerName, final IClientTransaction client) {
 		clientTransaction = (IJMSTransactionHolder) client;
 		setProtocol(new JMSAddTransformerMessage(transformerName));
 		getProtocol().setCookie(client.getCookie());
@@ -70,7 +69,7 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 			setProtocol(JMSAddTransformerMessage.createDecodedReplyMessage(message));
 		} catch (JMSException e) {
 			if (getProtocol() == null) {
-				setProtocol(new JMSLogoutMessage());
+				setProtocol(new JMSAddTransformerMessage());
 			}
 			getProtocol().setReplyMessage(e.getLocalizedMessage());
 			getProtocol().setException(e);
@@ -117,8 +116,31 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	 */
 	@Override
 	public String closeAll() {
-		// TODO Auto-generated method stub
-		return null;
+		boolean ok = true;
+		String ret = "Chappy:=";
+		try {
+			clientTransaction.getCurrentSession().close();
+		} catch (JMSException e) {
+			ret = ret + " " + e.getLocalizedMessage();
+			ok = false;
+		}
+		try {
+			clientTransaction.getCurrentConnection().close();
+		} catch (JMSException e) {
+			ret = ret + " " + e.getLocalizedMessage();
+			ok = false;
+		}
+		try {
+			clientTransaction.getCurrentConnection().stop();
+		} catch (JMSException e) {
+			ret = ret + " " + e.getLocalizedMessage();
+			ok =false;
+		}
+		if (!ok) {
+			return ret;
+		} else {
+			return ret + " has been stopped ok.";
+		}
 	}
 
 	/* (non-Javadoc)

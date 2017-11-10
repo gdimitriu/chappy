@@ -20,6 +20,15 @@
 package chappy.interfaces.jms.resources;
 
 import javax.jms.Connection;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import chappy.interfaces.jms.protocol.IJMSMessages;
 
 /**
  * Abstract class for producer/consumer resource.
@@ -53,4 +62,22 @@ public abstract class JMSAbstractProducerConsumer implements IJMSRuntimeResource
 		this.currentConnection = currentConnection;
 	}
 
+	/**
+	 * @param session
+	 * @param message
+	 */
+	public void sendStandardError(final Session session, final Message message) {
+		try {
+			TextMessage msg = session.createTextMessage();
+			Destination replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
+			msg.setJMSCorrelationID(message.getJMSCorrelationID());
+			msg.setText(IJMSMessages.INTERNAL_SERVER_ERROR);
+			MessageProducer producer = session.createProducer(replyTo);
+			producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+			producer.send(msg);
+			session.commit();
+		} catch (JMSException e2) {
+			e2.printStackTrace();
+		}
+	}
 }

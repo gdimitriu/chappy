@@ -25,8 +25,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import chappy.clients.jms.protocol.JMSLoginMessage;
 import chappy.clients.jms.protocol.JMSLogoutMessage;
 import chappy.interfaces.cookies.IChappyCookie;
@@ -211,25 +209,6 @@ public class Authentication extends JMSAbstractProducerConsumer {
 		replyMessage.setReplyMessage(IJMSMessages.COMMUNICATION_ERROR);
 		Message reply = replyMessage.encodeReplyMessage(session);
 		return reply;
-	}
-
-	/**
-	 * @param session
-	 * @param message
-	 */
-	private void sendStandardError(final Session session, final Message message) {
-		try {
-			TextMessage msg = session.createTextMessage();
-			Destination replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
-			msg.setJMSCorrelationID(message.getJMSCorrelationID());
-			msg.setText(IJMSMessages.INTERNAL_SERVER_ERROR);
-			MessageProducer producer = session.createProducer(replyTo);
-			producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-			producer.send(msg);
-			session.commit();
-		} catch (JMSException e2) {
-			e2.printStackTrace();
-		}
 	}
 
 }

@@ -33,14 +33,14 @@ public interface IJMSCommands {
 	String LOGIN = "login";
 	String LOGOUT = "logout";
 	String FLOW = "flow";
-	String TRANSFORMER = "transformer";
+	String ADD_TRANSFORMER = "add_transformer";
 	
 	public static List<String> getAllCommands() {
 		List<String >commands = new ArrayList<String>();
 		commands.add(LOGIN);
 		commands.add(LOGOUT);
 		commands.add(FLOW);
-		commands.add(TRANSFORMER);
+		commands.add(ADD_TRANSFORMER);
 		return commands;
 	}
 }

@@ -42,6 +42,8 @@ public class JMSRouteProvider {
 		routes = new HashMap<String, String>();
 		routes.put(IJMSCommands.LOGIN, IJMSQueueNameConstants.AUTHENTICATION);
 		routes.put(IJMSCommands.LOGOUT, IJMSQueueNameConstants.AUTHENTICATION);
+		routes.put(IJMSCommands.ADD_TRANSFORMER, IJMSQueueNameConstants.ADD_TRANSFORMER);
+		routes.put(IJMSCommands.FLOW, IJMSQueueNameConstants.TRANSFORM);
 	}
 	
 	public static JMSRouteProvider getInstance() {
