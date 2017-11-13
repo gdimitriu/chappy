@@ -23,8 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+
 
 /**
  * @author Gabriel Dimitriu
@@ -33,14 +34,47 @@ import org.apache.commons.collections.map.MultiValueMap;
 public class MultiDataQueryHolder {
 	
 	/** holder for REST FormDataMultiPart */
-	private MultiMap bodyValues = null;
+	private MultiValuedMap<String, Object> bodyValues = null;
 	
 	/** holder for MultivaluedMap<String,String> from REST queries*/
-	private MultiMap queries = null;
+	private MultiValuedMap<String, String> queries = null;
 	
 	public MultiDataQueryHolder() {
-		queries = new MultiValueMap();
-		bodyValues = new MultiValueMap();
+		queries = new HashSetValuedHashMap<String, String>();
+		bodyValues = new HashSetValuedHashMap<String, Object>();
+	}
+	
+	
+	/**
+	 * get the body values multimap.
+	 * @return multimap of the body values
+	 */
+	public MultiValuedMap<String, Object> getBodyValues() {
+		return bodyValues;
+	}
+	
+	/**
+	 * get the queries multimap.
+	 * @return multimap of the queries
+	 */
+	public MultiValuedMap<String, String> getQueries() {
+		return queries;
+	}
+	
+	/**
+	 * set the multimap of the body values.
+	 * @param bodies
+	 */
+	public void setBodyValues(final MultiValuedMap<String, Object> bodies) {
+		this.bodyValues = bodies;
+	}
+	
+	/**
+	 * set the multimap of the queries
+	 * @param queries as multimap
+	 */
+	public void setQueries(final MultiValuedMap<String, String> queries) {
+		this.queries = queries;
 	}
 	
 	/**
@@ -66,7 +100,6 @@ public class MultiDataQueryHolder {
 	 * @param key to search
 	 * @return collection of values
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<Object> getBodyValue(final String key) {
 		return (Collection<Object>) bodyValues.get(key);
 	}
@@ -87,9 +120,8 @@ public class MultiDataQueryHolder {
 	 * @param key to search
 	 * @return collection of values
 	 */
-	@SuppressWarnings("unchecked")
-	public Collection<Object> getQueryValue(final String key) {
-		return (Collection<Object>) queries.get(key);
+	public Collection<String> getQueryValue(final String key) {
+		return (Collection<String>) queries.get(key);
 	}
 	
 	/**
@@ -108,7 +140,6 @@ public class MultiDataQueryHolder {
 	 * get the set of string key values.
 	 * @return a set containing all keys.
 	 */
-	@SuppressWarnings("unchecked")
 	public Set<String> getQueriesSet() {
 		return queries.keySet();
 	}

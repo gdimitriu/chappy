@@ -32,7 +32,7 @@ public interface IJMSProtocolKeys {
 	/** reply message key for the protocol */
 	String REPLY_MESSAGE_KEY = "reply_message";
 
-	/** exception occured in chappy*/
+	/** exception occurred in chappy*/
 	String REPLY_EXCEPTION_KEY = "exception";
 	
 	/** status property */
@@ -41,6 +41,18 @@ public interface IJMSProtocolKeys {
 	/** transformer name */
 	String TRANSFORMER_NAME = "transformer_name";
 	
-	/** trnasformer bytecode to be instantiated */
+	/** transformer bytecode to be instantiated */
 	String TRANSFORMER_BYTECODE = "transformer_bytecode";
+
+	/** transformer flow configuration */
+	String FLOW_CONFIGURATION = "flow_configuration";
+	
+	/** number of input data */
+	String DATA_FLOW_NR = "data_nr";
+	
+	/** prefix for input data for the flow */
+	String DATA_FLOW = "data_";
+
+	/** flow queries data */
+	String FLOW_QUERIES = "flow_queries";
 }

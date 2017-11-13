@@ -19,13 +19,24 @@
  */
 package chappy.clients.jms.protocol;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
+
+import org.apache.commons.collections4.MultiValuedMap;
 
 import chappy.clients.common.protocol.AbstractChappyTransformFlowMessage;
 import chappy.interfaces.IChappyProtocol;
+import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.flows.MultiDataQueryHolder;
+import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
+import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
 /**
@@ -38,11 +49,14 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 	/** status string */
 	private String status = IJMSStatus.FORBIDDEN;
 	
+	/** hold the queries of the system */
+	private MultiDataQueryHolder queries = null;
+	
 	/**
 	 * 
 	 */
 	public JMSTransformFlowMessage(final String configuration) {
-		// TODO Auto-generated constructor stub
+		setConfiguration(configuration);
 	}
 
 	public JMSTransformFlowMessage() {
@@ -51,14 +65,36 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 
 	@Override
 	public Message encodeInboundMessage(final Session session) throws JMSException {
-		// TODO Auto-generated method stub
-		return null;
+		ObjectMessage message = session.createObjectMessage();
+		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.FLOW);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
+		map.put(IJMSProtocolKeys.FLOW_CONFIGURATION, getConfiguration());
+		map.put(IJMSProtocolKeys.FLOW_QUERIES, queries.getQueries());
+		map.put(IJMSProtocolKeys.DATA_FLOW_NR, getInputs().size());
+		for (int i = 0; i < getInputs().size(); i++) {
+			map.put(IJMSProtocolKeys.DATA_FLOW + i, getInputs().get(i));
+		}
+		message.setObject(map);
+		return message;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void decodeInboundMessage(final Message message) throws JMSException {
-		// TODO Auto-generated method stub
-		
+		ObjectMessage objMsg = (ObjectMessage) message;
+		HashMap<String, Object> retObj = (HashMap<String, Object>) ((ObjectMessage) objMsg).getObject();
+		if (retObj.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
+			setCookie((IChappyCookie) retObj.get(IJMSProtocolKeys.COOKIE_KEY));
+		}
+		setConfiguration((String) retObj.get(IJMSProtocolKeys.FLOW_CONFIGURATION));
+		queries.setQueries((MultiValuedMap<String, String>) retObj.get(IJMSProtocolKeys.FLOW_QUERIES));
+		int size = (Integer) retObj.get(IJMSProtocolKeys.DATA_FLOW_NR);
+		List<String> inputs = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			inputs.add((String) retObj.get(IJMSProtocolKeys.DATA_FLOW + i));
+		}
+		setInputs(inputs);
 	}
 
 	@Override
@@ -71,18 +107,6 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 	public void decodeReplyMessage(final Message message) throws JMSException {
 		// TODO Auto-generated method stub
 		
-	}
-
-	/**
-	 * created the decoded reply message from chappy.
-	 * @param message from JMS
-	 * @return this as a factory.
-	 * @throws JMSException
-	 */
-	public static IChappyProtocol createDecodedReplyMessage(final Message message) throws JMSException {
-		JMSTransformFlowMessage transformer = new JMSTransformFlowMessage();
-		transformer.decodeReplyMessage(message);
-		return transformer;
 	}
 
 	/**
@@ -99,4 +123,34 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 		this.status = status;
 	}
 
+	/**
+	 * @return MultiDataQueryHolder of the decoded queries.
+	 */
+	public MultiDataQueryHolder getMultidataQuery() {
+		return queries;
+	}
+
+	/**
+	 * created the decoded inbound message received by chappy.
+	 * @param message from JMS
+	 * @return this as a factory.
+	 * @throws JMSException
+	 */
+	public static JMSTransformFlowMessage createDecodedInboundMessage(final Message message) throws JMSException {
+		JMSTransformFlowMessage transformer = new JMSTransformFlowMessage();
+		transformer.decodeInboundMessage(message);
+		return transformer;
+	}
+	
+	/**
+	 * created the decoded reply message from chappy.
+	 * @param message from JMS
+	 * @return this as a factory.
+	 * @throws JMSException
+	 */
+	public static IChappyProtocol createDecodedReplyMessage(final Message message) throws JMSException {
+		JMSTransformFlowMessage transformer = new JMSTransformFlowMessage();
+		transformer.decodeReplyMessage(message);
+		return transformer;
+	}
 }

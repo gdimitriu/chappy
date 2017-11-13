@@ -19,6 +19,11 @@
  */
 package chappy.services.servers.jms.resources.tranform;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -26,10 +31,16 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-import chappy.interfaces.exception.ForbiddenException;
+import chappy.clients.jms.protocol.JMSTransformFlowMessage;
+import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
+import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.utils.streams.StreamUtils;
+import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
+import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
  * JMS tranformer flow request.
@@ -96,9 +107,48 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 	}
 
 
-	private void transformFlow(final Session session, final Message message) throws JMSException , ForbiddenException {
-		// TODO Auto-generated method stub
+	/**
+	 * transform the flow and send the reply.
+	 * @param session in which the message was received.
+	 * @param message the received message.
+	 * @throws Exception
+	 */
+	private void transformFlow(final Session session, final Message message) throws Exception {
+		JMSTransformFlowMessage transformer = JMSTransformFlowMessage.createDecodedInboundMessage(message);
+		InputStream configurationStream = null;
+		if (transformer.getConfiguration() == null || "".equals(transformer.getConfiguration())) {
+			configurationStream = new ByteArrayInputStream(transformer.getConfiguration().getBytes());
+		}
+		/* create the list of input stream holders */
+		List<StreamHolder> holders = new ArrayList<StreamHolder>();
+		for (String input : transformer.getInputs()) {
+			byte[] buffer = input.getBytes();
+			holders.add(new StreamHolder(new ByteArrayInputStreamWrapper(buffer, 0, buffer.length)));
+		}
 		
+		
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, transformer.getMultidataQuery());
+		runner.createSteps(transformer.getCookie());
+		runner.executeSteps(holders);
+		/* create the output */
+		List<String> retList = new ArrayList<String>();
+		for (StreamHolder holder : holders) {
+			retList.add(StreamUtils.toStringFromStream(holder.getInputStream()));
+		}		
+		transformer.setOutputs(retList);
+		Message reply = transformer.encodeReplyMessage(session);
+		
+		Destination replyTo = null;
+		if (message.getJMSReplyTo() != null) {
+			replyTo = message.getJMSReplyTo();
+		} else {
+			replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
+		}
+		MessageProducer producer = session.createProducer(replyTo);
+		producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+		producer.send(reply);
+		session.commit();
 	}
 	
 	

@@ -54,4 +54,16 @@ public class WrapperUtils {
 		return bos;
 	}
 
+	/**
+	 * This will transform the String into ByteArrayOutputStreamWrapper. 
+	 * @param inputSring
+	 * @return ByteArrayOutputStreamWrapper
+	 * @throws IOException
+	 */
+	public static ByteArrayOutputStreamWrapper fromStringToOutputWrapper(final String inputString) throws IOException {
+		ByteArrayOutputStreamWrapper bos = new ByteArrayOutputStreamWrapper();
+		byte[] buffer = inputString.getBytes();
+		bos.write(buffer, 0, buffer.length);
+		return bos;
+	}
 }
