@@ -50,7 +50,7 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 	private String status = IJMSStatus.FORBIDDEN;
 	
 	/** hold the queries of the system */
-	private MultiDataQueryHolder queries = null;
+	private MultiDataQueryHolder queries = new MultiDataQueryHolder();
 	
 	/**
 	 * 
@@ -63,17 +63,21 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 		// TODO Auto-generated constructor stub
 	}
 
+	public JMSTransformFlowMessage(final String input, final String configuration) {
+		super(input, configuration);
+	}
+
 	@Override
 	public Message encodeInboundMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
 		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.FLOW);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
-		map.put(IJMSProtocolKeys.FLOW_CONFIGURATION, getConfiguration());
-		map.put(IJMSProtocolKeys.FLOW_QUERIES, queries.getQueries());
-		map.put(IJMSProtocolKeys.DATA_FLOW_NR, getInputs().size());
+		map.put(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY, getConfiguration());
+		map.put(IJMSProtocolKeys.FLOW_QUERIES_KEY, queries.getQueries());
+		map.put(IJMSProtocolKeys.DATA_FLOW_NR_KEY, getInputs().size());
 		for (int i = 0; i < getInputs().size(); i++) {
-			map.put(IJMSProtocolKeys.DATA_FLOW + i, getInputs().get(i));
+			map.put(IJMSProtocolKeys.DATA_FLOW_KEY + i, getInputs().get(i));
 		}
 		message.setObject(map);
 		return message;
@@ -87,26 +91,59 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 		if (retObj.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
 			setCookie((IChappyCookie) retObj.get(IJMSProtocolKeys.COOKIE_KEY));
 		}
-		setConfiguration((String) retObj.get(IJMSProtocolKeys.FLOW_CONFIGURATION));
-		queries.setQueries((MultiValuedMap<String, String>) retObj.get(IJMSProtocolKeys.FLOW_QUERIES));
-		int size = (Integer) retObj.get(IJMSProtocolKeys.DATA_FLOW_NR);
+		setConfiguration((String) retObj.get(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY));
+		queries.setQueries((MultiValuedMap<String, String>) retObj.get(IJMSProtocolKeys.FLOW_QUERIES_KEY));
+		int size = (Integer) retObj.get(IJMSProtocolKeys.DATA_FLOW_NR_KEY);
 		List<String> inputs = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
-			inputs.add((String) retObj.get(IJMSProtocolKeys.DATA_FLOW + i));
+			inputs.add((String) retObj.get(IJMSProtocolKeys.DATA_FLOW_KEY + i));
 		}
 		setInputs(inputs);
 	}
 
 	@Override
 	public Message encodeReplyMessage(final Session session) throws JMSException {
-		// TODO Auto-generated method stub
-		return null;
+		ObjectMessage replyMessage = session.createObjectMessage();
+		replyMessage.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_KEY, status);
+		replyMessage.setJMSCorrelationID(getCookie().getTransactionId());
+		HashMap<String, Object> retObj = new HashMap<>();
+		retObj.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
+		if (hasException()) {
+			retObj.put(IJMSProtocolKeys.REPLY_EXCEPTION_KEY, getException());
+		}
+		if (getReplyMessage() != null && !getReplyMessage().isEmpty()) {
+			retObj.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
+		}
+		if (getOutputs() != null && !getOutputs().isEmpty()) {
+			int size = getOutputs().size();
+			retObj.put(IJMSProtocolKeys.DATA_FLOW_NR_KEY, size);
+			for (int i = 0; i < size; i++) {
+				retObj.put(IJMSProtocolKeys.DATA_FLOW_KEY + i, getOutputs().get(i));
+			}
+		}
+		replyMessage.setObject(retObj);
+		return replyMessage;
 	}
 
 	@Override
 	public void decodeReplyMessage(final Message message) throws JMSException {
-		// TODO Auto-generated method stub
-		
+		status = ((ObjectMessage) message).getStringProperty(IJMSProtocolKeys.REPLY_STATUS_KEY);
+		@SuppressWarnings("unchecked")
+		HashMap<String, Object> retObj = (HashMap<String, Object>) ((ObjectMessage) message).getObject();
+		setCookie((IChappyCookie) retObj.get(IJMSProtocolKeys.COOKIE_KEY));
+		if (retObj.containsKey(IJMSProtocolKeys.REPLY_EXCEPTION_KEY)) {
+			setException((Exception) retObj.get(IJMSProtocolKeys.REPLY_EXCEPTION_KEY));
+		}
+		if (retObj.containsKey(IJMSProtocolKeys.REPLY_MESSAGE_KEY)) {
+			setReplyMessage((String) retObj.get(IJMSProtocolKeys.REPLY_MESSAGE_KEY));
+		}
+		if (retObj.containsKey(IJMSProtocolKeys.DATA_FLOW_NR_KEY)) {
+			List<String> outputs = new ArrayList<>();
+			for (int i = 0 ; i < (Integer) retObj.get(IJMSProtocolKeys.DATA_FLOW_NR_KEY); i++) {
+				outputs.add((String) retObj.get(IJMSProtocolKeys.DATA_FLOW_KEY + i));
+			}
+			setOutputs(outputs);
+		}
 	}
 
 	/**

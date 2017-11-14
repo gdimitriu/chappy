@@ -80,8 +80,8 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.ADD_TRANSFORMER);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
-		map.put(IJMSProtocolKeys.TRANSFORMER_NAME, getTransformerName());
-		map.put(IJMSProtocolKeys.TRANSFORMER_BYTECODE, getTransformerData());
+		map.put(IJMSProtocolKeys.TRANSFORMER_NAME_KEY, getTransformerName());
+		map.put(IJMSProtocolKeys.TRANSFORMER_BYTECODE_KEY, getTransformerData());
 		message.setObject(map);
 		return message;
 	}
@@ -97,8 +97,8 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 		if (retObj.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
 			setCookie((IChappyCookie) retObj.get(IJMSProtocolKeys.COOKIE_KEY));
 		}
-		setTransformerName((String) retObj.get(IJMSProtocolKeys.TRANSFORMER_NAME));
-		setTransformerData((String) retObj.get(IJMSProtocolKeys.TRANSFORMER_BYTECODE));
+		setTransformerName((String) retObj.get(IJMSProtocolKeys.TRANSFORMER_NAME_KEY));
+		setTransformerData((String) retObj.get(IJMSProtocolKeys.TRANSFORMER_BYTECODE_KEY));
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +107,7 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 	@Override
 	public Message encodeReplyMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
-		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
+		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_KEY, status);
 		message.setJMSCorrelationID(getCookie().getTransactionId());
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
@@ -130,7 +130,7 @@ public class JMSAddTransformerMessage extends AbstractChappyAddTransformerMessag
 	@Override
 	public void decodeReplyMessage(final Message message) throws JMSException {
 		if (message instanceof ObjectMessage) {
-			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
+			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_KEY);
 			ObjectMessage msg = (ObjectMessage) message;
 			@SuppressWarnings("unchecked")
 			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();

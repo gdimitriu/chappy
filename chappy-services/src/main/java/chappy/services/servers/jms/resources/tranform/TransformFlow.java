@@ -116,7 +116,7 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 	private void transformFlow(final Session session, final Message message) throws Exception {
 		JMSTransformFlowMessage transformer = JMSTransformFlowMessage.createDecodedInboundMessage(message);
 		InputStream configurationStream = null;
-		if (transformer.getConfiguration() == null || "".equals(transformer.getConfiguration())) {
+		if (transformer.getConfiguration() != null && !"".equals(transformer.getConfiguration())) {
 			configurationStream = new ByteArrayInputStream(transformer.getConfiguration().getBytes());
 		}
 		/* create the list of input stream holders */

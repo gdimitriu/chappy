@@ -44,9 +44,9 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 	/**
 	 * 
 	 */
-	public ChappyJMSTransformFlow(final String configuration, final IClientTransaction client) {
+	public ChappyJMSTransformFlow(final String input, final String configuration, final IClientTransaction client) {
 		clientTransaction = (IJMSTransactionHolder) client;
-		setProtocol(new JMSTransformFlowMessage(configuration));
+		setProtocol(new JMSTransformFlowMessage(input, configuration));
 		getProtocol().setCookie(client.getCookie());
 	}
 
@@ -104,7 +104,7 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public Object send() throws JMSException {
+	public ChappyJMSTransformFlow send() throws JMSException {
 		Message message = ((JMSTransformFlowMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
 		message.setJMSReplyTo(clientTransaction.getCurrentReplyToDestination());
 		clientTransaction.getCurrentMessageProducer().send(message);

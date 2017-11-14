@@ -21,6 +21,7 @@ package chappy.tests.clients;
 
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSLogin;
 import chappy.clients.jms.ChappyJMSLogout;
+import chappy.clients.jms.ChappyJMSTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.jms.IJMSTransactionHolder;
@@ -46,6 +48,7 @@ import chappy.services.servers.jms.resources.tranform.AddTransformer;
 import chappy.services.servers.jms.resources.tranform.Authentication;
 import chappy.services.servers.jms.resources.tranform.TransformFlow;
 import chappy.tests.rest.transformers.test.RestCallsUtils;
+import chappy.utils.streams.StreamUtils;
 
 /**
  * Functional tests for Chappy clients with JMS protocol.
@@ -184,6 +187,44 @@ public class JMSClientTransactionFlowTransformationsTest {
 			List<String> addTransformers = new ArrayList<>();
 			addTransformers.add("PreProcessingStep");
 			chappyJMSAddCustomTransformers(addTransformers, transaction);
+			jmsChappyLogout(transaction);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+	}
+	
+	/**
+	 * test chappy: 
+	 * 	- login
+	 * 	- add 3 transformer steps
+	 *  - validate that they are on the server
+	 *  - run a flow with those steps
+	 *  - validate the return data
+	 *  - logout
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void push3CustomTransformersByTransactionAndMakeTransformation() throws FileNotFoundException {
+		List<String> addTransformers = new ArrayList<>();
+		addTransformers.add("PreProcessingStep");
+		addTransformers.add("ProcessingStep");
+		addTransformers.add("PostProcessingStep");
+		try {
+			IJMSTransactionHolder transaction = jmsChappyLogin();
+			chappyJMSAddCustomTransformers(addTransformers, transaction);
+			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
+					"blabla",
+					StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"),
+					transaction).send();
+			while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			if (transformer.getStatusCode() >= 0) {
+				List<String> actual = transformer.getOutputResultAsString();
+				assertEquals(actual.size(), 1);
+				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+							actual.get(0));
+			} else {
+				fail("processing error on server");
+			}
 			jmsChappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
