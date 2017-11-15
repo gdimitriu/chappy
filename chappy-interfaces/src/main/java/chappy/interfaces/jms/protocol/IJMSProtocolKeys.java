@@ -55,4 +55,7 @@ public interface IJMSProtocolKeys {
 
 	/** flow queries data */
 	String FLOW_QUERIES_KEY = "flow_queries";
+	
+	/** transformers added in this transaction */
+	String TRANSFORMERS_KEY = "transformers";
 }

@@ -34,6 +34,7 @@ public interface IJMSCommands {
 	String LOGOUT = "logout";
 	String FLOW = "flow";
 	String ADD_TRANSFORMER = "add_transformer";
+	String LIST_TRANSFORMERS = "list_transformers";
 	
 	public static List<String> getAllCommands() {
 		List<String >commands = new ArrayList<String>();
@@ -41,6 +42,7 @@ public interface IJMSCommands {
 		commands.add(LOGOUT);
 		commands.add(FLOW);
 		commands.add(ADD_TRANSFORMER);
+		commands.add(LIST_TRANSFORMERS);
 		return commands;
 	}
 }

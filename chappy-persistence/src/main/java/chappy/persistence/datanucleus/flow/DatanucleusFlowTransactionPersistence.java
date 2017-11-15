@@ -50,6 +50,9 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	@Persistent(defaultFetchGroup = "true")
 	private String storageId;
 	
+	@Persistent(defaultFetchGroup = "true")
+	private String cookieTransactionId;
+	
 	/**
 	 * 
 	 */
@@ -62,6 +65,9 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	 */
 	@Override
 	public String getTransactionId() {
+		if (cookieTransactionId != null) {
+			return cookieTransactionId;
+		}
 		return transactionId;
 	}
 	
@@ -70,6 +76,21 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	 */
 	public void setTransactionId(final String transactionId) {
 		this.transactionId = transactionId;
+	}
+	
+	/**
+	 * 
+	 * @param transactionId the cookie transaction id (JMS or other transaction id) to be set
+	 */
+	public void setCookieTransactionId(final String transactionId) {
+		this.cookieTransactionId = transactionId;
+	}
+	
+	/**
+	 * @return the cookie transaction id (JMS or other transaction id)
+	 */
+	public String getCookieTransactionId() {
+		return this.cookieTransactionId;
 	}
 	
 	/**
