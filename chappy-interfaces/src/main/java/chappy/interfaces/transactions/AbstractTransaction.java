@@ -38,6 +38,9 @@ public abstract class AbstractTransaction implements ITransaction {
 	/** transactionID */
 	private String transactionId;
 	
+	/** cookie transactionID */
+	private String cookieTransactionID;
+	
 	/**
 	 * 
 	 */
@@ -115,5 +118,19 @@ public abstract class AbstractTransaction implements ITransaction {
 	@Override
 	public String getTransactionId() {
 		return this.transactionId;
+	}
+
+	/**
+	 * @return the cookieTransactionID
+	 */
+	public String getCookieTransactionID() {
+		return cookieTransactionID;
+	}
+
+	/**
+	 * @param cookieTransactionID the cookieTransactionID to set
+	 */
+	public void setCookieTransactionID(String cookieTransactionID) {
+		this.cookieTransactionID = cookieTransactionID;
 	}
 }

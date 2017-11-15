@@ -240,11 +240,17 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		persistedTransaction.setStorageId(cookie.generateStorageId());
 		flowTransaction.begin();
-		persistenceFlowManager.makePersistent(persistedTransaction);		
+		persistenceFlowManager.makePersistent(persistedTransaction);
+		if (cookie.getTransactionId() == null) {
+			setCookieTransactionID(cookie.getTransactionId());
+		}
 		setTransactionId(persistedTransaction.getTransactionId());
 		flowTransaction.commit();
 		if (cookie.getTransactionId() == null) {
 			cookie.setTransactionId(getTransactionId());
+		} else {
+			setCookieTransactionID(cookie.getTransactionId());
+			setTransactionId(getTransactionId());
 		}
 	}
 
@@ -252,6 +258,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	public void persist() {
 		DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
 		persistedTransaction = obj;
+		if (getTransactionId() != null) {
+			obj.setCookieTransactionId(getTransactionId());
+		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		flowTransaction.begin();

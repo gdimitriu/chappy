@@ -20,7 +20,7 @@
 package chappy.services.servers.jms.resources.tranform;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.util.List;
 
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -29,7 +29,7 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-import chappy.clients.jms.protocol.JMSAddTransformerMessage;
+import chappy.clients.jms.protocol.JMSListTransformersMessage;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.jms.protocol.IJMSCommands;
@@ -38,20 +38,19 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
 import chappy.interfaces.transactions.ITransaction;
-import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
 
 /**
- * Add Transformer resources for JMS.
+ * List Transformers resources for JMS.
  * @author Gabriel Dimitriu
  *
  */
-public class AddTransformer extends JMSAbstractProducerConsumer {
+public class ListTransformers extends JMSAbstractProducerConsumer {
 
 	/**
 	 * 
 	 */
-	public AddTransformer() {
+	public ListTransformers() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -60,7 +59,7 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 	 */
 	@Override
 	public String getQueueName() {
-		return IJMSQueueNameConstants.ADD_TRANSFORMER;
+		return IJMSQueueNameConstants.LIST_TRANSFORMERS;
 	}
 
 	/* (non-Javadoc)
@@ -77,8 +76,8 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 			return;
 		}
 		try {
-			if (IJMSCommands.ADD_TRANSFORMER.equals(command)) {
-				addTransformer(session, message);
+			if (IJMSCommands.LIST_TRANSFORMERS.equals(command)) {
+				listTransformers(session, message);
 			} else {
 				sendStandardError(session, message);
 			}
@@ -95,8 +94,8 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 	private void sendOnError(final Session session, final Message message, final Exception e, final String command) {
 		try {
 			Message reply = null;
-			if (IJMSCommands.ADD_TRANSFORMER.equals(command)) {
-				reply = createAddTransformerErrorReply(session, e);
+			if (IJMSCommands.LIST_TRANSFORMERS.equals(command)) {
+				reply = createListTransformersErrorReply(session, e);
 			}
 			Destination replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
 			MessageProducer producer = session.createProducer(replyTo);
@@ -109,7 +108,7 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 	}
 
 	/** 
-	 * add custom transformer.
+	 * list custom transformers
 	 * @param session the session in which the message was received
 	 * @param message the request message
 	 * @throws JMSException
@@ -117,8 +116,8 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 	 * @throws Exception
 	 * @throws IOException
 	 */
-	private void addTransformer(final Session session, final Message message) throws JMSException, ForbiddenException, Exception, IOException {
-		JMSAddTransformerMessage transformerMessage = JMSAddTransformerMessage.createDecodedInboundMessage(message);
+	private void listTransformers(final Session session, final Message message) throws JMSException, ForbiddenException, Exception, IOException {
+		JMSListTransformersMessage transformerMessage = JMSListTransformersMessage.createDecodedInboundMessage(message);
 		if (transformerMessage == null) {
 			throw new ForbiddenException(IJMSMessages.FORBIDDEN);
 		}
@@ -130,15 +129,14 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 		if (transaction == null) {
 			throw new ForbiddenException(IJMSMessages.FORBIDDEN);
 		}
-		byte[] transformerData = Base64.getDecoder().decode(transformerMessage.getTransformerData());
+
+		List<String> listOfSteps = transaction.getListOfCustomTansformers();
 		
-		CustomTransformerStorageProvider.getInstance().pushNewTransformer(transformerMessage.getTransformerName(), transformerData);
-		transaction.addTransformer(transformerMessage.getCookie().getUserName(), transformerMessage.getTransformerName(), transformerData);		
-		
-		JMSAddTransformerMessage replyMessage = new JMSAddTransformerMessage();
+		JMSListTransformersMessage replyMessage = new JMSListTransformersMessage();
 		replyMessage.setCookie(cookie);
 		replyMessage.setStatus(IJMSStatus.OK);
 		replyMessage.setReplyMessage(IJMSMessages.OK);
+		replyMessage.setListOfTransformersName(listOfSteps);
 		Message reply = replyMessage.encodeReplyMessage(session);
 		
 		Destination replyTo = null;
@@ -154,18 +152,18 @@ public class AddTransformer extends JMSAbstractProducerConsumer {
 	}
 
 	/**
-	 * create the error from a the added transformer 
+	 * create the error from a the list transformers 
 	 * @param session in which the transformer supposed to be created.
 	 * @param e the exception
 	 * @return the error message to be send.
 	 * @throws JMSException
 	 */
-	private Message createAddTransformerErrorReply(final Session session, final Exception e)  throws JMSException  {
-		JMSAddTransformerMessage transformerMessage = null;
+	private Message createListTransformersErrorReply(final Session session, final Exception e)  throws JMSException  {
+		JMSListTransformersMessage transformerMessage = null;
 		if (e instanceof ForbiddenException && ((ForbiddenException) e).getLocalizedMessage() != null) {
-			transformerMessage = new JMSAddTransformerMessage(((ForbiddenException) e).getLocalizedMessage());
+			transformerMessage = new JMSListTransformersMessage(((ForbiddenException) e).getLocalizedMessage());
 		} else {
-			transformerMessage = new JMSAddTransformerMessage();
+			transformerMessage = new JMSListTransformersMessage();
 		}
 		transformerMessage.setException(e);
 		transformerMessage.setReplyMessage(e.getLocalizedMessage());

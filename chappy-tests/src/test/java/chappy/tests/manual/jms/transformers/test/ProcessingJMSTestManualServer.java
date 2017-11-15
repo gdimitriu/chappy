@@ -30,6 +30,7 @@ import chappy.services.servers.jms.ServerJMS;
 import chappy.services.servers.jms.resources.TransactionRouter;
 import chappy.services.servers.jms.resources.tranform.AddTransformer;
 import chappy.services.servers.jms.resources.tranform.Authentication;
+import chappy.services.servers.jms.resources.tranform.ListTransformers;
 import chappy.services.servers.jms.resources.tranform.TransformFlow;
 
 /**
@@ -57,6 +58,7 @@ public class ProcessingJMSTestManualServer {
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new Authentication());
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddTransformer());
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransformFlow());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new ListTransformers());
 		server.configure(configuration);
 		Thread thread = new Thread() {
 			public void run() {
