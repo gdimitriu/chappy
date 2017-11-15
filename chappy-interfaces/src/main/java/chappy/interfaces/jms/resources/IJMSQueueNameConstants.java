@@ -26,7 +26,7 @@ package chappy.interfaces.jms.resources;
  */
 public interface IJMSQueueNameConstants {
 
-	String ADD = "add";
+	String ADD_TRANSFORMER = "add_transformer";
 	String TRANSFORM = "transform";
 	String AUTHENTICATION = "authentication";
 	String TRANSACTION = "transaction";

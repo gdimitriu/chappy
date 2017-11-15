@@ -96,6 +96,14 @@ public abstract class AbstractChappyAddTransformerMessage extends AbstractChappy
 	public String getTransformerData() {
 		return transformerData;
 	}
+	
+	/**
+	 * set the transformer data
+	 * @param data representing transformer bytecode
+	 */
+	public void setTransformerData(final String data) {
+		transformerData = data;
+	}
 
 	/**
 	 * @param transformerClassName

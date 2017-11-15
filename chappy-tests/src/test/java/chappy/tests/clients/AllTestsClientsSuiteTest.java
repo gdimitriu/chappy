@@ -17,30 +17,19 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.protocol;
+package chappy.tests.clients;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * JMS Commands that will be routed.
+ * Functional tests for Chappy clients with JMS and REST protocol.
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSCommands {
+@RunWith(Suite.class)
+@SuiteClasses({ JMSClientTransactionFlowTransformationsTest.class, RestClientTrasactionFlowTransformationsTest.class })
+public class AllTestsClientsSuiteTest {
 
-	String COMMAND_PROPERTY = "command";
-	String LOGIN = "login";
-	String LOGOUT = "logout";
-	String FLOW = "flow";
-	String ADD_TRANSFORMER = "add_transformer";
-	
-	public static List<String> getAllCommands() {
-		List<String >commands = new ArrayList<String>();
-		commands.add(LOGIN);
-		commands.add(LOGOUT);
-		commands.add(FLOW);
-		commands.add(ADD_TRANSFORMER);
-		return commands;
-	}
 }

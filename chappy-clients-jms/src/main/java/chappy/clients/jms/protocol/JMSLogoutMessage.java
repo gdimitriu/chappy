@@ -91,7 +91,7 @@ public class JMSLogoutMessage extends AbstractChappyLogoutMessage implements IJM
 	@Override
 	public Message encodeReplyMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
-		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY, status);
+		message.setStringProperty(IJMSProtocolKeys.REPLY_STATUS_KEY, status);
 		message.setJMSCorrelationID(getCookie().getTransactionId());
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IJMSProtocolKeys.REPLY_MESSAGE_KEY, getReplyMessage());
@@ -114,7 +114,7 @@ public class JMSLogoutMessage extends AbstractChappyLogoutMessage implements IJM
 	@Override
 	public void decodeReplyMessage(final Message message) throws JMSException {
 		if (message instanceof ObjectMessage) {
-			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_PROPERTY);
+			status = message.getStringProperty(IJMSProtocolKeys.REPLY_STATUS_KEY);
 			ObjectMessage msg = (ObjectMessage) message;
 			@SuppressWarnings("unchecked")
 			HashMap<String, Object> map = (HashMap<String, Object>) msg.getObject();

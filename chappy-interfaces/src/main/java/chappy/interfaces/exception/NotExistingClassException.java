@@ -27,8 +27,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 /**
- * exception for class intantion problem (not existing class).
- * This is tipical to forget to post new client classes.
+ * exception for class instantiation problem (not existing class).
+ * This is typical to forget to post new client classes.
  * @author Gabriel Dimitriu
  *
  */
@@ -116,5 +116,21 @@ public class NotExistingClassException extends Exception implements IChappyExcep
 	@Override
 	public void setLocalizedMessage(final String message) {
 		this.localizedMessage = message;
+	}
+	
+	
+	/**
+	 * get the message cause of this exception.
+	 * @return message cause
+	 */
+	public String getMessageCause() {
+		String messageCause = getLocalizedMessage();
+		if (messageCause == null && getCause() != null) {
+			messageCause = getCause().toString();
+		}
+		if (localizedMessage != null) {
+			messageCause = localizedMessage + ":" + messageCause;
+		}
+		return messageCause;
 	}
 }

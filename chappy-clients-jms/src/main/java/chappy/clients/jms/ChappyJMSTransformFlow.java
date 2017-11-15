@@ -22,8 +22,9 @@ package chappy.clients.jms;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import chappy.clients.common.AbstractChappyAddTransformer;
+import chappy.clients.common.AbstractChappyTransformFlow;
 import chappy.clients.jms.protocol.JMSAddTransformerMessage;
+import chappy.clients.jms.protocol.JMSTransformFlowMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSMessages;
@@ -31,11 +32,11 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * Chappy add transformer request wrapper for JMS.
+ * JMS request for run a static flow.
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implements IJMSClient {
+public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implements IJMSClient {
 
 	/** client transaction coming from login */
 	private IJMSTransactionHolder clientTransaction = null;
@@ -43,21 +44,16 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	/**
 	 * 
 	 */
-	public ChappyJMSAddTransformer(final String transformerName, final IClientTransaction client) {
+	public ChappyJMSTransformFlow(final String input, final String configuration, final IClientTransaction client) {
 		clientTransaction = (IJMSTransactionHolder) client;
-		setProtocol(new JMSAddTransformerMessage(transformerName));
+		setProtocol(new JMSTransformFlowMessage(input, configuration));
 		getProtocol().setCookie(client.getCookie());
 	}
-	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.services.IChappyClient#getTransactionErrorMessage()
-	 */
-	@Override
-	public String getTransactionErrorMessage() {
-		if (getProtocol() == null) {
-			return IJMSMessages.REPLY_NOT_READY;
-		}
-		return getProtocol().getReplyMessage();
+
+	public ChappyJMSTransformFlow(final IClientTransaction client) {
+		clientTransaction = (IJMSTransactionHolder) client;
+		setProtocol(new JMSTransformFlowMessage());
+		getProtocol().setCookie(client.getCookie());
 	}
 
 	/* (non-Javadoc)
@@ -66,7 +62,7 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	@Override
 	public void onMessage(final Message message) {
 		try {
-			setProtocol(JMSAddTransformerMessage.createDecodedReplyMessage(message));
+			setProtocol(JMSTransformFlowMessage.createDecodedReplyMessage(message));
 		} catch (JMSException e) {
 			if (getProtocol() == null) {
 				setProtocol(new JMSAddTransformerMessage());
@@ -74,6 +70,7 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 			getProtocol().setReplyMessage(e.getLocalizedMessage());
 			getProtocol().setException(e);
 		}
+
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +81,7 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 		if (getProtocol() == null) {
 			return IJMSStatus.REPLY_NOT_READY;
 		}
-		return ((JMSAddTransformerMessage) getProtocol()).getStatus();
+		return ((JMSTransformFlowMessage) getProtocol()).getStatus();
 	}
 
 	/* (non-Javadoc)
@@ -99,11 +96,22 @@ public class ChappyJMSAddTransformer extends AbstractChappyAddTransformer implem
 	}
 
 	/* (non-Javadoc)
+	 * @see chappy.interfaces.services.IChappyClient#getTransactionErrorMessage()
+	 */
+	@Override
+	public String getTransactionErrorMessage() {
+		if (getProtocol() == null) {
+			return IJMSMessages.REPLY_NOT_READY;
+		}
+		return getProtocol().getReplyMessage();
+	}
+
+	/* (non-Javadoc)
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public ChappyJMSAddTransformer send() throws JMSException {
-		Message message = ((JMSAddTransformerMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
+	public ChappyJMSTransformFlow send() throws JMSException {
+		Message message = ((JMSTransformFlowMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
 		message.setJMSReplyTo(clientTransaction.getCurrentReplyToDestination());
 		clientTransaction.getCurrentMessageProducer().send(message);
 		clientTransaction.getCurrentMessageConsumer().setMessageListener(this);		

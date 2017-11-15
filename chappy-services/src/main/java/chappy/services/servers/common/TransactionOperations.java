@@ -67,7 +67,7 @@ public class TransactionOperations {
 	 * Utility for logout request.
 	 * @param received cookie
 	 */
-	public static ITransaction logout(IChappyCookie received) {
+	public static ITransaction logout(final IChappyCookie received) {
 		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
 		if (transaction == null) {
 			return null;
