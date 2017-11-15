@@ -36,4 +36,7 @@ public interface IJMSStatus {
 	
 	/** internal server error or communication error */
 	public static final String COMMUNICATION_SERVER_ERROR = "Communication Server error";
+	
+	/** precondition failed for the processing of flow */
+	public static final String PRECONDITION_FAILED = "Precondition failed";
 }

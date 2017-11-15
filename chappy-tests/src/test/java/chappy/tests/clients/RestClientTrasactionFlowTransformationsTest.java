@@ -135,6 +135,13 @@ public class RestClientTrasactionFlowTransformationsTest {
 		TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
 		return transaction;
 	}
+	/*
+	 *---------------------------------------------------------------------------------
+	 *
+	 *From here there are the functional tests which shoul be the same on all protocols. 
+	 * 
+	 * --------------------------------------------------------------------------------
+	 */
 	
 	/**
 	 * test chappy: 
@@ -415,7 +422,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 	/**
 	 * test chappy exception: 
 	 * 	- login
-	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 intead of parameters)
+	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 instead of parameters)
 	 *  - Chappy should return exception 403 with forbidden.
 	 *  - validate the return data
 	 *  - logout

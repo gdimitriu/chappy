@@ -98,4 +98,15 @@ public class MalformedXSDXMLException extends Exception implements IChappyExcept
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * get the message cause of this exception.
+	 * @return message cause
+	 */
+	public String getMessageCause() {
+		String messageCause = getLocalizedMessage();
+		if (messageCause == null && getCause() != null) {
+			messageCause = getCause().toString();
+		}
+		return messageCause;
+	}
 }

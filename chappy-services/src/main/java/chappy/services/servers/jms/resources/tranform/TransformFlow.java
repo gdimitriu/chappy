@@ -32,8 +32,11 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import chappy.clients.jms.protocol.JMSTransformFlowMessage;
+import chappy.interfaces.exception.MalformedXSDXMLException;
+import chappy.interfaces.exception.NotExistingClassException;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.jms.protocol.IJMSCommands;
+import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
@@ -69,34 +72,54 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 		String command = null;
 		try {
 			command = message.getStringProperty(IJMSCommands.COMMAND_PROPERTY);
+			if (!IJMSCommands.FLOW.equals(command)) {
+				sendStandardError(session, message);
+				return;
+			}
 		} catch (JMSException e) {
-			e.printStackTrace();
 			sendStandardError(session, message);
 			return;
 		}
+		JMSTransformFlowMessage transformer = null;
 		try {
-			if (IJMSCommands.FLOW.equals(command)) {
-				transformFlow(session, message);
-			} else {
-				sendStandardError(session, message);
-			}
+			transformer = JMSTransformFlowMessage.createDecodedInboundMessage(message);
+			transformFlow(session, message, transformer);
+		} catch (JMSException je) {
+			sendStandardError(session, message);
+			return;
 		} catch (Exception e) {
-			sendOnError(session, message, e, command);
+			sendOnError(session, transformer, e, message);
 		}
 	}
 	
 	/** Send the message in case of error.
 	 * @param session is the session in which the error has arrived
-	 * @param message is the message where the error arrise
+	 * @param message is the message where the error arise
 	 * @param e is exception received
 	 */
-	private void sendOnError(final Session session, final Message message, final Exception e, final String command) {
+	private void sendOnError(final Session session, final JMSTransformFlowMessage transformer, final Exception e, final Message message) {
 		try {
-			Message reply = null;
-			if (IJMSCommands.FLOW.equals(command)) {
-				reply = createFlowTransformerErrorReply(session, e);
+			JMSTransformFlowMessage transformerReply = new JMSTransformFlowMessage();
+			transformerReply.setCookie(transformer.getCookie());
+			if (e instanceof NotExistingClassException) {
+				transformerReply.setStatus(IJMSStatus.PRECONDITION_FAILED);
+				transformerReply.setReplyMessage(((NotExistingClassException) e).getMessageCause()); 
+			} else {
+				transformerReply.setStatus(IJMSStatus.FORBIDDEN);
+				if (e instanceof MalformedXSDXMLException) {
+					transformerReply.setReplyMessage(((MalformedXSDXMLException) e).getMessageCause());
+				} else {
+					transformerReply.setReplyMessage(e.getLocalizedMessage());
+				}
 			}
-			Destination replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
+			transformerReply.setException(e);
+			Message reply =  transformerReply.encodeReplyMessage(session);
+			Destination replyTo = null;
+			if (message.getJMSReplyTo() != null) {
+				replyTo = message.getJMSReplyTo();
+			} else {
+				replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
+			}
 			MessageProducer producer = session.createProducer(replyTo);
 			producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 			producer.send(reply);
@@ -110,11 +133,11 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 	/**
 	 * transform the flow and send the reply.
 	 * @param session in which the message was received.
+	 * @param transformer the JMSFlowTransformerInstance
 	 * @param message the received message.
 	 * @throws Exception
 	 */
-	private void transformFlow(final Session session, final Message message) throws Exception {
-		JMSTransformFlowMessage transformer = JMSTransformFlowMessage.createDecodedInboundMessage(message);
+	private void transformFlow(final Session session, final Message message, final JMSTransformFlowMessage transformer) throws Exception {		
 		InputStream configurationStream = null;
 		if (transformer.getConfiguration() != null && !"".equals(transformer.getConfiguration())) {
 			configurationStream = new ByteArrayInputStream(transformer.getConfiguration().getBytes());
@@ -149,11 +172,5 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 		producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 		producer.send(reply);
 		session.commit();
-	}
-	
-	
-	private Message createFlowTransformerErrorReply(final Session session, final Exception e)  throws JMSException  {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

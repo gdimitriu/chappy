@@ -50,6 +50,12 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 		getProtocol().setCookie(client.getCookie());
 	}
 
+	public ChappyJMSTransformFlow(final IClientTransaction client) {
+		clientTransaction = (IJMSTransactionHolder) client;
+		setProtocol(new JMSTransformFlowMessage());
+		getProtocol().setCookie(client.getCookie());
+	}
+
 	/* (non-Javadoc)
 	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
 	 */
