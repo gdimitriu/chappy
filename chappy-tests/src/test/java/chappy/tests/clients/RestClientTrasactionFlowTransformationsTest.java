@@ -36,7 +36,6 @@ import org.junit.Test;
 
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
-import chappy.clients.rest.ChappyRESTLogin;
 import chappy.clients.rest.ChappyRESTLogout;
 import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
@@ -97,44 +96,6 @@ public class RestClientTrasactionFlowTransformationsTest {
 		server.stopServer();
 	}
 	
-	/**
-	 * login and add custom transformers and list and validate them.
-	 * @return chappy transaction holder
-	 */
-	private IRESTTransactionHolder chappyRESTLoginAddCustomTransformers(final List<String> addTransformers) {
-		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
-		try {
-			login.createConnectionToServer("localhost", port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		login.send();
-		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
-		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
-		IRESTTransactionHolder transaction = login.createTransactionHolder();
-		
-		// add transformers in transaction
-		for (String transf : addTransformers) {
-			ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer(transf, transaction);
-			try {
-				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
-				addTransformer.send();
-				assertEquals("add transformer " + transf + " exception", addTransformer.getStatusCode(),
-						Status.OK.getStatusCode());
-			} catch (IOException e) {
-				e.printStackTrace();
-				fail("exception occured at add transformer" + e.getLocalizedMessage());
-			}
-		}
-
-		// list the added transformers
-		ChappyRESTListTransformers listTransformers = new ChappyRESTListTransformers(transaction).send();
-		assertEquals("internal error for list transformers", listTransformers.getStatusCode(),
-				Status.OK.getStatusCode());
-		List<String> transformers = listTransformers.getListOfTransformersName();
-		TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
-		return transaction;
-	}
 	/*
 	 *---------------------------------------------------------------------------------
 	 *
@@ -159,7 +120,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("ProcessingStep");
 		addTransformers.add("PostProcessingStep");
-		IRESTTransactionHolder transaction = chappyRESTLoginAddCustomTransformers(addTransformers);
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				"blabla",
@@ -194,7 +155,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		addTransformers.add("SplitterStep");
-		IRESTTransactionHolder transaction = chappyRESTLoginAddCustomTransformers(addTransformers);
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -227,7 +188,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 	public void pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs() throws FileNotFoundException {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
-		IRESTTransactionHolder transaction = chappyRESTLoginAddCustomTransformers(addTransformers);
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(transaction);
 		transformer.addStringConfiguration(
@@ -266,7 +227,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 		
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("SplitterStep");
-		IRESTTransactionHolder transaction = chappyRESTLoginAddCustomTransformers(addTransformers);
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -306,7 +267,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("PostProcessingStep");
-		IRESTTransactionHolder transaction = chappyRESTLoginAddCustomTransformers(addTransformers);
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
 
 		//stop and restart the server
 		tearDown();
@@ -362,16 +323,8 @@ public class RestClientTrasactionFlowTransformationsTest {
 	 */
 	@Test
 	public void exceptionMissingTransformerInTransactionException() {
-		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
-		try {
-			login.createConnectionToServer("localhost", port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		login.send();
-		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
-		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
-		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("exceptions/missingtransformer.xml"),
@@ -398,16 +351,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 	 */
 	@Test
 	public void exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration() {
-		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
-		try {
-			login.createConnectionToServer("localhost", port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		login.send();
-		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
-		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
-		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("xml2json2xml.xml"),
@@ -430,16 +374,8 @@ public class RestClientTrasactionFlowTransformationsTest {
 	 */
 	@Test
 	public void exceptionXml2json2xmlStepsWrongXMLConfigurationTest() {
-		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
-		try {
-			login.createConnectionToServer("localhost", port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		login.send();
-		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
-		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
-		IRESTTransactionHolder transaction = login.createTransactionHolder();
+		
+		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),
