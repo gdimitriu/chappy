@@ -29,5 +29,10 @@
 			<artifactId>chappy-interfaces</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-configurations</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
 	</dependencies>
 </project>

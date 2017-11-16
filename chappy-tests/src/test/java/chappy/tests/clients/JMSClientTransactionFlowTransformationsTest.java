@@ -19,7 +19,8 @@
  */
 package chappy.tests.clients;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,8 +29,8 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import chappy.clients.jms.ChappyJMSAddTransformer;
@@ -60,19 +61,19 @@ import chappy.utils.streams.StreamUtils;
  */
 public class JMSClientTransactionFlowTransformationsTest {
 
-	private IServiceServer server = null;
+	private static IServiceServer server = null;
 	
 	/** server port for connection */
-	private int serverPort = 61616;
+	private static int serverPort = 61616;
 	
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUp() throws Exception {
 		SystemConfigurationProvider.getInstance().readSystemConfiguration(
-				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+				JMSClientTransactionFlowTransformationsTest.class.getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		server = new ServerJMS();
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransactionRouter());
@@ -98,8 +99,8 @@ public class JMSClientTransactionFlowTransformationsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
-	public void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDown() throws Exception {
 		server.stopServer();
 	}
 	

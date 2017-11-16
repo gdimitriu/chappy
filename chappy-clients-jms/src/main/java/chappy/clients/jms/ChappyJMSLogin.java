@@ -30,7 +30,7 @@ import javax.jms.Session;
 
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.common.transaction.JMSTransactionHolder;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.protocol.JMSLoginMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
@@ -93,7 +93,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 		Message message = ((JMSLoginMessage) getProtocol()).encodeInboundMessage(session);
 		message.setJMSReplyTo(replyTo);
 		producer.send(message);
-		String messageID = message.getJMSMessageID();						
+		String messageID = message.getJMSMessageID();
 		consumer = session.createConsumer(replyTo, "JMSCorrelationID = '" + 
 				messageID + "'");
 		consumer.setMessageListener(this);		
@@ -151,7 +151,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 */
 	@Override
 	public IJMSTransactionHolder createTransactionHolder() {
-		return new JMSTransactionHolder(connection, session, consumer, producer, getCookie(), replyTo);
+		return ChappyClientTransactionHolder.createJMSTransactionHolder(connection, session, consumer, producer, getCookie(), replyTo);
 	}
 	
 	/* (non-Javadoc)

@@ -51,6 +51,12 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * @param client
+	 * @param baseUri
+	 * @param target
+	 * @param cookie
+	 */
 	public RESTTransactionHolder(final Client client, final URI baseUri, final WebTarget target, final IChappyCookie cookie) {
 		this.chappyCookie = cookie;
 		this.restClient = client;

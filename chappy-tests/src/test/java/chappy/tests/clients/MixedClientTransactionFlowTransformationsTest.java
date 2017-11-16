@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import chappy.interfaces.jms.IJMSTransactionHolder;
@@ -46,7 +46,7 @@ public class MixedClientTransactionFlowTransformationsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeClass
 	public void setUp() throws Exception {
 		server.startAll();
 	}
@@ -54,7 +54,7 @@ public class MixedClientTransactionFlowTransformationsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
+	@AfterClass
 	public void tearDown() throws Exception {
 		server.stopAll();
 	}

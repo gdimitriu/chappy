@@ -26,12 +26,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.Response.Status;
+
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import chappy.clients.rest.ChappyRESTAddTransformer;
@@ -56,18 +57,18 @@ import chappy.utils.streams.StreamUtils;
  */
 public class RestClientTrasactionFlowTransformationsTest {
 
-	private IServiceServer server = null;
+	private static IServiceServer server = null;
 
-	private int port = 0;
+	private static int port = 0;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUp() throws Exception {
 
 		SystemConfigurationProvider.getInstance().readSystemConfiguration(
-				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+				RestClientTrasactionFlowTransformationsTest.class.getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
@@ -91,8 +92,8 @@ public class RestClientTrasactionFlowTransformationsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
-	public void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDown() throws Exception {
 		server.stopServer();
 	}
 	
