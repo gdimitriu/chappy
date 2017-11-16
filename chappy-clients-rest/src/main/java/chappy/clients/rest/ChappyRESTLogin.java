@@ -33,7 +33,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.common.transaction.RESTTransactionHolder;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.rest.protocol.IRESTMessage;
 import chappy.clients.rest.protocol.RESTLoginMessage;
 import chappy.interfaces.rest.IRESTTransactionHolder;
@@ -88,7 +88,7 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	 */
 	@Override
 	public IRESTTransactionHolder createTransactionHolder() {
-		return new RESTTransactionHolder(client, baseUri, target, getCookie());
+		return ChappyClientTransactionHolder.createRESTTransactionHolder(client, baseUri, target, getCookie());
 	}
 	
 	@Override

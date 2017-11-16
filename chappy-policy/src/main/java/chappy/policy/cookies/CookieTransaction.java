@@ -42,6 +42,18 @@ public abstract class CookieTransaction implements IChappyCookie {
 	/** transaction Id */
 	private String transactionId;
 	
+	/** rest server name */
+	private String restServerName;
+	
+	/* jms server name */
+	private String jmsServerName;
+	
+	/** rest server port */
+	private int restServerPort;
+	
+	/** jms server port */
+	private int jmsServerPort;
+	
 	/**
 	 * base cookie.
 	 */
@@ -57,10 +69,11 @@ public abstract class CookieTransaction implements IChappyCookie {
 		return userName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see chappy.policy.cookies.IChappyCookie#setUserName(java.lang.String)
+	/**
+	 * set the user name
+	 * @param nameUser - the user name which own the cookie
 	 */
-	public void setUserName(String nameUser) {
+	public void setUserName(final String nameUser) {
 		this.userName = nameUser;
 	}
 
@@ -76,7 +89,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 * @see chappy.policy.cookies.IChappyCookie#setTransactionId(java.lang.String)
 	 */
 	@Override
-	public void setTransactionId(String transactionId) {
+	public void setTransactionId(final String transactionId) {
 		this.transactionId = transactionId;
 	}
 
@@ -86,5 +99,65 @@ public abstract class CookieTransaction implements IChappyCookie {
 	@Override
 	public String generateStorageId() {
 		return userName + ":" + transactionId;
+	}
+
+	/**
+	 * @return the restServerName
+	 */
+	@Override
+	public String getRestServerName() {
+		return restServerName;
+	}
+
+	/**
+	 * @param restServerName the restServerName to set
+	 */
+	public void setRestServerName(final String restServerName) {
+		this.restServerName = restServerName;
+	}
+
+	/**
+	 * @return the jmsServerName
+	 */
+	@Override
+	public String getJmsServerName() {
+		return jmsServerName;
+	}
+
+	/**
+	 * @param jmsServerName the jmsServerName to set
+	 */
+	public void setJmsServerName(final String jmsServerName) {
+		this.jmsServerName = jmsServerName;
+	}
+
+	/**
+	 * @return the restServerPort
+	 */
+	@Override
+	public int getRestServerPort() {
+		return restServerPort;
+	}
+
+	/**
+	 * @param restServerPort the restServerPort to set
+	 */
+	public void setRestServerPort(final int restServerPort) {
+		this.restServerPort = restServerPort;
+	}
+
+	/**
+	 * @return the jmsServerPort
+	 */
+	@Override
+	public int getJmsServerPort() {
+		return jmsServerPort;
+	}
+
+	/**
+	 * @param jmsServerPort the jmsServerPort to set
+	 */
+	public void setJmsServerPort(final int jmsServerPort) {
+		this.jmsServerPort = jmsServerPort;
 	}
 }

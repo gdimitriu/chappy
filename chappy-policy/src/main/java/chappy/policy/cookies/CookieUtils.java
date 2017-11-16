@@ -59,7 +59,7 @@ public final class CookieUtils {
 	
 	/**
 	 * encode the cookie
-	 * @param cookie comming from chappy
+	 * @param cookie coming from chappy
 	 * @return encoded chappy REST cookie
 	 * @throws JsonProcessingException
 	 */

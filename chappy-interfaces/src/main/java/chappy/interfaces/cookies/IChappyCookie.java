@@ -51,5 +51,31 @@ public interface IChappyCookie extends Serializable {
 	 * @return storage id for the hash.
 	 */
 	String generateStorageId();
+	
+	/**
+	 * get the rest server name
+	 * @return rest server name
+	 */
+	String getRestServerName();
+	
+	/**
+	 * get the rest server port
+	 * @return rest server port
+	 */
+	int getRestServerPort();
+	
+	
+	/**
+	 * get the jms server name
+	 * @return jms server name
+	 */
+	String getJmsServerName();
+	
+	/**
+	 * get the jms server port
+	 * @return jms server port
+	 */
+	int getJmsServerPort();
+	
 
 }
