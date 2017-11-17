@@ -2,33 +2,59 @@
 
 Chappy has been design as a test-bed for long running servers and application server.
 
-The transformation server was choose as type of long running server. The transformation server will take request using REST.
+The transformation server was choose as type of long running server.
+The transformation server will take request using REST and JMS.
 
-Chappy wish to implement the following characteristics of the long running server:
-- REST server using Jersey and Jetty.
-- JMS server using ActiveMQ.
-- Internal tansaction (a user could logon the system using JMS/REST and it will receive a cookie which will be used in the rest of the process). Transaction is persisted until the user logout.
-- Predefined service for transformation using staxon and saxon.
+Chappy wish to implement the following functional characteristics of the long time running application server:
+- Predefined service for transformation using staxon and saxon for one time transformation without transactions.
+- Internal transaction (a user could logon the system using JMS/REST and it will receive a cookie which will be used in the rest of the process). Transaction is persisted until the user logout.
+- Auto-discovery of new packages for connectors. (only REST auto-discovery is implemented) 
 - Hot-plugin of the transformation steps.
-- Hot-plugin of the transformations step by user with returning a cookie with will be used to run the flow. On logout the custom transformers are deleted from system.
 - Persistence of the logs in configured storage.
-- Persistence of running steps for the failover situation.
+- Persistence of running steps for the fail-over situation.
+- HTTPS upgrade and maintenance service. (not implemented yet)
+- Hot-plugin for upgrade of the chappy jars (maven module or submodules). (not implemented yet)
+- Hot-plugin of different type of flow. (not implemented yet)
 - Hot-plugin of the transformations step with dependencies. (not implemented yet)
 - Persistence of the upgrade/hot-plugin.(not implemented yet)
-- HTTP upgrade service. (not implemented yet)
+
+Transaction functional behavioral:
+- Hot-plugin of the user custom transformer step is kept inside transaction.
+- Custom transformer are moved from customer package to a special package using byte-code modification. 
+- On logout the added custom transformers are deleted from system.
+- Transaction holds references to the statistics of each transformation operation.
+- Transaction is persisted until the user log-out.
+- Caching of the operation is done in transaction (not implemented yet).
+
+Transformer functional behavioral:
+- Predefined transformer are :
+	- xslt (saxson step for xml2xml transformation)
+	- json2xml (staxon step for json2xml transformation)
+	- xml2json (staxon step for xml2json transformation)
+- Custom transformer could be derived from:
+	- AbstractStep which could do anything
+	- AbstractSplitterStep which splits messages
+	- AbstractEnveloperStep which envelopes messages in one step (there is no waiting for number of messages implemented yet)
+	- AbstractReorderStep which put in a custom order the receiving messages. (not implemented yet)
+- Transformer has multiple input and output messages.
+- Transformer flow could be cached inside transaction to speedup the run of the flow. (not implemented yet) 
+- Transformer has sequence of the messages, the sequence order could be used later on for the splitter, enveloper and reorder steps. (not implemented yet)
+- Transformation in the flow could have priority and only some inputs are routed to the corresponding steps. (not implemented yet)
 
 Chappy uses the following libraries and technologies:
 - Jetty for the embedded http server.
 - Jersey for the REST server.
 - ActiveMQ for the JMS server.
+- ASM for byte-code modification
+- reflections library for resource discovery.
+- Datanucleus for persistence.
 - Staxon for json2xml and xml2json transformations.
 - Saxon for xml2xml mapping.
 - Apache Digester for running a flow in one step.
 - JAXB for data-binding.
+- JUnit for unitests.
 - Maven for building.
-- ASM for bytecode modification
-- reflections library for resource discovery.
-- Datanucleus for persistence.
+- maven-surefire-plugin to run the unitests in maven.
 
 Run the tests from the package chappy-tests using maven:
 - the JAVA_HOME is needed to be set into the main pom due to cassandra needs.
@@ -41,12 +67,3 @@ NOTE:
 - Only runs in dev environment is working in this moment (eclipse).
 - because I do have some problems with classloaders for datanucleus enhancement the system works (with persistence and transaction) only in eclipse environment and at second start of server (first run the datanucleus will enhance the classes which could be loaded at second run by the system class-loader).
 - Standalone distribution is not yet created.
-
-
-
-
-
-
-
-
-
