@@ -62,7 +62,7 @@ public final class RESTUtilsRequests {
 			e.printStackTrace();
 		}
 		login.send();
-		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), login.getStatusCode());
 		assertEquals("wrong user", "gdimitriu", login.getCookie().getUserName());
 		return login.createTransactionHolder();		
 	}
@@ -91,8 +91,7 @@ public final class RESTUtilsRequests {
 			try {
 				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 				addTransformer.send();
-				assertEquals("add transformer " + transf + " exception", addTransformer.getStatusCode(),
-						Status.OK.getStatusCode());
+				assertEquals("add transformer " + transf + " exception", addTransformer.getStatusCode(), Status.OK.getStatusCode());
 			} catch (IOException e) {
 				e.printStackTrace();
 				fail("exception occured at add transformer" + e.getLocalizedMessage());
@@ -101,8 +100,7 @@ public final class RESTUtilsRequests {
 
 		// list the added transformers
 		ChappyRESTListTransformers listTransformers = new ChappyRESTListTransformers(transaction).send();
-		assertEquals("internal error for list transformers", listTransformers.getStatusCode(),
-				Status.OK.getStatusCode());
+		assertEquals("internal error for list transformers", Status.OK.getStatusCode(), listTransformers.getStatusCode());
 		List<String> transformers = listTransformers.getListOfTransformersName();
 		TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
 		return transaction;
@@ -114,6 +112,6 @@ public final class RESTUtilsRequests {
 	 */
 	public static void chappyLogout(final IRESTTransactionHolder transaction) {
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 }

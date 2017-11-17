@@ -139,6 +139,7 @@ public class JMSLoginMessage extends AbstractChappyLoginMessage implements IJMSP
 			setPassword(strMsg.readString());
 			setPersistence(strMsg.readBoolean());
 			setCookie( CookieFactory.getFactory().newCookie(this.getClass(), getUserName()));
+			getCookie().setCorrelationId(message.getJMSCorrelationID());
 			getCookie().setTransactionId(message.getJMSMessageID());
 		}
 	}

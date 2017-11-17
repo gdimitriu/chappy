@@ -27,7 +27,13 @@ import org.xml.sax.SAXException;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.services.IServiceServer;
+import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.providers.services.ServicesProvider;
+import chappy.services.servers.jms.resources.TransactionRouter;
+import chappy.services.servers.jms.resources.tranform.AddTransformer;
+import chappy.services.servers.jms.resources.tranform.Authentication;
+import chappy.services.servers.jms.resources.tranform.ListTransformers;
+import chappy.services.servers.jms.resources.tranform.TransformFlow;
 
 /**
  * This is the main entry point of the server.
@@ -43,6 +49,11 @@ public class Chappy {
 	 * 
 	 */
 	public Chappy() {
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransactionRouter());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new Authentication());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddTransformer());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransformFlow());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new ListTransformers());
 		try {
 			@SuppressWarnings("unused")
 			IServiceServer service = ServicesProvider.getInstance().getNewServiceServer("rest");
@@ -86,7 +97,16 @@ public class Chappy {
 	}
 	private void startAllServices() throws Exception {
 		for (IServiceServer server : listOfInstanceOfServers) {
-			server.startServer();
+			Thread thread = new Thread() {
+				public void run() {
+					try {
+						server.startServer();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			thread.start();
 		}
 	}
 }

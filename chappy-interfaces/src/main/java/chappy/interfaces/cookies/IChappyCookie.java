@@ -78,4 +78,19 @@ public interface IChappyCookie extends Serializable {
 	int getJmsServerPort();
 	
 
+	/**
+	 * @return correlationId used by JMS
+	 */
+	String getCorrelationId();
+	
+	
+	/**
+	 * @param correlationId correlationId used by JMS
+	 */
+	void setCorrelationId(final String correlationId);
+	
+	/**
+	 * update the server information for the cookie.
+	 */
+	void update();
 }

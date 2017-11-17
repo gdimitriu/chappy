@@ -6,6 +6,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry excluding="java/|resources/" kind="src" path="src/main"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -40,5 +41,14 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-services"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-transformers"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-utils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-clients-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-clients-jms"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-clients-rest"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-exceptions"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-installer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-persistence"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-policy"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-statistics-logs"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-tests"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

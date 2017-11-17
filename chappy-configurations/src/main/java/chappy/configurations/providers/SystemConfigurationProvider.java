@@ -85,6 +85,7 @@ public class SystemConfigurationProvider {
 			if (fileName != null) {
 				readSystemConfiguration(new BufferedInputStream(new FileInputStream(new File(fileName))));
 			} else {
+				readSystemConfiguration(null);
 				System.err.println("Chappy goes to the default system configuration.");
 			}
 		} catch (FileNotFoundException e) {

@@ -217,29 +217,41 @@ public class ServerJMS implements IServiceJMS {
 	 */
 	@Override
 	public void configure(final Object configuration) {
-		SystemConfiguration[] configs = ((SystemConfigurations) configuration).getServicesConfigurations();
-		for (SystemConfiguration config : configs) {
-			if ("jms".equals(config.getName())) {
-				Field[] fields = this.getClass().getDeclaredFields();
-				for (PropertyConfiguration property: config.getProperties()) {
-					for (Field fld : fields) {
-						if (fld.getName().equals(property.getName())) {
-							try {
-								fld.set(this, property.getValue());
-							} catch (IllegalArgumentException | IllegalAccessException e) {
-								e.printStackTrace();
-							}
-							break;
-						}
-					}
-				}				
+		if (configuration instanceof SystemConfigurations) {
+			SystemConfiguration[] configs = ((SystemConfigurations) configuration).getServicesConfigurations();
+			for (SystemConfiguration config : configs) {
+				if ("jms".equals(config.getName())) {
+					setFields(config);				
+				}
 			}
+		} else if (configuration instanceof SystemConfiguration) {
+			setFields((SystemConfiguration) configuration);
 		}
 		//set the queues names
 		setQueuesNames(JMSQueuesProvider.getInstance().getAllQueues());
 		//get and set the resources
 		List<IJMSRuntimeResource> resources = JMSRuntimeResourceProvider.getInstance().getAllResources();
 		resources.stream().forEach(res -> registerResourceConsumer(res));
+	}
+
+	/**
+	 * @param config
+	 * @throws SecurityException
+	 */
+	private void setFields(SystemConfiguration config) throws SecurityException {
+		Field[] fields = this.getClass().getDeclaredFields();
+		for (PropertyConfiguration property: config.getProperties()) {
+			for (Field fld : fields) {
+				if (fld.getName().equals(property.getName())) {
+					try {
+						fld.set(this, property.getValue());
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	@Override

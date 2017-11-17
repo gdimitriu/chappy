@@ -108,8 +108,7 @@ public final class JMSUtilsRequests {
 				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 				addTransformer.send();
 				while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
-				assertEquals("add transformer " + transf + " exception", addTransformer.getStatus(),
-						IJMSStatus.OK);
+				assertEquals("add transformer " + transf + " exception", IJMSStatus.OK,  addTransformer.getStatus());
 			} catch (IOException | JMSException | InterruptedException e) {
 				fail("exception occured at add transformer" + e.getLocalizedMessage());
 			}
@@ -118,8 +117,7 @@ public final class JMSUtilsRequests {
 			// list the added transformers
 			ChappyJMSListTransformers listTransformers = new ChappyJMSListTransformers(transaction).send();
 			while(listTransformers.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
-			assertEquals("internal error for list transformers", listTransformers.getStatus(),
-					IJMSStatus.OK);
+			assertEquals("internal error for list transformers", IJMSStatus.OK, listTransformers.getStatus());
 			List<String> transformers = listTransformers.getListOfTransformersName();
 			TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
 		} catch (Exception e) {

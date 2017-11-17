@@ -124,6 +124,10 @@ public class TransactionProviders {
 		}
 		transaction.setPersistence(persistence);
 		IChappyCookie cookie = CookieFactory.getFactory().newCookie(requester, userName);
+		if (cookie.getCorrelationId() == null || cookie.getCorrelationId().isEmpty()) {
+			cookie.setCorrelationId(transactionId);
+		}
+		cookie.update();
 		cookie.setTransactionId(transactionId);
 		storageProvider.putTransaction(cookie, transaction);
 		return cookie;

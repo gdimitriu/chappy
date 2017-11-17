@@ -130,14 +130,14 @@ public class RestClientTrasactionFlowTransformationsTest {
 		
 		if (transformer.getStatusCode() >= 0) {
 			List<String> actual = transformer.getOutputResultAsString();
-			assertEquals(actual.size(), 1);
+			assertEquals(1, actual.size());
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 						actual.get(0));
 		} else {
 			fail("processing error on server");
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 
 	/**
@@ -165,14 +165,14 @@ public class RestClientTrasactionFlowTransformationsTest {
 		
 		if (transformer.getStatusCode() >= 0) {
 			List<String> actual = transformer.getOutputResultAsString();
-			assertEquals(actual.size(), 1);
+			assertEquals(1, actual.size());
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
 						actual.get(0));
 		} else {
 			fail("processing error on server");
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 	
 	/**
@@ -209,7 +209,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 			fail("processing error on server");
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 	
 	/**
@@ -246,7 +246,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 			fail("processing error on server");
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());		
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());		
 	}
 	
 	/**
@@ -282,8 +282,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 		try {
 			addTransformer.setTransformer("ProcessingStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 			addTransformer.send();
-			assertEquals("add transformer " +  "ProcessingStep" + " exception", addTransformer.getStatusCode(),
-					Status.OK.getStatusCode());
+			assertEquals("add transformer " +  "ProcessingStep" + " exception", Status.OK.getStatusCode(), addTransformer.getStatusCode());
 			addTransformers.add("ProcessingStep");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -310,7 +309,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 			fail("processing error on server");
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 	
 	/**
@@ -338,7 +337,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 				transformer.getTransactionErrorMessage());
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 	
 	/**

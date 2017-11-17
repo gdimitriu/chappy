@@ -130,7 +130,7 @@ public class RestTransactionFailOverAndPersistence {
 				.queryParam(IChappyServiceNamesConstants.PERSIST, "true")
 				.request().get();
 		
-		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
 		
 		Map<String, NewCookie> cookies = response.getCookies();
 		
@@ -144,7 +144,7 @@ public class RestTransactionFailOverAndPersistence {
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
@@ -154,7 +154,7 @@ public class RestTransactionFailOverAndPersistence {
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		//stop and restart the server
 		tearDown();
@@ -170,7 +170,7 @@ public class RestTransactionFailOverAndPersistence {
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.INPUT_DATA, "blabla");

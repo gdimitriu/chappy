@@ -22,7 +22,7 @@
 	<configuration>
   		<name>rest</name>
   		<property>
-  			<name>port</name>
+  			<name>serverPort</name>
   			<value>8099</value>
   		</property>
 	</configuration>
