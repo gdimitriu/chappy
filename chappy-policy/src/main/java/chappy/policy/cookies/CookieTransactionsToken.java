@@ -40,7 +40,16 @@ public class CookieTransactionsToken extends CookieTransaction{
 	 * @param userName 
 	 */
 	public CookieTransactionsToken(final String userName) {
-		setUserName(userName);
+		setCredentials(userName, null);
+	}
+	
+	/**
+	 * cookie transaction token constructor
+	 * @param userName
+	 * @param passwd of the user
+	 */
+	public CookieTransactionsToken(final String userName, final String passwd) {
+		setCredentials(userName, passwd);
 	}
 	
 	/**

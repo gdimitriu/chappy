@@ -107,13 +107,16 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	 * @return the jmsTransaction
 	 */
 	public JMSTransactionHolder getJmsTransaction() {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction;
 	}
 
 	/**
 	 * @param jmsTransaction the jmsTransaction to set
 	 */
-	public void setJmsTransaction(JMSTransactionHolder jmsTransaction) {
+	public void setJmsTransaction(final JMSTransactionHolder jmsTransaction) {
 		this.jmsTransaction = jmsTransaction;
 	}
 
@@ -121,13 +124,16 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	 * @return the restTransaction
 	 */
 	public RESTTransactionHolder getRestTransaction() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction;
 	}
 
 	/**
 	 * @param restTransaction the restTransaction to set
 	 */
-	public void setRestTransaction(RESTTransactionHolder restTransaction) {
+	public void setRestTransaction(final RESTTransactionHolder restTransaction) {
 		this.restTransaction = restTransaction;
 	}
 
@@ -144,41 +150,65 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 
 	@Override
 	public Client getRestClient() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction.getRestClient();
 	}
 
 	@Override
 	public URI getBaseUri() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction.getBaseUri();
 	}
 
 	@Override
 	public WebTarget getRestTarget() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction.getRestTarget();
 	}
 
 	@Override
 	public Connection getCurrentConnection() {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction.getCurrentConnection();
 	}
 
 	@Override
 	public Session getCurrentSession() {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction.getCurrentSession();
 	}
 
 	@Override
 	public MessageConsumer getCurrentMessageConsumer() {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction.getCurrentMessageConsumer();
 	}
 
 	@Override
 	public MessageProducer getCurrentMessageProducer() {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction.getCurrentMessageProducer();
 	}
 
 	@Override
 	public Destination getCurrentReplyToDestination() {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction.getCurrentReplyToDestination();
 	}
 }

@@ -64,6 +64,14 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 		this.restTarget = target; 
 	}
 
+	/**
+	 * constructor to create a REST transaction from other protocol.
+	 * @param cookie the cookie which contains all info needed
+	 */
+	public RESTTransactionHolder(final IChappyCookie cookie) {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public IChappyCookie getCookie() {
 		return this.chappyCookie;

@@ -19,18 +19,39 @@
  */
 package chappy.policy.authentication;
 
+import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Holder for User/Password.
  * @author Gabriel Dimitriu
  *
  */
-public class CredentialHolder {
+@XmlRootElement
+public class CredentialHolder implements Serializable {
+
+	/**
+	 * default serial version id.
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/** the user */
-	private final String user;
+	@XmlElement(name = "user")
+	private String user;
 	
 	/** the password */
-	private final String passwd;
+	@XmlElement(name = "passwd")
+	private String passwd;
+	
+	/**
+	 * default constructor.
+	 */
+	public CredentialHolder() {
+		this.user = null;
+		this.passwd = null;
+	}
 	/**
 	 * 
 	 */
@@ -51,6 +72,18 @@ public class CredentialHolder {
 	 */
 	public String getPasswd() {
 		return passwd;
+	}
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(String user) {
+		this.user = user;
+	}
+	/**
+	 * @param passwd the passwd to set
+	 */
+	public void setPasswd(String passwd) {
+		this.passwd = passwd;
 	}
 
 }

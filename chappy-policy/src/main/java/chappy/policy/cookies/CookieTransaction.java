@@ -22,12 +22,18 @@ package chappy.policy.cookies;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.policy.authentication.CredentialHolder;
 
 /**
  * Base class for cookie.
@@ -35,6 +41,8 @@ import chappy.interfaces.cookies.IChappyCookie;
  *
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public abstract class CookieTransaction implements IChappyCookie {
 
 	/**
@@ -42,9 +50,9 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "userName")
+	@XmlElement(name = "credentials")
 	/** name of the user */
-	private String userName;
+	private CredentialHolder credentials;
 	
 	@XmlElement(name = "transactionId")
 	/** transaction Id */
@@ -53,6 +61,10 @@ public abstract class CookieTransaction implements IChappyCookie {
 	@XmlElement(name = "correlationId")
 	/** correlation id for JMS */
 	private String correlationId;
+	
+	@XmlElement(name = "persistence")
+	/** persistence required flag */
+	private boolean persistence = false;
 	
 	@XmlElement(name = "servers")
 	/** servers available */
@@ -70,15 +82,24 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String getUserName() {
-		return userName;
+		return credentials.getUser();
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.cookies.IChappyCookie#getUserPassword()
+	 */
+	@Override
+	public String getUserPassword() {
+		return credentials.getPasswd();
 	}
 	
 	/**
 	 * set the user name
 	 * @param nameUser - the user name which own the cookie
+	 * @param passwd - the user password
 	 */
-	public void setUserName(final String nameUser) {
-		this.userName = nameUser;
+	public void setCredentials(final String nameUser, final String passwd) {
+		this.credentials = new CredentialHolder(nameUser, passwd);
 	}
 
 	/* (non-Javadoc)
@@ -102,7 +123,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String generateStorageId() {
-		return userName + ":" + transactionId;
+		return credentials.getUser() + ":" + transactionId;
 	}
 
 	/**
@@ -241,5 +262,10 @@ public abstract class CookieTransaction implements IChappyCookie {
 			}
 			servers[i].setServerName(serverName);
 		}
+	}
+	
+	@Override
+	public boolean getPersistence() {
+		return this.persistence;
 	}
 }

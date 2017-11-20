@@ -98,6 +98,16 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	}
 
 	/**
+	 * create a jms transaction from cookie.
+	 * this is used when converting transaction from one protocol to other.
+	 * @param cookie
+	 */
+	public JMSTransactionHolder(final IChappyCookie cookie) {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	/**
 	 * @param current transaction connection
 	 */
 	public void setCurrentConnection(final Connection connection) {

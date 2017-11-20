@@ -51,13 +51,13 @@ public class CookieFactory {
 	 * @param requester
 	 * @return cookie instance.
 	 */
-	public IChappyCookie newCookie(final Class<?> requester, final String userName) {
+	public IChappyCookie newCookie(final Class<?> requester, final String userName, final String passwd) {
 		
 		if (requester == null) {
 			//special case for not transactional operations. 
 		}
 		
-		CookieTransactionsToken cookie = new CookieTransactionsToken(userName);
+		CookieTransactionsToken cookie = new CookieTransactionsToken(userName, passwd);
 		return cookie;
 	}
 }

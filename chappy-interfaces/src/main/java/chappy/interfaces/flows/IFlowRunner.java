@@ -49,9 +49,10 @@ public interface IFlowRunner {
 	/**
 	 * This will create the steps from the configuration for a specific user without transaction.
 	 * @param userName the user name
+	 * @param password of the user
 	 * @throws Exception 
 	 */
-	public void createSteps(final String userName) throws  Exception;
+	public void createSteps(final String userName, final String passwd) throws  Exception;
 
 	/**
 	 * execute the flow constructed using the configuration.

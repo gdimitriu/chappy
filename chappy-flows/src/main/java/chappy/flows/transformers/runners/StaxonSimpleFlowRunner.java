@@ -101,7 +101,7 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(java.lang.String)
 	 */
 	@Override
-	public void createSteps(final String userName) throws Exception {
+	public void createSteps(final String userName, final String passwd) throws Exception {
 		//nothing to do for staxon simple flow because this flow could not be overriden
 	}
 
