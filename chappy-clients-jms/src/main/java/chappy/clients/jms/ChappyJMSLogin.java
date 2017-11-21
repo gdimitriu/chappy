@@ -19,18 +19,11 @@
  */
 package chappy.clients.jms;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-
-import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.common.transaction.JMSTransactionHolder;
 import chappy.clients.jms.protocol.JMSLoginMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
@@ -45,20 +38,7 @@ import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
  */
 public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	
-	/** session used by chappy */
-	private Session session = null;
-	
-	/** connection used by chappy */
-	private Connection connection = null;
-	
-	/** reply to destination */
-	private Destination replyTo = null;
-	
-	/** consumer for replies */
-	private MessageConsumer consumer = null;
-	
-	/** producer for messages */
-	private MessageProducer producer = null;
+	private JMSTransactionHolder transaction = null;
 	
 	/**
 	 * base constructor. 
@@ -68,6 +48,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	public ChappyJMSLogin(final String userName, final String passwd, final boolean persistence) {
 		setProtocol(new JMSLoginMessage(userName, passwd));
 		((JMSLoginMessage) getProtocol()).setPersistence(persistence);
+		transaction = new JMSTransactionHolder(userName, passwd, persistence);
 	}
 	
 	/**
@@ -76,9 +57,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 * @throws Exception 
 	 */
 	public void createConnectionToServer(final String serverName, final int port) throws Exception {
-		ConnectionFactory connFactory = ActiveMQJMSClient.createConnectionFactory("tcp://" + serverName + ":" + port, "default");
-		connection = connFactory.createConnection("system","system");
-		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		transaction.createConnectionToServer(serverName, port);
 	}
 	
 	/* (non-Javadoc)
@@ -86,17 +65,16 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 */
 	@Override
 	public ChappyJMSLogin send() throws JMSException {
-		Destination destination = session.createQueue(IJMSQueueNameConstants.TRANSACTION);		
-		producer = session.createProducer(destination);
-		replyTo = session.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
-		connection.start();
-		Message message = ((JMSLoginMessage) getProtocol()).encodeInboundMessage(session);
-		message.setJMSReplyTo(replyTo);
-		producer.send(message);
+		Destination destination = transaction.getCurrentSession().createQueue(IJMSQueueNameConstants.TRANSACTION);		
+		transaction.setCurrentMessageProducer(transaction.getCurrentSession().createProducer(destination));
+		transaction.setCurrentReplyToDestination(transaction.getCurrentSession().createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN));
+		transaction.getCurrentConnection().start();
+		Message message = ((JMSLoginMessage) getProtocol()).encodeInboundMessage(transaction.getCurrentSession());
+		message.setJMSReplyTo(transaction.getCurrentReplyToDestination());
+		transaction.getCurrentMessageProducer().send(message);
 		String messageID = message.getJMSMessageID();
-		consumer = session.createConsumer(replyTo, "JMSCorrelationID = '" + 
-				messageID + "'");
-		consumer.setMessageListener(this);		
+		transaction.createMessageConsumerFilter(messageID);
+		transaction.getCurrentMessageConsumer().setMessageListener(this);
 		setProtocol(null);
 		return this;
 	}
@@ -122,19 +100,19 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 		boolean ok = true;
 		String ret = "Chappy:=";
 		try {
-			session.close();
+			transaction.getCurrentSession().close();
 		} catch (JMSException e) {
 			ret = ret + " " + e.getLocalizedMessage();
 			ok = false;
 		}
 		try {
-			connection.close();
+			transaction.getCurrentConnection().close();
 		} catch (JMSException e) {
 			ret = ret + " " + e.getLocalizedMessage();
 			ok = false;
 		}
 		try {
-			connection.stop();
+			transaction.getCurrentConnection().stop();
 		} catch (JMSException e) {
 			ret = ret + " " + e.getLocalizedMessage();
 			ok =false;
@@ -151,7 +129,8 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 */
 	@Override
 	public IJMSTransactionHolder createTransactionHolder() {
-		return ChappyClientTransactionHolder.createJMSTransactionHolder(connection, session, consumer, producer, getCookie(), replyTo);
+		transaction.setCookie(getCookie());
+		return transaction;
 	}
 	
 	/* (non-Javadoc)

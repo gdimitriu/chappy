@@ -60,4 +60,14 @@ public class CookieFactory {
 		CookieTransactionsToken cookie = new CookieTransactionsToken(userName, passwd);
 		return cookie;
 	}
+	
+	/**
+	 * newCookie request.
+	 * @param requester
+	 * @return cookie instance.
+	 */
+	public IChappyCookie newCookie(final String userName, final String passwd, final boolean persistence) {
+		CookieTransactionsToken cookie = new CookieTransactionsToken(userName, passwd, persistence);
+		return cookie;
+	}
 }

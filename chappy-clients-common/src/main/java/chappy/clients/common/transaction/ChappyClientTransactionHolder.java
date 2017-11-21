@@ -23,6 +23,7 @@ import java.net.URI;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -105,8 +106,9 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 	/**
 	 * @return the jmsTransaction
+	 * @throws Exception exception if the connection could not be created.
 	 */
-	public JMSTransactionHolder getJmsTransaction() {
+	public JMSTransactionHolder getJmsTransaction() throws Exception {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
@@ -173,7 +175,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 
 	@Override
-	public Connection getCurrentConnection() {
+	public Connection getCurrentConnection() throws JMSException {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
@@ -181,7 +183,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 
 	@Override
-	public Session getCurrentSession() {
+	public Session getCurrentSession() throws JMSException {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
@@ -189,7 +191,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 
 	@Override
-	public MessageConsumer getCurrentMessageConsumer() {
+	public MessageConsumer getCurrentMessageConsumer() throws JMSException {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
@@ -197,7 +199,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 
 	@Override
-	public MessageProducer getCurrentMessageProducer() {
+	public MessageProducer getCurrentMessageProducer() throws JMSException {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
@@ -205,10 +207,17 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 
 	@Override
-	public Destination getCurrentReplyToDestination() {
+	public Destination getCurrentReplyToDestination() throws JMSException {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
 		return jmsTransaction.getCurrentReplyToDestination();
+	}
+
+	@Override
+	public void createConnectionToServer(final String serverName, final int port) throws Exception {
+		if (restTransaction != null) {
+			restTransaction.createConnectionToServer(serverName, port);
+		}
 	}
 }

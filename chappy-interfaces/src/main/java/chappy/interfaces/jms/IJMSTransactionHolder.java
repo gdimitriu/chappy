@@ -21,6 +21,7 @@ package chappy.interfaces.jms;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -37,26 +38,26 @@ public interface IJMSTransactionHolder extends IClientTransaction {
 	/**
 	 * @return connection for transaction.
 	 */
-	public Connection getCurrentConnection();
+	public Connection getCurrentConnection() throws JMSException ;
 	
 	/**
 	 * @return current session of the client transaction.
 	 */
-	public Session getCurrentSession();
+	public Session getCurrentSession() throws JMSException ;
 	
 	/**
 	 * @return current message consumer for the transaction
 	 */
-	public MessageConsumer getCurrentMessageConsumer();
+	public MessageConsumer getCurrentMessageConsumer() throws JMSException ;
 			
 	/**
 	 * @return current message producer for transaction.
 	 */
-	public MessageProducer getCurrentMessageProducer();
+	public MessageProducer getCurrentMessageProducer() throws JMSException ;
 	
 	
 	/**
 	 * @return current replyTo destination.
 	 */
-	public Destination getCurrentReplyToDestination();
+	public Destination getCurrentReplyToDestination() throws JMSException ;
 }

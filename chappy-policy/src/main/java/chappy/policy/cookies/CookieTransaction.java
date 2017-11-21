@@ -268,4 +268,12 @@ public abstract class CookieTransaction implements IChappyCookie {
 	public boolean getPersistence() {
 		return this.persistence;
 	}
+	
+	
+	/**
+	 * @param persistence the persistence flag
+	 */
+	public void setPersistence(final boolean persistence) {
+		this.persistence = persistence;
+	}
 }

@@ -20,13 +20,19 @@
 package chappy.clients.common.transaction;
 
 import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
+import javax.jms.Queue;
 import javax.jms.Session;
+
+import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.IJMSTransactionHolder;
+import chappy.providers.cookie.CookieFactory;
 
 /**
  * implementation for JMS transaction holder.
@@ -101,9 +107,23 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 * create a jms transaction from cookie.
 	 * this is used when converting transaction from one protocol to other.
 	 * @param cookie
+	 * @throws JMSException the exception if the connection could not be created.
 	 */
-	public JMSTransactionHolder(final IChappyCookie cookie) {
-		// TODO Auto-generated constructor stub
+	public JMSTransactionHolder(final IChappyCookie cookie) throws JMSException {
+		currentCookie = cookie;
+		createConnectionToServer(cookie.getJmsServerName(), cookie.getJmsServerPort());
+		createMessageConsumerFilter(cookie.getCorrelationId());
+	}
+
+
+	
+	/**
+	 * @param userName
+	 * @param passwd
+	 * @param persistence
+	 */
+	public JMSTransactionHolder(final String userName, final String passwd, final boolean persistence) {
+		currentCookie = CookieFactory.getFactory().newCookie(userName, passwd, persistence);
 	}
 
 
@@ -192,4 +212,38 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 		return replyTo;
 	}
 
+	/**
+	 * @param serverName
+	 * @param port
+	 * @throws Exception 
+	 */
+	public void createConnectionToServer(final String serverName, final int port) throws JMSException {
+		ConnectionFactory connFactory = null;
+		try {
+			connFactory = ActiveMQJMSClient.createConnectionFactory("tcp://" + serverName + ":" + port, "default");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new JMSException(e.getMessage());
+		}
+		currentConnection = connFactory.createConnection("system","system");
+		currentSession = currentConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+	}
+
+	/**
+	 * set the reply to
+	 * @param destination
+	 */
+	public void setCurrentReplyToDestination(final Queue destination) {
+		this.replyTo = destination;
+	}
+	
+	/**
+	 * create the consumer with filter for the correlation message.
+	 * @param correlationId
+	 * @throws JMSException
+	 */
+	public void createMessageConsumerFilter(final String correlationId) throws JMSException {
+		currentMessageConsumer = currentSession.createConsumer(replyTo, "JMSCorrelationID = '" + 
+		correlationId + "'");
+	}
 }
