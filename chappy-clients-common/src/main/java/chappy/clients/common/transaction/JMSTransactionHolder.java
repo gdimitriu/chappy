@@ -22,16 +22,19 @@ package chappy.clients.common.transaction;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 
+import org.apache.activemq.artemis.api.core.ActiveMQDisconnectedException;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.IJMSTransactionHolder;
+import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.providers.cookie.CookieFactory;
 
 /**
@@ -39,7 +42,7 @@ import chappy.providers.cookie.CookieFactory;
  * @author Gabriel Dimitriu
  *
  */
-public class JMSTransactionHolder implements IJMSTransactionHolder {
+public class JMSTransactionHolder implements IJMSTransactionHolder, ExceptionListener {
 	
 	/** current session used by chappy */
 	private Session currentSession = null;
@@ -58,6 +61,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	
 	/** current cookie for chappy */
 	private IChappyCookie currentCookie = null;
+	
+	/** exception received during transactions */
+	private JMSException exceptionReceived = null;
 	
 	/**
 	 * @param currentSession
@@ -111,8 +117,21 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	public JMSTransactionHolder(final IChappyCookie cookie) throws JMSException {
 		currentCookie = cookie;
-		createConnectionToServer(cookie.getJmsServerName(), cookie.getJmsServerPort());
-		createMessageConsumerFilter(cookie.getCorrelationId());
+		createTransactonConnections(cookie);
+	}
+
+
+	/**
+	 * @param cookie
+	 */
+	private void createTransactonConnections(final IChappyCookie cookie) {
+		try {
+			createConnectionToServer(cookie.getJmsServerName(), cookie.getJmsServerPort());
+			startTransaction();
+			createMessageConsumerFilter(cookie.getCorrelationId());
+		} catch (JMSException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -139,6 +158,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	@Override
 	public Connection getCurrentConnection() {
+		if (this.currentConnection == null) {
+			createTransactonConnections(currentCookie);
+		}
 		return this.currentConnection;
 	}
 
@@ -154,6 +176,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	@Override
 	public Session getCurrentSession() {
+		if (this.currentConnection == null) {
+			createTransactonConnections(currentCookie);
+		}
 		return this.currentSession;
 	}
 
@@ -162,6 +187,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	@Override
 	public MessageConsumer getCurrentMessageConsumer() {
+		if (this.currentConnection == null) {
+			createTransactonConnections(currentCookie);
+		}
 		return this.currentMessageConsumer;
 	}
 
@@ -184,6 +212,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	@Override
 	public MessageProducer getCurrentMessageProducer() {
+		if (this.currentConnection == null) {
+			createTransactonConnections(currentCookie);
+		}
 		return this.currentMessageProducer;
 	}
 
@@ -209,6 +240,9 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 */
 	@Override
 	public Destination getCurrentReplyToDestination() {
+		if (this.currentConnection == null) {
+			createTransactonConnections(currentCookie);
+		}
 		return replyTo;
 	}
 
@@ -227,6 +261,7 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 		}
 		currentConnection = connFactory.createConnection("system","system");
 		currentSession = currentConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		currentConnection.setExceptionListener(this);
 	}
 
 	/**
@@ -243,7 +278,73 @@ public class JMSTransactionHolder implements IJMSTransactionHolder {
 	 * @throws JMSException
 	 */
 	public void createMessageConsumerFilter(final String correlationId) throws JMSException {
+		if (replyTo == null) {
+			replyTo = currentSession.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
+		}
 		currentMessageConsumer = currentSession.createConsumer(replyTo, "JMSCorrelationID = '" + 
 		correlationId + "'");
+	}
+
+	/**
+	 * check is the connection is closed.
+	 * @return true if the connection is closed.
+	 */
+	public boolean isClosed() {
+		if (currentConnection == null || exceptionReceived.getCause() instanceof ActiveMQDisconnectedException) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void onException(JMSException exception) {
+		exceptionReceived = exception;
+		if (exception.getCause()  instanceof ActiveMQDisconnectedException) {
+			currentConnection = null;
+			currentSession = null;
+			currentMessageConsumer = null;
+			currentMessageProducer = null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.jms.IJMSClient#closeAll()
+	 */
+	@Override
+	public String closeAll() {
+		boolean ok = true;
+		String ret = "Chappy:=";
+		try {
+			currentSession.close();
+			currentSession = null;
+		} catch (JMSException e) {
+			ret = ret + " " + e.getLocalizedMessage();
+			ok = false;
+		}
+		try {
+			currentConnection.stop();
+		} catch (JMSException e) {
+			ret = ret + " " + e.getLocalizedMessage();
+			ok = false;
+		}
+		try {
+			currentConnection.close();
+			currentConnection = null;
+		} catch (JMSException e) {
+			ret = ret + " " + e.getLocalizedMessage();
+			ok =false;
+		}
+		if (!ok) {
+			return ret;
+		} else {
+			return ret + " has been stopped ok.";
+		}
+	}
+	
+	public void startTransaction() throws JMSException {
+		Destination destination = currentSession.createQueue(IJMSQueueNameConstants.TRANSACTION);		
+		currentMessageProducer = currentSession.createProducer(destination);
+		replyTo = currentSession.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
+		currentConnection.start();
 	}
 }

@@ -60,4 +60,11 @@ public interface IJMSTransactionHolder extends IClientTransaction {
 	 * @return current replyTo destination.
 	 */
 	public Destination getCurrentReplyToDestination() throws JMSException ;
+	
+	/**
+	 * close all connections.
+	 * This should be called only once.
+	 * @return message confirmation.
+	 */
+	public String closeAll();
 }

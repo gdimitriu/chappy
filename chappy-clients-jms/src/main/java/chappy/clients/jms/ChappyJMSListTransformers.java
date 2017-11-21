@@ -110,42 +110,11 @@ public class ChappyJMSListTransformers extends AbstractChappyListTransformers im
 	}
 
 	/* (non-Javadoc)
-	 * @see chappy.interfaces.jms.IJMSClient#closeAll()
-	 */
-	@Override
-	public String closeAll() {
-		boolean ok = true;
-		String ret = "Chappy:=";
-		try {
-			clientTransaction.getCurrentSession().close();
-		} catch (JMSException e) {
-			ret = ret + " " + e.getLocalizedMessage();
-			ok = false;
-		}
-		try {
-			clientTransaction.getCurrentConnection().close();
-		} catch (JMSException e) {
-			ret = ret + " " + e.getLocalizedMessage();
-			ok = false;
-		}
-		try {
-			clientTransaction.getCurrentConnection().stop();
-		} catch (JMSException e) {
-			ret = ret + " " + e.getLocalizedMessage();
-			ok =false;
-		}
-		if (!ok) {
-			return ret;
-		} else {
-			return ret + " has been stopped ok.";
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see chappy.interfaces.jms.IJMSClient#createTransactionHolder()
 	 */
 	@Override
 	public IJMSTransactionHolder createTransactionHolder() {
+		clientTransaction.closeAll();
 		return clientTransaction;
 	}
 

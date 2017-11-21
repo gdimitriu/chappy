@@ -19,7 +19,6 @@
  */
 package chappy.clients.jms;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import chappy.clients.common.AbstractChappyClient;
@@ -29,7 +28,6 @@ import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.jms.protocol.IJMSStatus;
-import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 
 /**
  * Chappy login request client for JMS
@@ -65,10 +63,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 */
 	@Override
 	public ChappyJMSLogin send() throws JMSException {
-		Destination destination = transaction.getCurrentSession().createQueue(IJMSQueueNameConstants.TRANSACTION);		
-		transaction.setCurrentMessageProducer(transaction.getCurrentSession().createProducer(destination));
-		transaction.setCurrentReplyToDestination(transaction.getCurrentSession().createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN));
-		transaction.getCurrentConnection().start();
+		transaction.startTransaction();
 		Message message = ((JMSLoginMessage) getProtocol()).encodeInboundMessage(transaction.getCurrentSession());
 		message.setJMSReplyTo(transaction.getCurrentReplyToDestination());
 		transaction.getCurrentMessageProducer().send(message);
@@ -92,37 +87,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see chappy.interfaces.jms.IJMSClient#closeAll()
-	 */
-	@Override
-	public String closeAll() {
-		boolean ok = true;
-		String ret = "Chappy:=";
-		try {
-			transaction.getCurrentSession().close();
-		} catch (JMSException e) {
-			ret = ret + " " + e.getLocalizedMessage();
-			ok = false;
-		}
-		try {
-			transaction.getCurrentConnection().close();
-		} catch (JMSException e) {
-			ret = ret + " " + e.getLocalizedMessage();
-			ok = false;
-		}
-		try {
-			transaction.getCurrentConnection().stop();
-		} catch (JMSException e) {
-			ret = ret + " " + e.getLocalizedMessage();
-			ok =false;
-		}
-		if (!ok) {
-			return ret;
-		} else {
-			return ret + " has been stopped ok.";
-		}
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.jms.IJMSClient#createTransactionHolder()
@@ -130,6 +95,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	@Override
 	public IJMSTransactionHolder createTransactionHolder() {
 		transaction.setCookie(getCookie());
+		transaction.closeAll();
 		return transaction;
 	}
 	

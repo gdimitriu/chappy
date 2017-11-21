@@ -252,7 +252,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 			servers[i] = new ServerConnectionInfo();
 			servers[i].setType(configurations[i].getName());
 			servers[i].setServerPort(Integer.parseInt(configurations[i].getPropertyValue("serverPort")));
-			String serverName = configurations[i].getPropertyValue("serverName");
+			String serverName = configurations[i].getPropertyValue("serverHost");
 			if (serverName.isEmpty()) {
 				try {
 					serverName = InetAddress.getLocalHost().getCanonicalHostName();

@@ -179,6 +179,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentConnection();
 	}
 
@@ -187,6 +188,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentSession();
 	}
 
@@ -195,6 +197,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentMessageConsumer();
 	}
 
@@ -203,6 +206,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentMessageProducer();
 	}
 
@@ -211,6 +215,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentReplyToDestination();
 	}
 
@@ -219,5 +224,22 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 		if (restTransaction != null) {
 			restTransaction.createConnectionToServer(serverName, port);
 		}
+	}
+	
+	/**
+	 * @throws JMSException
+	 */
+	private void checkAndReconnectDeadSessions() throws JMSException {
+		if (jmsTransaction.isClosed()) {
+			jmsTransaction = new JMSTransactionHolder(jmsTransaction.getCookie());
+		}
+	}
+
+	@Override
+	public String closeAll() {
+		if (jmsTransaction != null) {
+			return jmsTransaction.closeAll();
+		}
+		return null;
 	}
 }

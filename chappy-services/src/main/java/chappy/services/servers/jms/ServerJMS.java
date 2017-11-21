@@ -43,6 +43,7 @@ import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.jms.resources.IJMSRuntimeResource;
 import chappy.interfaces.services.IServiceJMS;
 import chappy.interfaces.services.IServiceServer;
+import chappy.persistence.providers.PersistenceProvider;
 import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.providers.jms.resources.JMSQueuesProvider;
 import chappy.providers.jms.security.RolesProvider;
@@ -159,6 +160,10 @@ public class ServerJMS implements IServiceJMS {
 
 	    RolesProvider rolesProvider = new RolesProvider(queuesNames);
 	    configuration = configuration.setSecurityRoles(rolesProvider.getRoles());
+	    
+	    PersistenceProvider.getInstance().getSystemPersistence();
+		PersistenceProvider.getInstance().getSystemFlowPersistence();
+		PersistenceProvider.getInstance().getSystemUpgradePersistence();
 	    
 	    // Step 2. Create the JMS configuration
 	    jmsConfig = new JMSConfigurationImpl();
