@@ -22,10 +22,10 @@ package chappy.clients.rest;
 import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import chappy.clients.common.AbstractChappyClient;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.common.transaction.RESTTransactionHolder;
 import chappy.clients.rest.protocol.IRESTMessage;
 import chappy.clients.rest.protocol.RESTLoginMessage;
-import chappy.interfaces.rest.IRESTTransactionHolder;
 
 /**
  * Chappy login request client for REST.
@@ -37,7 +37,7 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	/** http response for REST client */
 	private Response response = null;
 	
-	private RESTTransactionHolder transaction = null;
+	private ChappyClientTransactionHolder transaction = new ChappyClientTransactionHolder();
 	
 	/**
 	 * base constructor. 
@@ -47,7 +47,7 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	public ChappyRESTLogin(final String userName, final String passwd, final boolean persistence) {
 		setProtocol(new RESTLoginMessage(userName, passwd));
 		((RESTLoginMessage) getProtocol()).setPersistence(persistence);
-		transaction = new RESTTransactionHolder(userName, passwd, persistence);
+		transaction.setRestTransaction(new RESTTransactionHolder(userName, passwd, persistence));
 	}
 
 
@@ -55,8 +55,8 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
 	@Override
-	public IRESTTransactionHolder createTransactionHolder() {
-		transaction.setCookie(getCookie());
+	public ChappyClientTransactionHolder createTransactionHolder() {
+		transaction.getRestTransaction().setCookie(getCookie());
 		return transaction;
 	}
 	

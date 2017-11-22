@@ -78,7 +78,13 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 	 * @param cookie the cookie which contains all info needed
 	 */
 	public RESTTransactionHolder(final IChappyCookie cookie) {
-		// TODO Auto-generated constructor stub
+		setCookie(cookie);
+		try {
+			createConnectionToServer(cookie.getRestServerName(), cookie.getRestServerPort());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	

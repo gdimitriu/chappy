@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ JMSClientTransactionFlowTransformationsTest.class, RestClientTrasactionFlowTransformationsTest.class })
+@SuiteClasses({ JMSClientTransactionFlowTransformationsTest.class, RestClientTrasactionFlowTransformationsTest.class, MixedClientTransactionFlowTransformationsTest.class })
 public class AllTestsClientsSuiteTest {
 
 }

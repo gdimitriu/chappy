@@ -22,10 +22,10 @@ package chappy.clients.jms;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import chappy.clients.common.AbstractChappyClient;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.common.transaction.JMSTransactionHolder;
 import chappy.clients.jms.protocol.JMSLoginMessage;
 import chappy.interfaces.jms.IJMSClient;
-import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 
@@ -36,7 +36,7 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
  */
 public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	
-	private JMSTransactionHolder transaction = null;
+	private ChappyClientTransactionHolder transaction = new ChappyClientTransactionHolder();
 	
 	/**
 	 * base constructor. 
@@ -46,7 +46,7 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	public ChappyJMSLogin(final String userName, final String passwd, final boolean persistence) {
 		setProtocol(new JMSLoginMessage(userName, passwd));
 		((JMSLoginMessage) getProtocol()).setPersistence(persistence);
-		transaction = new JMSTransactionHolder(userName, passwd, persistence);
+		transaction.setJmsTransaction(new JMSTransactionHolder(userName, passwd, persistence));
 	}
 	
 	/**
@@ -62,13 +62,13 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public ChappyJMSLogin send() throws JMSException {
-		transaction.startTransaction();
+	public ChappyJMSLogin send() throws Exception {
+		transaction.getJmsTransaction().startTransaction();
 		Message message = ((JMSLoginMessage) getProtocol()).encodeInboundMessage(transaction.getCurrentSession());
 		message.setJMSReplyTo(transaction.getCurrentReplyToDestination());
 		transaction.getCurrentMessageProducer().send(message);
 		String messageID = message.getJMSMessageID();
-		transaction.createMessageConsumerFilter(messageID);
+		transaction.getJmsTransaction().createMessageConsumerFilter(messageID);
 		transaction.getCurrentMessageConsumer().setMessageListener(this);
 		setProtocol(null);
 		return this;
@@ -93,9 +93,9 @@ public class ChappyJMSLogin extends AbstractChappyClient implements IJMSClient{
 	 * @see chappy.interfaces.jms.IJMSClient#createTransactionHolder()
 	 */
 	@Override
-	public IJMSTransactionHolder createTransactionHolder() {
-		transaction.setCookie(getCookie());
-		transaction.closeAll();
+	public ChappyClientTransactionHolder createTransactionHolder() throws Exception {
+		transaction.getJmsTransaction().setCookie(getCookie());
+		transaction.getJmsTransaction().closeAll();
 		return transaction;
 	}
 	

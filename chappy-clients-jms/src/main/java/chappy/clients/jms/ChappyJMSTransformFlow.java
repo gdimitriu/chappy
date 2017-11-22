@@ -23,10 +23,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import chappy.clients.common.AbstractChappyTransformFlow;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.common.transaction.JMSTransactionHolder;
 import chappy.clients.jms.protocol.JMSAddTransformerMessage;
 import chappy.clients.jms.protocol.JMSTransformFlowMessage;
 import chappy.interfaces.jms.IJMSClient;
-import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.transactions.IClientTransaction;
@@ -39,19 +40,27 @@ import chappy.interfaces.transactions.IClientTransaction;
 public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implements IJMSClient {
 
 	/** client transaction coming from login */
-	private IJMSTransactionHolder clientTransaction = null;
+	private ChappyClientTransactionHolder clientTransaction = new ChappyClientTransactionHolder();
 	
 	/**
 	 * 
 	 */
 	public ChappyJMSTransformFlow(final String input, final String configuration, final IClientTransaction client) {
-		clientTransaction = (IJMSTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof JMSTransactionHolder) {
+			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
+		}
 		setProtocol(new JMSTransformFlowMessage(input, configuration));
 		getProtocol().setCookie(client.getCookie());
 	}
 
 	public ChappyJMSTransformFlow(final IClientTransaction client) {
-		clientTransaction = (IJMSTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof JMSTransactionHolder) {
+			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
+		}
 		setProtocol(new JMSTransformFlowMessage());
 		getProtocol().setCookie(client.getCookie());
 	}
@@ -123,8 +132,13 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 	 * @see chappy.interfaces.jms.IJMSClient#createTransactionHolder()
 	 */
 	@Override
-	public IJMSTransactionHolder createTransactionHolder() {
-		clientTransaction.closeAll();
+	public ChappyClientTransactionHolder createTransactionHolder() {
+		try {
+			clientTransaction.getJmsTransaction().closeAll();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return clientTransaction;
 	}
 

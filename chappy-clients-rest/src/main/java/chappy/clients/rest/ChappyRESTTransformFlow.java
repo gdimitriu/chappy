@@ -25,9 +25,10 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import chappy.clients.common.AbstractChappyTransformFlow;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.common.transaction.RESTTransactionHolder;
 import chappy.clients.rest.protocol.RESTTransformFlowMessage;
 import chappy.interfaces.cookies.IChappyCookie;
-import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
@@ -37,7 +38,7 @@ import chappy.interfaces.transactions.IClientTransaction;
 public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow implements IChappyRESTClient {
 
 	/** client transaction */
-	IRESTTransactionHolder clientTransaction = null;
+	private ChappyClientTransactionHolder clientTransaction = new ChappyClientTransactionHolder();
 	
 	/** http response for REST client */
 	private Response response = null;
@@ -48,7 +49,11 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 	 * @param client the chappy client transaction
 	 */
 	public ChappyRESTTransformFlow(final String input, final String configuration, final IClientTransaction client) {
-		clientTransaction = (IRESTTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof RESTTransactionHolder) {
+			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
+		}
 		setProtocol(new RESTTransformFlowMessage(input, configuration));
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
@@ -60,7 +65,11 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 	 */
 	public ChappyRESTTransformFlow(final String input, final MediaType type, final String configuration,
 			final IClientTransaction client) {
-		clientTransaction = (IRESTTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof RESTTransactionHolder) {
+			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
+		}
 		setProtocol(new RESTTransformFlowMessage(input, type, configuration));
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
@@ -69,7 +78,11 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 	 * @param client the chappy client transaction
 	 */
 	public ChappyRESTTransformFlow(final IClientTransaction client) {
-		clientTransaction = (IRESTTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof RESTTransactionHolder) {
+			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
+		}
 		setProtocol(new RESTTransformFlowMessage());
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
@@ -78,7 +91,7 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
 	@Override
-	public IRESTTransactionHolder createTransactionHolder() {
+	public ChappyClientTransactionHolder createTransactionHolder() {
 		return clientTransaction;
 	}
 

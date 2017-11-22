@@ -223,6 +223,8 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	public void createConnectionToServer(final String serverName, final int port) throws Exception {
 		if (restTransaction != null) {
 			restTransaction.createConnectionToServer(serverName, port);
+		} else if (jmsTransaction != null) {
+			jmsTransaction.createConnectionToServer(serverName, port);
 		}
 	}
 	
