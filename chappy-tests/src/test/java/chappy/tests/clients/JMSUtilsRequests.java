@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSListTransformers;
 import chappy.clients.jms.ChappyJMSLogin;
@@ -59,7 +60,7 @@ public final class JMSUtilsRequests {
 	 * @return transaction holder to be pass
 	 * @throws Exception
 	 */
-	public static IJMSTransactionHolder chappyLogin(final int serverPort) throws Exception {
+	public static ChappyClientTransactionHolder chappyLogin(final int serverPort) throws Exception {
 		ChappyJMSLogin login = new ChappyJMSLogin("system", "system", true);
 		login.createConnectionToServer("localhost", serverPort);
 		login.send();
@@ -71,7 +72,7 @@ public final class JMSUtilsRequests {
 		assertEquals("reply message is wrong", CHAPPY_RECEIVED_OK, login.getTransactionErrorMessage());
 		
 		if (!login.hasException()) {
-			 IJMSTransactionHolder transaction =  login.createTransactionHolder();
+			 ChappyClientTransactionHolder transaction =  login.createTransactionHolder();
 			 assertEquals("user should be system", "system", transaction.getCookie().getUserName());
 			 return transaction;
 		}

@@ -24,8 +24,9 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import chappy.clients.common.AbstractChappyListTransformers;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.common.transaction.RESTTransactionHolder;
 import chappy.clients.rest.protocol.RESTListTransformersMessage;
-import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
@@ -36,7 +37,7 @@ import chappy.interfaces.transactions.IClientTransaction;
 public class ChappyRESTListTransformers extends AbstractChappyListTransformers implements IChappyRESTClient {
 
 	/** client transaction */
-	IRESTTransactionHolder clientTransaction = null;
+	private ChappyClientTransactionHolder clientTransaction = new ChappyClientTransactionHolder();
 	
 	/** http response for REST client */
 	private Response response = null;
@@ -45,7 +46,11 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 	 * @param client the chappy client transaction
 	 */
 	public ChappyRESTListTransformers(final IClientTransaction client) {
-		clientTransaction = (IRESTTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof RESTTransactionHolder) {
+			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
+		}
 		setProtocol(new RESTListTransformersMessage());
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
@@ -54,7 +59,7 @@ public class ChappyRESTListTransformers extends AbstractChappyListTransformers i
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
 	@Override
-	public IRESTTransactionHolder createTransactionHolder() {
+	public ChappyClientTransactionHolder createTransactionHolder() {
 		return clientTransaction;
 	}
 

@@ -23,10 +23,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import chappy.clients.common.AbstractChappyClient;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.common.transaction.JMSTransactionHolder;
 import chappy.clients.jms.protocol.JMSLogoutMessage;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.IJMSClient;
-import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.transactions.IClientTransaction;
 
@@ -38,14 +39,18 @@ import chappy.interfaces.transactions.IClientTransaction;
 public class ChappyJMSLogout extends AbstractChappyClient implements IJMSClient {
 
 	/** client transaction coming from login */
-	private IJMSTransactionHolder clientTransaction = null;
+	private ChappyClientTransactionHolder clientTransaction = new ChappyClientTransactionHolder();
 	
 	
 	/**
 	 * @param client transaction coming from login
 	 */
 	public ChappyJMSLogout(final IClientTransaction client) {
-		clientTransaction = (IJMSTransactionHolder) client;
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof JMSTransactionHolder) {
+			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
+		}
 		setProtocol(new JMSLogoutMessage());
 		getProtocol().setCookie(client.getCookie());
 	}
@@ -94,8 +99,13 @@ public class ChappyJMSLogout extends AbstractChappyClient implements IJMSClient 
 	 * @see chappy.interfaces.jms.IJMSClient#createTransactionHolder()
 	 */
 	@Override
-	public IJMSTransactionHolder createTransactionHolder() {
-		clientTransaction.closeAll();
+	public ChappyClientTransactionHolder createTransactionHolder() {
+		try {
+			clientTransaction.getJmsTransaction().closeAll();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return clientTransaction;
 	}
 	

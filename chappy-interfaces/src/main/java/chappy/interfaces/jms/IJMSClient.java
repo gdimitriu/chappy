@@ -33,12 +33,12 @@ public interface IJMSClient extends MessageListener {
 	 * @throws JMSException
 	 * return the client.
 	 */
-	public Object send() throws JMSException;
+	public Object send() throws Exception;
 	
 	
 	/**
 	 * This contains everithing neeed to continue communication to chappy.
 	 * @return Transaction Holder for JMS
 	 */
-	public IJMSTransactionHolder createTransactionHolder();
+	public IJMSTransactionHolder createTransactionHolder() throws Exception;
 }

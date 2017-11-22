@@ -28,7 +28,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import chappy.interfaces.jms.IJMSTransactionHolder;
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 
 /**
  * Functional tests for Chappy clients with JMS protocol.
@@ -72,10 +72,10 @@ public class MixedClientTransactionFlowTransformationsTest {
 	 * 	- logout from chappy using REST
 	 */
 	@Test
-	public void mixedChappyLoginLogout() {
+	public void mixedChappyJLoginRLogout() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
-			JMSUtilsRequests.chappyLogout(transaction);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
+			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -85,17 +85,17 @@ public class MixedClientTransactionFlowTransformationsTest {
 	/**
 	 * chappy test:
 	 * - login in chappy using jms
-	 * - add transformers and valide using REST
+	 * - add transformers and validate using REST
 	 * - logout from chappy using REST
 	 */
 	@Test
-	public void mixedChappyAddTransformer() {
+	public void mixedChappyJLoginRAddTransformerRListRLogout() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
 			List<String> addTransformers = new ArrayList<>();
 			addTransformers.add("PreProcessingStep");
-			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
-			JMSUtilsRequests.chappyLogout(transaction);
+			RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
+			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}

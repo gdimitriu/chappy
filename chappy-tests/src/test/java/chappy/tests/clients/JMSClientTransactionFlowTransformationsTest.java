@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

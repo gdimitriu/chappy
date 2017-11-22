@@ -290,7 +290,7 @@ public class JMSTransactionHolder implements IJMSTransactionHolder, ExceptionLis
 	 * @return true if the connection is closed.
 	 */
 	public boolean isClosed() {
-		if (currentConnection == null || exceptionReceived.getCause() instanceof ActiveMQDisconnectedException) {
+		if (currentConnection == null || (exceptionReceived != null && exceptionReceived.getCause() instanceof ActiveMQDisconnectedException)) {
 			return true;
 		}
 		return false;

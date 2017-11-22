@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogin;
@@ -54,7 +55,7 @@ public final class RESTUtilsRequests {
 	 * @param port 
 	 * @return transaction
 	 */
-	public static IRESTTransactionHolder chappyLogin(final int port) {
+	public static ChappyClientTransactionHolder chappyLogin(final int port) {
 		ChappyRESTLogin login = new ChappyRESTLogin("gdimitriu", "password", true);
 		try {
 			login.createConnectionToServer("localhost", port);
@@ -74,8 +75,8 @@ public final class RESTUtilsRequests {
 	 * @return chappy transaction holder
 	 */
 	public static IRESTTransactionHolder chappyLoginAddCustomTransformers(final List<String> addTransformers, final int port) {
-		IRESTTransactionHolder transaction = chappyLogin(port);
-		return chappyAddCustomTransformers(addTransformers, transaction);
+		ChappyClientTransactionHolder transaction = chappyLogin(port);
+		return chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 	}
 	
 	/**
@@ -84,7 +85,7 @@ public final class RESTUtilsRequests {
 	 * @param transaction in which the transformers should be added.
 	 * @return transaction.
 	 */
-	public static IRESTTransactionHolder chappyAddCustomTransformers(final List<String> addTransformers, final IRESTTransactionHolder transaction) {
+	public static IRESTTransactionHolder chppyAddCustomTransformersAndValidate(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
 		// add transformers in transaction
 		for (String transf : addTransformers) {
 			ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer(transf, transaction);
@@ -110,8 +111,8 @@ public final class RESTUtilsRequests {
 	 * logout from the chappy using REST.
 	 * @param transaction to logout
 	 */
-	public static void chappyLogout(final IRESTTransactionHolder transaction) {
-		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
+	public static void chappyLogout(final ChappyClientTransactionHolder transaction) {
+		ChappyRESTLogout logout = new ChappyRESTLogout(transaction.getRestTransaction()).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 }
