@@ -340,7 +340,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 			addTransformer.setTransformer("ProcessingStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 			addTransformer.send();
 			while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
-			assertEquals("add transformer " +  "ProcessingStep" + " exception", Status.OK.getStatusCode(), addTransformer.getStatusCode());
+			assertEquals("add transformer " +  "ProcessingStep" + " exception", IJMSStatus.OK, addTransformer.getStatus());
 			addTransformers.add("ProcessingStep");
 		} catch (IOException e) {
 			e.printStackTrace();
