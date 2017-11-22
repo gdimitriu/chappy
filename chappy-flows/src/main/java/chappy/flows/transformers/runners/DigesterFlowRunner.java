@@ -130,7 +130,7 @@ public class DigesterFlowRunner implements IFlowRunner {
 	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(java.lang.String)
 	 */
 	@Override
-	public void createSteps(final String userName) throws Exception {
+	public void createSteps(final String userName, final String passwd) throws Exception {
 		//nothing to do the the digester flow because this flow could not be overriden
 	}
 	

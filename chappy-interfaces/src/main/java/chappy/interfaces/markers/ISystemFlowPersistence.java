@@ -19,6 +19,8 @@
  */
 package chappy.interfaces.markers;
 
+import javax.jdo.PersistenceManager;
+
 /**
  * Marker for system flow persistence.
  * @author Gabriel Dimitriu
@@ -38,6 +40,12 @@ public interface ISystemFlowPersistence {
 	
 	/**
 	 * create the real element from the persisted data.
+	 * @param pm 
 	 */
-	public Object createRealElement();
+	public Object createRealElement(final PersistenceManager pm);
+	
+	/**
+	 * @return the cookieTransactionId
+	 */
+	public String getCookieTransactionId();
 }

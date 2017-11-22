@@ -39,7 +39,7 @@ public abstract class AbstractTransaction implements ITransaction {
 	private String transactionId;
 	
 	/** cookie transactionID */
-	private String cookieTransactionID;
+	private String cookieTransactionId;
 	
 	/**
 	 * 
@@ -54,9 +54,10 @@ public abstract class AbstractTransaction implements ITransaction {
 	 * @param persistence true if persist
 	 * @param transformers list of transformers
 	 */
-	public AbstractTransaction(final String id, final boolean persistence, final List<String> transformers) {
+	public AbstractTransaction(final String id, final boolean persistence, final List<String> transformers, final String cookieTransactionId) {
 		this.persistence = persistence;
 		this.transactionId = id;
+		this.cookieTransactionId = cookieTransactionId;
 		this.listOfTansformers = new ArrayList<String>();
 		if (transformers != null && !transformers.isEmpty()) {
 			this.listOfTansformers.addAll(transformers);
@@ -121,16 +122,17 @@ public abstract class AbstractTransaction implements ITransaction {
 	}
 
 	/**
-	 * @return the cookieTransactionID
+	 * @return the cookieTransactionId
 	 */
-	public String getCookieTransactionID() {
-		return cookieTransactionID;
+	@Override
+	public String getCookieTransactionId() {
+		return cookieTransactionId;
 	}
 
 	/**
-	 * @param cookieTransactionID the cookieTransactionID to set
+	 * @param cookieTransactionId the cookieTransactionId to set
 	 */
-	public void setCookieTransactionID(String cookieTransactionID) {
-		this.cookieTransactionID = cookieTransactionID;
+	public void setCookieTransactionId(String cookieTransactionID) {
+		this.cookieTransactionId = cookieTransactionID;
 	}
 }

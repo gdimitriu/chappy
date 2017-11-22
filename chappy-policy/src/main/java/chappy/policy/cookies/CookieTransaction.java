@@ -19,9 +19,21 @@
  */
 package chappy.policy.cookies;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
+import chappy.configurations.providers.SystemConfigurationProvider;
+import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.policy.authentication.CredentialHolder;
 
 /**
  * Base class for cookie.
@@ -29,30 +41,34 @@ import chappy.interfaces.cookies.IChappyCookie;
  *
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public abstract class CookieTransaction implements IChappyCookie {
 
 	/**
-	 * default but is overriden in the implementation class.
+	 * default but is overridden in the implementation class.
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement(name = "credentials")
 	/** name of the user */
-	private String userName;
+	private CredentialHolder credentials;
 	
+	@XmlElement(name = "transactionId")
 	/** transaction Id */
 	private String transactionId;
 	
-	/** rest server name */
-	private String restServerName;
+	@XmlElement(name = "correlationId")
+	/** correlation id for JMS */
+	private String correlationId;
 	
-	/* jms server name */
-	private String jmsServerName;
+	@XmlElement(name = "persistence")
+	/** persistence required flag */
+	private boolean persistence = false;
 	
-	/** rest server port */
-	private int restServerPort;
-	
-	/** jms server port */
-	private int jmsServerPort;
+	@XmlElement(name = "servers")
+	/** servers available */
+	private ServerConnectionInfo[] servers = new ServerConnectionInfo[0];
 	
 	/**
 	 * base cookie.
@@ -66,15 +82,24 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String getUserName() {
-		return userName;
+		return credentials.getUser();
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.cookies.IChappyCookie#getUserPassword()
+	 */
+	@Override
+	public String getUserPassword() {
+		return credentials.getPasswd();
 	}
 	
 	/**
 	 * set the user name
 	 * @param nameUser - the user name which own the cookie
+	 * @param passwd - the user password
 	 */
-	public void setUserName(final String nameUser) {
-		this.userName = nameUser;
+	public void setCredentials(final String nameUser, final String passwd) {
+		this.credentials = new CredentialHolder(nameUser, passwd);
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +123,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String generateStorageId() {
-		return userName + ":" + transactionId;
+		return credentials.getUser() + ":" + transactionId;
 	}
 
 	/**
@@ -106,14 +131,24 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String getRestServerName() {
-		return restServerName;
+		for (int i = 0; i < servers.length; i++) {
+			if ("rest".equals(servers[i].getType())) {
+				return servers[i].getServerName();
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * @param restServerName the restServerName to set
 	 */
 	public void setRestServerName(final String restServerName) {
-		this.restServerName = restServerName;
+		for (int i = 0; i < servers.length; i++) {
+			if ("rest".equals(servers[i].getType())) {
+				servers[i].setServerName(restServerName);
+				return;
+			}
+		}
 	}
 
 	/**
@@ -121,14 +156,25 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String getJmsServerName() {
-		return jmsServerName;
+		for (int i = 0; i < servers.length; i++) {
+			if ("jms".equals(servers[i].getType())) {
+				return servers[i].getServerName();
+			}
+		}
+		return null;
+
 	}
 
 	/**
 	 * @param jmsServerName the jmsServerName to set
 	 */
 	public void setJmsServerName(final String jmsServerName) {
-		this.jmsServerName = jmsServerName;
+		for (int i = 0; i < servers.length; i++) {
+			if ("jms".equals(servers[i].getType())) {
+				servers[i].setServerName(jmsServerName);
+				return;
+			}
+		}
 	}
 
 	/**
@@ -136,28 +182,98 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public int getRestServerPort() {
-		return restServerPort;
+		for (int i = 0; i < servers.length; i++) {
+			if ("rest".equals(servers[i].getType())) {
+				return servers[i].getServerPort();
+			}
+		}
+		return -1;
+
 	}
 
 	/**
 	 * @param restServerPort the restServerPort to set
 	 */
 	public void setRestServerPort(final int restServerPort) {
-		this.restServerPort = restServerPort;
+		for (int i = 0; i < servers.length; i++) {
+			if ("rest".equals(servers[i].getType())) {
+				servers[i].setServerPort(restServerPort);
+				return;
+			}
+		}
 	}
 
 	/**
 	 * @return the jmsServerPort
 	 */
 	@Override
-	public int getJmsServerPort() {
-		return jmsServerPort;
+	public int getJmsServerPort() {		
+		for (int i = 0; i < servers.length; i++) {
+			if ("jms".equals(servers[i].getType())) {
+				return servers[i].getServerPort();
+			}
+		}
+		return -1;
 	}
 
 	/**
 	 * @param jmsServerPort the jmsServerPort to set
 	 */
 	public void setJmsServerPort(final int jmsServerPort) {
-		this.jmsServerPort = jmsServerPort;
+		for (int i = 0; i < servers.length; i++) {
+			if ("jms".equals(servers[i].getType())) {
+				servers[i].setServerPort(jmsServerPort);
+			}
+		}
+	}
+
+	/**
+	 * @return the correlationId
+	 */
+	@Override
+	public String getCorrelationId() {
+		return correlationId;
+	}
+
+	/**
+	 * @param correlationId the correlationId to set
+	 */
+	@Override
+	public void setCorrelationId(final String correlationId) {
+		this.correlationId = correlationId;
+	}
+	
+	@Override
+	public void update() {
+		SystemConfiguration[] configurations = SystemConfigurationProvider.getInstance()
+				.getSystemConfiguration().getServicesConfigurations();
+		servers = new ServerConnectionInfo[configurations.length];
+		for (int i = 0; i < servers.length; i++ ) {
+			servers[i] = new ServerConnectionInfo();
+			servers[i].setType(configurations[i].getName());
+			servers[i].setServerPort(Integer.parseInt(configurations[i].getPropertyValue("serverPort")));
+			String serverName = configurations[i].getPropertyValue("serverHost");
+			if (serverName.isEmpty()) {
+				try {
+					serverName = InetAddress.getLocalHost().getCanonicalHostName();
+				} catch (UnknownHostException e) {
+					serverName = "localhost";
+				} 
+			}
+			servers[i].setServerName(serverName);
+		}
+	}
+	
+	@Override
+	public boolean getPersistence() {
+		return this.persistence;
+	}
+	
+	
+	/**
+	 * @param persistence the persistence flag
+	 */
+	public void setPersistence(final boolean persistence) {
+		this.persistence = persistence;
 	}
 }

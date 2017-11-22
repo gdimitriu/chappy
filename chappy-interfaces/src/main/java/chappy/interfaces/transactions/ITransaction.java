@@ -161,4 +161,9 @@ public interface ITransaction {
 	 * persist the transaction if the transaction is capable.
 	 */
 	void persist();
+
+	/**
+	 * @return the cookieTransactionId
+	 */
+	String getCookieTransactionId();
 }

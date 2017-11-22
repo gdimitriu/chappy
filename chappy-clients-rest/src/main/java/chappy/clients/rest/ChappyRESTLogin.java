@@ -19,25 +19,13 @@
  */
 package chappy.clients.rest;
 
-import java.net.URI;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-
 import chappy.clients.common.AbstractChappyClient;
-import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.common.transaction.RESTTransactionHolder;
 import chappy.clients.rest.protocol.IRESTMessage;
 import chappy.clients.rest.protocol.RESTLoginMessage;
 import chappy.interfaces.rest.IRESTTransactionHolder;
-import chappy.interfaces.rest.LocalDateTimeContextResolver;
 
 /**
  * Chappy login request client for REST.
@@ -46,17 +34,10 @@ import chappy.interfaces.rest.LocalDateTimeContextResolver;
  */
 public class ChappyRESTLogin extends AbstractChappyClient implements IChappyRESTClient{
 
-	/** http REST client */
-	private Client client = null;
-	
-	/** base URI for chappy */
-	private URI baseUri = null;
-	
-	/** web target for REST client */
-	private WebTarget target = null;
-	
 	/** http response for REST client */
 	private Response response = null;
+	
+	private RESTTransactionHolder transaction = null;
 	
 	/**
 	 * base constructor. 
@@ -66,35 +47,24 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	public ChappyRESTLogin(final String userName, final String passwd, final boolean persistence) {
 		setProtocol(new RESTLoginMessage(userName, passwd));
 		((RESTLoginMessage) getProtocol()).setPersistence(persistence);
+		transaction = new RESTTransactionHolder(userName, passwd, persistence);
 	}
 
-	/**
-	 * @param serverName
-	 * @param port
-	 * @throws Exception 
-	 */
-	public void createConnectionToServer(final String serverName, final int port) throws Exception {
-		client = ClientBuilder.newClient()
-				.register(MultiPartFeature.class)
-				.register(MultiPartWriter.class)
-				.register(JacksonJaxbJsonProvider.class)
-				.register(LocalDateTimeContextResolver.class);
-		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://" + serverName + ":" + port + "/" }, false);
-		target = client.target(baseUri);
-	}
 
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.rest.IRESTClient#createTransactionHolder()
 	 */
 	@Override
 	public IRESTTransactionHolder createTransactionHolder() {
-		return ChappyClientTransactionHolder.createRESTTransactionHolder(client, baseUri, target, getCookie());
+		transaction.setCookie(getCookie());
+		return transaction;
 	}
 	
 	@Override
 	public ChappyRESTLogin send() {
 		try {
-			response = ((IRESTMessage) getProtocol()).encodeInboundMessage(target).invoke();
+			response = ((IRESTMessage) getProtocol())
+					.encodeInboundMessage(transaction.getRestTarget()).invoke();
 		} catch (JsonProcessingException e) {
 			//Nothing to do for login.
 		}
@@ -104,8 +74,19 @@ public class ChappyRESTLogin extends AbstractChappyClient implements IChappyREST
 	
 	@Override
 	public String closeAll() {
-		client.close();
+		transaction.getRestClient().close();
 		return "Chappy:= has been stopped ok.";
+	}
+
+
+	/**
+	 * create the connection to the server.
+	 * @param serverName
+	 * @param port
+	 * @throws Exception 
+	 */
+	public void createConnectionToServer(final String serverName, final int port) throws Exception {
+		transaction.createConnectionToServer(serverName, port);
 	}
 
 }

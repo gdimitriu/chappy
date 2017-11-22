@@ -244,16 +244,16 @@ public class RestCallsForFlowTransformationsTest {
 		response = target.path(IRestPathConstants.PATH_TO_DELETE_TRANSFORMER_TO_FLOW)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).queryParam("transformer", transformerName).request()
 				.delete();
-		assertEquals("could not delete transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not delete transformer", Status.OK.getStatusCode(), response.getStatus());
 		transformerName = "PreProcessingStep";
 		response = target.path(IRestPathConstants.PATH_TO_DELETE_TRANSFORMER_TO_FLOW)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).queryParam("transformer", transformerName).request()
 				.delete();
-		assertEquals("could not delete transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not delete transformer", Status.OK.getStatusCode(), response.getStatus());
 		transformerName = "PostProcessingStep";
 		response = target.path(IRestPathConstants.PATH_TO_DELETE_TRANSFORMER_TO_FLOW)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).queryParam("transformer", transformerName).request()
 				.delete();
-		assertEquals("could not delete transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not delete transformer", Status.OK.getStatusCode(), response.getStatus());
 	}
 }

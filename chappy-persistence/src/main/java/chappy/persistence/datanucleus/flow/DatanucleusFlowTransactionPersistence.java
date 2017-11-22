@@ -22,6 +22,7 @@ package chappy.persistence.datanucleus.flow;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Join;
 import javax.jdo.annotations.Order;
@@ -65,9 +66,9 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	 */
 	@Override
 	public String getTransactionId() {
-		if (cookieTransactionId != null) {
-			return cookieTransactionId;
-		}
+//		if (cookieTransactionId != null) {
+//			return cookieTransactionId;
+//		}
 		return transactionId;
 	}
 	
@@ -89,6 +90,7 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	/**
 	 * @return the cookie transaction id (JMS or other transaction id)
 	 */
+	@Override
 	public String getCookieTransactionId() {
 		return this.cookieTransactionId;
 	}
@@ -127,7 +129,11 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	 * @see chappy.interfaces.markers.ISystemFlowPersistence#createRealElement()
 	 */
 	@Override
-	public ITransaction createRealElement() {
-		return new DatanucleusTransaction(transactionId, true, listOftransformers);
+	public ITransaction createRealElement(final PersistenceManager pm) {
+		
+		DatanucleusTransaction trans = new DatanucleusTransaction(transactionId, true, listOftransformers, cookieTransactionId);
+		trans.setPersistedTransaction(this);
+		trans.setPersistenceFlowManager(pm);
+		return trans;
 	}
 }

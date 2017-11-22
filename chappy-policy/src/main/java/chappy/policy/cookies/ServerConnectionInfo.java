@@ -17,73 +17,78 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.policy.authentication;
+package chappy.policy.cookies;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
- * Holder for User/Password.
+ * Connection information of the server.
  * @author Gabriel Dimitriu
  *
  */
-@XmlRootElement
-public class CredentialHolder implements Serializable {
+public class ServerConnectionInfo implements Serializable {
 
 	/**
-	 * default serial version id.
+	 * default serial version.
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** the user */
-	@XmlElement(name = "user")
-	private String user;
+	/** type of the server like: rest, jms */
+	private String type;
 	
-	/** the password */
-	@XmlElement(name = "passwd")
-	private String passwd;
+	/** name of the server eg: localhost or network name */
+	private String serverName;
 	
-	/**
-	 * default constructor.
-	 */
-	public CredentialHolder() {
-		this.user = null;
-		this.passwd = null;
-	}
+	/** the connection port of the server */
+	private int serverPort;
+	
 	/**
 	 * 
 	 */
-	public CredentialHolder(final String user, final String passwd) {
-		this.user = user;
-		this.passwd = passwd;
+	public ServerConnectionInfo() {
+		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
-	 * @return the user
+	 * @return the type
 	 */
-	public String getUser() {
-		return user;
+	public String getType() {
+		return type;
 	}
-	
+
 	/**
-	 * @return the passwd
+	 * @param type the type to set
 	 */
-	public String getPasswd() {
-		return passwd;
+	public void setType(final String type) {
+		this.type = type;
 	}
+
 	/**
-	 * @param user the user to set
+	 * @return the serverName
 	 */
-	public void setUser(String user) {
-		this.user = user;
+	public String getServerName() {
+		return serverName;
 	}
+
 	/**
-	 * @param passwd the passwd to set
+	 * @param serverName the serverName to set
 	 */
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
+	public void setServerName(final String serverName) {
+		this.serverName = serverName;
+	}
+
+	/**
+	 * @return the port
+	 */
+	public int getServerPort() {
+		return serverPort;
+	}
+
+	/**
+	 * @param port the port to set
+	 */
+	public void setServerPort(final int port) {
+		this.serverPort = port;
 	}
 
 }

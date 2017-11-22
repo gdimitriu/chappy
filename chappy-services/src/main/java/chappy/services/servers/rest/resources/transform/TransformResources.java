@@ -81,6 +81,7 @@ public class TransformResources {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response processDataStreamFlow(final FormDataMultiPart multipart,
 			@QueryParam(IChappyServiceNamesConstants.LOGIN_USER) final String userName,
+			@QueryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD) final String passwd,
 			@Context UriInfo uriInfo) throws Exception {
 		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
 		InputStream configurationStream = null;
@@ -108,7 +109,7 @@ public class TransformResources {
 		
 		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
 				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
-		runner.createSteps(userName);
+		runner.createSteps(userName, passwd);
 		runner.executeSteps(holder);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();

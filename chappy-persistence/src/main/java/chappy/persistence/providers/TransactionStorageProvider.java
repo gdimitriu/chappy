@@ -41,7 +41,7 @@ public class TransactionStorageProvider {
 	private IPersistence systemFlowPersistence = null;
 	
 	/** map of transactions persisted data */
-	private Map<String, ITransaction> mapOfTransactionPersistedData = null;
+	public Map<String, ITransaction> mapOfTransactionPersistedData = null;
 	
 	/** map of transactions */
 	private Map<String, ITransaction> mapOfTransactionTransientData = null;
@@ -74,7 +74,7 @@ public class TransactionStorageProvider {
 				List<ISystemFlowPersistence> persisted = (List<ISystemFlowPersistence>) query.execute();
 				// TODO put persistence in map
 				for (ISystemFlowPersistence flow : persisted) {
-					mapOfTransactionPersistedData.put(flow.getStorageId(), (ITransaction) flow.createRealElement());
+					mapOfTransactionPersistedData.put(flow.getStorageId(), (ITransaction) flow.createRealElement(pm));
 				}
 				query.close();
 				tx.commit();

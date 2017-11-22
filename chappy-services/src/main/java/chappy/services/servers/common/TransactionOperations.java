@@ -59,7 +59,7 @@ public class TransactionOperations {
 			}
 		}
 		
-		response = TransactionProviders.getInstance().startTransaction(requester, userName, persistence, transactionId);
+		response = TransactionProviders.getInstance().startTransaction(requester, userName, password, persistence, transactionId);
 		return response;
 	}
 	

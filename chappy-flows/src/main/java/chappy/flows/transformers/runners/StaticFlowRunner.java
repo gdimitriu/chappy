@@ -133,8 +133,8 @@ public class StaticFlowRunner implements IFlowRunner{
 	 * @see chappy.interfaces.flows.IFlowRunner#createSteps(final String userName)
 	 */
 	@Override
-	public void createSteps(final String userName) throws Exception {
-		createSteps(CookieFactory.getFactory().newCookie(null, userName));		
+	public void createSteps(final String userName, final String passwd) throws Exception {
+		createSteps(CookieFactory.getFactory().newCookie(null, userName, passwd));		
 	}
 
 	

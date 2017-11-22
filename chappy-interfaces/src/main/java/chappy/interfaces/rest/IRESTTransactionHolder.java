@@ -47,4 +47,12 @@ public interface IRESTTransactionHolder extends IClientTransaction {
 	 * @return the restTarget
 	 */
 	public WebTarget getRestTarget();
+	
+	/**
+	 * create the connection to server.
+	 * @param serverName
+	 * @param port
+	 * @throws Exception
+	 */
+	public void createConnectionToServer(final String serverName, final int port) throws Exception;
 }

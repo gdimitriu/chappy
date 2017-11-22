@@ -23,6 +23,7 @@ import java.net.URI;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -105,15 +106,19 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 	/**
 	 * @return the jmsTransaction
+	 * @throws Exception exception if the connection could not be created.
 	 */
-	public JMSTransactionHolder getJmsTransaction() {
+	public JMSTransactionHolder getJmsTransaction() throws Exception {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
 		return jmsTransaction;
 	}
 
 	/**
 	 * @param jmsTransaction the jmsTransaction to set
 	 */
-	public void setJmsTransaction(JMSTransactionHolder jmsTransaction) {
+	public void setJmsTransaction(final JMSTransactionHolder jmsTransaction) {
 		this.jmsTransaction = jmsTransaction;
 	}
 
@@ -121,13 +126,16 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	 * @return the restTransaction
 	 */
 	public RESTTransactionHolder getRestTransaction() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction;
 	}
 
 	/**
 	 * @param restTransaction the restTransaction to set
 	 */
-	public void setRestTransaction(RESTTransactionHolder restTransaction) {
+	public void setRestTransaction(final RESTTransactionHolder restTransaction) {
 		this.restTransaction = restTransaction;
 	}
 
@@ -144,41 +152,94 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 
 	@Override
 	public Client getRestClient() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction.getRestClient();
 	}
 
 	@Override
 	public URI getBaseUri() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction.getBaseUri();
 	}
 
 	@Override
 	public WebTarget getRestTarget() {
+		if (restTransaction == null && jmsTransaction != null) {
+			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
+		}
 		return restTransaction.getRestTarget();
 	}
 
 	@Override
-	public Connection getCurrentConnection() {
+	public Connection getCurrentConnection() throws JMSException {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentConnection();
 	}
 
 	@Override
-	public Session getCurrentSession() {
+	public Session getCurrentSession() throws JMSException {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentSession();
 	}
 
 	@Override
-	public MessageConsumer getCurrentMessageConsumer() {
+	public MessageConsumer getCurrentMessageConsumer() throws JMSException {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentMessageConsumer();
 	}
 
 	@Override
-	public MessageProducer getCurrentMessageProducer() {
+	public MessageProducer getCurrentMessageProducer() throws JMSException {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentMessageProducer();
 	}
 
 	@Override
-	public Destination getCurrentReplyToDestination() {
+	public Destination getCurrentReplyToDestination() throws JMSException {
+		if (jmsTransaction == null && restTransaction != null) {
+			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
+		}
+		checkAndReconnectDeadSessions();
 		return jmsTransaction.getCurrentReplyToDestination();
+	}
+
+	@Override
+	public void createConnectionToServer(final String serverName, final int port) throws Exception {
+		if (restTransaction != null) {
+			restTransaction.createConnectionToServer(serverName, port);
+		}
+	}
+	
+	/**
+	 * @throws JMSException
+	 */
+	private void checkAndReconnectDeadSessions() throws JMSException {
+		if (jmsTransaction.isClosed()) {
+			jmsTransaction = new JMSTransactionHolder(jmsTransaction.getCookie());
+		}
+	}
+
+	@Override
+	public String closeAll() {
+		if (jmsTransaction != null) {
+			return jmsTransaction.closeAll();
+		}
+		return null;
 	}
 }

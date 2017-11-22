@@ -22,10 +22,19 @@ package chappy.clients.common.transaction;
 import java.net.URI;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.UriBuilder;
+
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.rest.IRESTTransactionHolder;
+import chappy.interfaces.rest.LocalDateTimeContextResolver;
+import chappy.providers.cookie.CookieFactory;
 
 /**
  * @author Gabriel Dimitriu
@@ -34,16 +43,16 @@ import chappy.interfaces.rest.IRESTTransactionHolder;
 public class RESTTransactionHolder implements IRESTTransactionHolder{
 
 	/** cookie for the transactions */
-	private IChappyCookie chappyCookie = null;
+	private IChappyCookie currentCookie = null;
 	
 	/** rest client */
-	private Client restClient = null; 
+	private Client currentClient = null; 
 	
 	/** base uri for the rest client */
-	private URI baseUri = null;
+	private URI currentBaseUri = null;
 	
 	/** rest target for client */
-	private WebTarget restTarget = null;
+	private WebTarget currentTarget = null;
 	/**
 	 * 
 	 */
@@ -58,22 +67,40 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 	 * @param cookie
 	 */
 	public RESTTransactionHolder(final Client client, final URI baseUri, final WebTarget target, final IChappyCookie cookie) {
-		this.chappyCookie = cookie;
-		this.restClient = client;
-		this.baseUri = baseUri;
-		this.restTarget = target; 
+		this.currentCookie = cookie;
+		this.currentClient = client;
+		this.currentBaseUri = baseUri;
+		this.currentTarget = target; 
+	}
+
+	/**
+	 * constructor to create a REST transaction from other protocol.
+	 * @param cookie the cookie which contains all info needed
+	 */
+	public RESTTransactionHolder(final IChappyCookie cookie) {
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	/**
+	 * @param userName
+	 * @param passwd
+	 * @param persistence
+	 */
+	public RESTTransactionHolder(final String userName, final String passwd, final boolean persistence) {
+		currentCookie = CookieFactory.getFactory().newCookie(userName, passwd, persistence);
 	}
 
 	@Override
 	public IChappyCookie getCookie() {
-		return this.chappyCookie;
+		return this.currentCookie;
 	}
 
 	/**
 	 * @param chappyCookie the chappyCookie to set
 	 */
 	public void setCookie(IChappyCookie chappyCookie) {
-		this.chappyCookie = chappyCookie;
+		this.currentCookie = chappyCookie;
 	}
 
 	/**
@@ -81,14 +108,14 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 	 */
 	@Override
 	public Client getRestClient() {
-		return restClient;
+		return currentClient;
 	}
 
 	/**
 	 * @param restClient the restClient to set
 	 */
 	public void setRestClient(Client restClient) {
-		this.restClient = restClient;
+		this.currentClient = restClient;
 	}
 
 	/**
@@ -96,14 +123,14 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 	 */
 	@Override
 	public URI getBaseUri() {
-		return baseUri;
+		return currentBaseUri;
 	}
 
 	/**
 	 * @param baseUri the baseUri to set
 	 */
 	public void setBaseUri(URI baseUri) {
-		this.baseUri = baseUri;
+		this.currentBaseUri = baseUri;
 	}
 
 	/**
@@ -111,13 +138,29 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 	 */
 	@Override
 	public WebTarget getRestTarget() {
-		return restTarget;
+		return currentTarget;
 	}
 
 	/**
 	 * @param restTarget the restTarget to set
 	 */
 	public void setRestTarget(WebTarget restTarget) {
-		this.restTarget = restTarget;
+		this.currentTarget = restTarget;
+	}
+	
+	/**
+	 * @param serverName
+	 * @param port
+	 * @throws Exception 
+	 */
+	@Override
+	public void createConnectionToServer(final String serverName, final int port) throws Exception {
+		currentClient = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class)
+				.register(JacksonJaxbJsonProvider.class)
+				.register(LocalDateTimeContextResolver.class);
+		currentBaseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://" + serverName + ":" + port + "/" }, false);
+		currentTarget = currentClient.target(currentBaseUri);
 	}
 }

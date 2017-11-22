@@ -73,8 +73,8 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 * @param persistence
 	 * @param transformers
 	 */
-	public DatanucleusTransaction(final String id, final boolean persistence, final List<String> transformers) {
-		super(id,persistence,transformers);
+	public DatanucleusTransaction(final String id, final boolean persistence, final List<String> transformers, final String cookieTransactionId) {
+		super(id,persistence,transformers, cookieTransactionId);
 		start();
 	}
 	
@@ -222,8 +222,13 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	}
 	
 	private void updatePersistenceData() {
-		DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
-		persistedTransaction = obj;
+		try {
+			DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
+			persistedTransaction = obj;
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
 		Transaction transaction = persistenceFlowManager.currentTransaction();
 		transaction.begin();
@@ -241,15 +246,15 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		persistedTransaction.setStorageId(cookie.generateStorageId());
 		flowTransaction.begin();
 		persistenceFlowManager.makePersistent(persistedTransaction);
-		if (cookie.getTransactionId() == null) {
-			setCookieTransactionID(cookie.getTransactionId());
+		if (cookie.getTransactionId() != null) {
+			setCookieTransactionId(cookie.getTransactionId());
 		}
 		setTransactionId(persistedTransaction.getTransactionId());
 		flowTransaction.commit();
 		if (cookie.getTransactionId() == null) {
 			cookie.setTransactionId(getTransactionId());
 		} else {
-			setCookieTransactionID(cookie.getTransactionId());
+//			setCookieTransactionID(cookie.getTransactionId());
 			setTransactionId(getTransactionId());
 		}
 	}
@@ -266,5 +271,23 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		flowTransaction.begin();
 		persistenceFlowManager.makePersistent(persistedTransaction);
 		flowTransaction.commit();
+	}
+
+
+	/**
+	 * @param persistedTransaction the persistedTransaction to set
+	 */
+	public void setPersistedTransaction(DatanucleusFlowTransactionPersistence persistedTransaction) {
+		this.persistedTransaction = persistedTransaction;
+	}
+
+
+	
+	/**
+	 * set the system flow persistence manager
+	 * @param pm persistence manager
+	 */
+	public void setPersistenceFlowManager(PersistenceManager pm) {
+		persistenceFlowManager = pm;
 	}
 }

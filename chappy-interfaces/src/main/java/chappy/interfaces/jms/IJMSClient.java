@@ -35,12 +35,6 @@ public interface IJMSClient extends MessageListener {
 	 */
 	public Object send() throws JMSException;
 	
-	/**
-	 * close all connections.
-	 * This should be called only once.
-	 * @return message confirmation.
-	 */
-	public String closeAll();
 	
 	/**
 	 * This contains everithing neeed to continue communication to chappy.

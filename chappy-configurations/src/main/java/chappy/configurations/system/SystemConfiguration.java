@@ -78,4 +78,18 @@ public class SystemConfiguration {
 	public PropertyConfiguration[] getProperties() {
 		return property;
 	}
+	
+	/**
+	 * get the value of a specific property
+	 * @param property name
+	 * @return value of property
+	 */
+	public String getPropertyValue(final String property) {
+		for (int i = 0 ; i < this.property.length; i++) {
+			if (property.equals(this.property[i].getName())) {
+				return this.property[i].getValue();
+			}
+		}
+		return "";
+	}
 }

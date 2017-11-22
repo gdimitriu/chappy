@@ -113,7 +113,7 @@ public class RestTrasactionFlowTransformationsTest {
 				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password").request().get();
 
-		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
 
 		Map<String, NewCookie> cookies = response.getCookies();
 
@@ -153,7 +153,7 @@ public class RestTrasactionFlowTransformationsTest {
 				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password").request().get();
 
-		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
 
 		Map<String, NewCookie> cookies = response.getCookies();
 
@@ -165,7 +165,7 @@ public class RestTrasactionFlowTransformationsTest {
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_ADD)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.cookie(cookie).post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.INPUT_DATA,
@@ -204,7 +204,7 @@ public class RestTrasactionFlowTransformationsTest {
 				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password").request().get();
 
-		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
 
 		Map<String, NewCookie> cookies = response.getCookies();
 
@@ -216,7 +216,7 @@ public class RestTrasactionFlowTransformationsTest {
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_ADD)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.cookie(cookie).post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "SplitterStep")
 				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA,
@@ -224,7 +224,7 @@ public class RestTrasactionFlowTransformationsTest {
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_ADD)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.cookie(cookie).post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.INPUT_DATA,
 				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"));
@@ -261,7 +261,7 @@ public class RestTrasactionFlowTransformationsTest {
 				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
 				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password").request().get();
 
-		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
 
 		Map<String, NewCookie> cookies = response.getCookies();
 
@@ -273,7 +273,7 @@ public class RestTrasactionFlowTransformationsTest {
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_ADD)
 				.path(IRestResourcesConstants.REST_TRANSFORMER).request(new String[] { MediaType.MULTIPART_FORM_DATA })
 				.cookie(cookie).post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		multipartEntity = new FormDataMultiPart().field(IChappyServiceNamesConstants.INPUT_DATA,
 				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"));

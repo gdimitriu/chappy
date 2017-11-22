@@ -33,6 +33,12 @@ public interface IChappyCookie extends Serializable {
 	 * @return the user name
 	 */
 	String getUserName();
+	
+	/**
+	 * get the user password.
+	 * @return password for the user.
+	 */
+	String getUserPassword();
 
 	/**
 	 * get the transaction id.
@@ -78,4 +84,25 @@ public interface IChappyCookie extends Serializable {
 	int getJmsServerPort();
 	
 
+	/**
+	 * @return correlationId used by JMS
+	 */
+	String getCorrelationId();
+	
+	
+	/**
+	 * @param correlationId correlationId used by JMS
+	 */
+	void setCorrelationId(final String correlationId);
+	
+	/**
+	 * update the server information for the cookie.
+	 */
+	void update();
+	
+	/**
+	 * get the persistence flag.
+	 * @return true if the user required persistence.
+	 */
+	boolean getPersistence();
 }

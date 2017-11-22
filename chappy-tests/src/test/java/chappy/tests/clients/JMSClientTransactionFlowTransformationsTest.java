@@ -173,7 +173,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 			while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
 			if (transformer.getStatusCode() >= 0) {
 				List<String> actual = transformer.getOutputResultAsString();
-				assertEquals(actual.size(), 1);
+				assertEquals(1, actual.size());
 				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 							actual.get(0));
 			} else {
@@ -210,7 +210,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 			while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
 			if (transformer.getStatusCode() >= 0) {
 				List<String> actual = transformer.getOutputResultAsString();
-				assertEquals(actual.size(), 1);
+				assertEquals(1, actual.size());
 				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
 							actual.get(0));
 			} else {
@@ -339,8 +339,8 @@ public class JMSClientTransactionFlowTransformationsTest {
 		try {
 			addTransformer.setTransformer("ProcessingStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 			addTransformer.send();
-			assertEquals("add transformer " +  "ProcessingStep" + " exception", addTransformer.getStatusCode(),
-					Status.OK.getStatusCode());
+			while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			assertEquals("add transformer " +  "ProcessingStep" + " exception", IJMSStatus.OK, addTransformer.getStatus());
 			addTransformers.add("ProcessingStep");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -352,8 +352,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 			// list the added transformers
 			ChappyJMSListTransformers listTransformers = new ChappyJMSListTransformers(transaction).send();
 			while(listTransformers.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
-			assertEquals("internal error for list transformers", listTransformers.getStatus(),
-					IJMSStatus.OK);
+			assertEquals("internal error for list transformers",IJMSStatus.OK, listTransformers.getStatus());
 			List<String> transformers = listTransformers.getListOfTransformersName();
 			TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
 		} catch (Exception e) {
@@ -367,7 +366,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
 		if (transformer.getStatusCode() >= 0) {
 			List<String> actual = transformer.getOutputResultAsString();
-			assertEquals(actual.size(), 1);
+			assertEquals(1, actual.size());
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
 						actual.get(0));
 		} else {

@@ -41,13 +41,13 @@ public class MixedClientTransactionFlowTransformationsTest {
 	private int serverJMSPort = 61616;
 		
 	/** chappy server */
-	private MixedChappyServer server = new MixedChappyServer();
+	private static MixedChappyServer server = new MixedChappyServer();
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
-	public void setUp() throws Exception {
+	public static void setUp() throws Exception {
 		server.startAll();
 	}
 	
@@ -55,7 +55,7 @@ public class MixedClientTransactionFlowTransformationsTest {
 	 * @throws java.lang.Exception
 	 */
 	@AfterClass
-	public void tearDown() throws Exception {
+	public static void tearDown() throws Exception {
 		server.stopAll();
 	}
 	

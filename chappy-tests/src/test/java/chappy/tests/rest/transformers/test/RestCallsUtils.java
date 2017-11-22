@@ -66,7 +66,7 @@ public final class RestCallsUtils {
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
@@ -76,7 +76,7 @@ public final class RestCallsUtils {
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		cookie = response.getCookies().get("userData");
 		multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "ProcessingStep")
@@ -86,7 +86,7 @@ public final class RestCallsUtils {
 				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
 				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
 				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
 		return response;
 	}
 }

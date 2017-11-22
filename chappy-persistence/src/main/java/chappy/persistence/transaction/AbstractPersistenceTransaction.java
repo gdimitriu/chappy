@@ -59,8 +59,8 @@ public abstract class AbstractPersistenceTransaction extends AbstractTransaction
 	 * @param persistence
 	 * @param transformers
 	 */
-	public AbstractPersistenceTransaction(final String id, final boolean persistence, final List<String> transformers) {
-		super(id,persistence, transformers);
+	public AbstractPersistenceTransaction(final String id, final boolean persistence, final List<String> transformers, final String cookieTransactionId) {
+		super(id,persistence, transformers, cookieTransactionId);
 		try {
 			systemUpgradePersistenceImpl = PersistenceProvider.getInstance().getSystemUpgradePersistence();
 		} catch (InstantiationException | IllegalAccessException e) {
