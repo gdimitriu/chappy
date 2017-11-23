@@ -69,7 +69,7 @@ public final class RESTUtilsRequests {
 	}
 
 	/**
-	 * login and add custom transformers and list and validate them on REST.
+	 * login and add custom transformers and list and validate them
 	 * @param addTransformers (list of custom transformers)
 	 * @param port in which the transformers should be added.
 	 * @return chappy transaction holder
@@ -80,10 +80,46 @@ public final class RESTUtilsRequests {
 	}
 	
 	/**
-	 * add customs transformers to chappy on REST.
-	 * @param addTransformers (list of custom transformers)
-	 * @param transaction in which the transformers should be added.
-	 * @return transaction.
+	 * add custom transformers to chappy
+	 * @param addTransformers the list of transformers to add
+	 * @param transaction the client transaction 
+	 * @return chappy transaction holder
+	 */
+	public static IRESTTransactionHolder chppyAddCustomTransformers(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
+		// add transformers in transaction
+		for (String transf : addTransformers) {
+			ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer(transf, transaction);
+			try {
+				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
+				addTransformer.send();
+				assertEquals("add transformer " + transf + " exception", addTransformer.getStatusCode(), Status.OK.getStatusCode());
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail("exception occured at add transformer" + e.getLocalizedMessage());
+			}
+		}
+		return transaction;
+	}
+	
+	/**
+	 * validate the added transformers on chappy
+	 * @param addTransformers the list of transformers to validate
+	 * @param transaction the client transaction
+	 */
+	public static void chappyValidateTransformers(final List<String> addTransformers,
+			final ChappyClientTransactionHolder transaction) {
+		// list the added transformers
+		ChappyRESTListTransformers listTransformers = new ChappyRESTListTransformers(transaction).send();
+		assertEquals("internal error for list transformers", Status.OK.getStatusCode(), listTransformers.getStatusCode());
+		List<String> transformers = listTransformers.getListOfTransformersName();
+		TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
+	}
+	
+	/**
+	 * add custom transformers and list and validate them.
+	 * @param addTransformers list of transformers to add
+	 * @param transaction the client transaction
+	 * @return chappy transaction holder
 	 */
 	public static IRESTTransactionHolder chppyAddCustomTransformersAndValidate(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
 		// add transformers in transaction
@@ -99,16 +135,12 @@ public final class RESTUtilsRequests {
 			}
 		}
 
-		// list the added transformers
-		ChappyRESTListTransformers listTransformers = new ChappyRESTListTransformers(transaction).send();
-		assertEquals("internal error for list transformers", Status.OK.getStatusCode(), listTransformers.getStatusCode());
-		List<String> transformers = listTransformers.getListOfTransformersName();
-		TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
+		chappyValidateTransformers(addTransformers, transaction);
 		return transaction;
 	}
-	
+
 	/**
-	 * logout from the chappy using REST.
+	 * logout from the chappy
 	 * @param transaction to logout
 	 */
 	public static void chappyLogout(final ChappyClientTransactionHolder transaction) {

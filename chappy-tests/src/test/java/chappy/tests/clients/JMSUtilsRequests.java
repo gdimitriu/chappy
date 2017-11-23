@@ -80,6 +80,74 @@ public final class JMSUtilsRequests {
 	}
 	
 	/**
+	 * add custom transformers to chappy
+	 * @param addTransformers the list of transformers to add
+	 * @param transaction the client transaction 
+	 * @return chappy transaction holder
+	 */
+	public static ChappyClientTransactionHolder chppyAddCustomTransformers(final List<String> addTransformers,
+			final ChappyClientTransactionHolder transaction) {
+		
+		// add transformers in transaction
+		for (String transf : addTransformers) {
+			ChappyJMSAddTransformer addTransformer = new ChappyJMSAddTransformer(transf, transaction);
+			try {
+				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
+				addTransformer.send();
+				while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+				assertEquals("add transformer " + transf + " exception", IJMSStatus.OK,  addTransformer.getStatus());
+			} catch (IOException | JMSException | InterruptedException e) {
+				fail("exception occured at add transformer" + e.getLocalizedMessage());
+			}
+		}
+		return transaction;
+	}
+	
+	/**
+	 * add custom transformers and list and validate them.
+	 * @param addTransformers list of transformers to add
+	 * @param transaction the client transaction
+	 * @return chappy transaction holder
+	 */
+	public static ChappyClientTransactionHolder chppyAddCustomTransformersAndValidate(final List<String> addTransformers,
+			final ChappyClientTransactionHolder transaction) {
+		
+		// add transformers in transaction
+		for (String transf : addTransformers) {
+			ChappyJMSAddTransformer addTransformer = new ChappyJMSAddTransformer(transf, transaction);
+			try {
+				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
+				addTransformer.send();
+				while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+				assertEquals("add transformer " + transf + " exception", IJMSStatus.OK,  addTransformer.getStatus());
+			} catch (IOException | JMSException | InterruptedException e) {
+				fail("exception occured at add transformer" + e.getLocalizedMessage());
+			}
+		}
+		chappyValidateTransformers(addTransformers, transaction);
+		return transaction;
+	}
+
+	/**
+	 * validate the added transformers on chappy
+	 * @param addTransformers the list of transformers to validate
+	 * @param transaction the client transaction
+	 */
+	public static void chappyValidateTransformers(final List<String> addTransformers,
+			final ChappyClientTransactionHolder transaction) {
+		try {
+			// list the added transformers
+			ChappyJMSListTransformers listTransformers = new ChappyJMSListTransformers(transaction).send();
+			while(listTransformers.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			assertEquals("internal error for list transformers", IJMSStatus.OK, listTransformers.getStatus());
+			List<String> transformers = listTransformers.getListOfTransformersName();
+			TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
+		} catch (Exception e) {
+			fail("exception occured at add transformer" + e.getLocalizedMessage());
+		}
+	}
+	
+	/**
 	 * test wrapper for chappy logout
 	 * @param transaction holder from login
 	 * @throws Exception
@@ -95,35 +163,4 @@ public final class JMSUtilsRequests {
 		assertEquals("reply message is wrong", JMSUtilsRequests.CHAPPY_RECEIVED_OK, logout.getTransactionErrorMessage());
 	}
 	
-	/**
-	 * add custom transformers and list and validate them.
-	 * @return chappy transaction holder
-	 */
-	public static IJMSTransactionHolder chppyAddCustomTransformersAndValidate(final List<String> addTransformers,
-			final IJMSTransactionHolder transaction) {
-		
-		// add transformers in transaction
-		for (String transf : addTransformers) {
-			ChappyJMSAddTransformer addTransformer = new ChappyJMSAddTransformer(transf, transaction);
-			try {
-				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
-				addTransformer.send();
-				while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
-				assertEquals("add transformer " + transf + " exception", IJMSStatus.OK,  addTransformer.getStatus());
-			} catch (IOException | JMSException | InterruptedException e) {
-				fail("exception occured at add transformer" + e.getLocalizedMessage());
-			}
-		}
-		try {
-			// list the added transformers
-			ChappyJMSListTransformers listTransformers = new ChappyJMSListTransformers(transaction).send();
-			while(listTransformers.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
-			assertEquals("internal error for list transformers", IJMSStatus.OK, listTransformers.getStatus());
-			List<String> transformers = listTransformers.getListOfTransformersName();
-			TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
-		} catch (Exception e) {
-			fail("exception occured at add transformer" + e.getLocalizedMessage());
-		}
-		return transaction;
-	}
 }

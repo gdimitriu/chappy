@@ -35,13 +35,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogout;
 import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
-import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
@@ -107,12 +107,11 @@ public class RestClientTrasactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add 3 transformer steps
-	 *  - validate that they are on the server
-	 *  - run a flow with those steps
+	 * 	- login in chappy using REST
+	 * 	- add 3 transformer steps and validate using REST
+	 *  - run a flow with those steps using REST
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -121,7 +120,9 @@ public class RestClientTrasactionFlowTransformationsTest {
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("ProcessingStep");
 		addTransformers.add("PostProcessingStep");
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				"blabla",
@@ -142,12 +143,11 @@ public class RestClientTrasactionFlowTransformationsTest {
 
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add enveloper and splitter
-	 *  - validate that they are on the server
-	 *  - run a flow with those steps with one input as split-envelope
+	 * 	- login in chappy using REST
+	 * 	- add enveloper and splitter and validate using REST
+	 *  - run a flow with those steps with one input as split-envelope using REST
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -156,7 +156,9 @@ public class RestClientTrasactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		addTransformers.add("SplitterStep");
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -171,25 +173,27 @@ public class RestClientTrasactionFlowTransformationsTest {
 		} else {
 			fail("processing error on server");
 		}
+		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add enveloper step
-	 *  - validate that they are on the server
-	 *  - run a flow with enveloper with two input messages
+	 * 	- login in chappy using REST
+	 * 	- add enveloper step and validate using REST
+	 *  - run a flow with enveloper with two input messages using REST
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * @throws FileNotFoundException
 	 */
 	@Test
 	public void pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs() throws FileNotFoundException {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(transaction);
 		transformer.addStringConfiguration(
@@ -214,12 +218,11 @@ public class RestClientTrasactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add splitter step
-	 *  - validate that they are on the server
-	 *  - run a flow with enveloper with one input messages
+	 * 	- login in chappy using REST
+	 * 	- add splitter step and validate using REST
+	 *  - run a flow with enveloper with one input messages using REST
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -228,7 +231,9 @@ public class RestClientTrasactionFlowTransformationsTest {
 		
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("SplitterStep");
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -245,21 +250,21 @@ public class RestClientTrasactionFlowTransformationsTest {
 		} else {
 			fail("processing error on server");
 		}
+		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());		
 	}
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add 2 custom transformers
-	 *  - validate that they are on the server
-	 *  - fail-over on the server side
-	 *  - add 1 custom transformer
-	 *  - validat that all 3 custom transformers are on the server
-	 *  - run the flow with one input message 
+	 * 	- login in chappy using REST
+	 * 	- add 2 custom transformers and validate using REST
+	 *  - fail-over the REST server
+	 *  - add 1 custom transformer using REST
+	 *  - validate that all 3 custom transformers are on the server using REST
+	 *  - run the flow with one input message using REST
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -268,7 +273,9 @@ public class RestClientTrasactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("PostProcessingStep");
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLoginAddCustomTransformers(addTransformers, port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 
 		//stop and restart the server
 		tearDown();
@@ -288,6 +295,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 			e.printStackTrace();
 			fail("exception occured at add transformer" + e.getLocalizedMessage());
 		}
+		
 		// list the added transformers
 		ChappyRESTListTransformers listTransformers = new ChappyRESTListTransformers(transaction).send();
 		assertEquals("internal error for list transformers", listTransformers.getStatusCode(),
@@ -308,23 +316,24 @@ public class RestClientTrasactionFlowTransformationsTest {
 		} else {
 			fail("processing error on server");
 		}
+		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 	
 	/**
 	 * test chappy exception: 
-	 * 	- login
-	 *  - run the flow with one input message (the transformer is missing)
-	 *  - Chappy should return exception 412 with precondition failed.
+	 * 	- login in chappy using REST
+	 *  - run the flow with one input message (the transformer is missing) using REST
+	 *		(Chappy should return exception 412 with precondition failed.)
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * 
 	 */
 	@Test
 	public void exceptionMissingTransformerInTransactionException() {
 		
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("exceptions/missingtransformer.xml"),
@@ -342,16 +351,16 @@ public class RestClientTrasactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy exception: 
-	 * 	- login
-	 *  - run the flow with one input message (the configuration xml is wrong for one step not supported tag in configuration)
-	 *  - Chappy should return exception 403 with forbidden.
+	 * 	- login in chappy using REST
+	 *  - run the flow with one input message (the configuration xml is wrong for one step not supported tag in configuration) using REST
+	 *		(Chappy should return exception 403 with forbidden.)
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * 
 	 */
 	@Test
 	public void exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration() {
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("xml2json2xml.xml"),
@@ -365,17 +374,17 @@ public class RestClientTrasactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy exception: 
-	 * 	- login
-	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 instead of parameters)
-	 *  - Chappy should return exception 403 with forbidden.
+	 * 	- login in chappy using REST
+	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 instead of parameters) using REST
+	 *		(Chappy should return exception 403 with forbidden.)
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using REST
 	 * 
 	 */
 	@Test
 	public void exceptionXml2json2xmlStepsWrongXMLConfigurationTest() {
 		
-		IRESTTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
 				StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),

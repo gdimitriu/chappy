@@ -232,6 +232,9 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 */
 	@Override
 	public String getCorrelationId() {
+		if (correlationId == null && transactionId != null) {
+			return transactionId;
+		}
 		return correlationId;
 	}
 
