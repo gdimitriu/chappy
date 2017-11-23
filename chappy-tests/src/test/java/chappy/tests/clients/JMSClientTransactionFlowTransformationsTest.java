@@ -31,12 +31,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSListTransformers;
 import chappy.clients.jms.ChappyJMSTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfigurations;
-import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
@@ -110,24 +110,30 @@ public class JMSClientTransactionFlowTransformationsTest {
 	 * --------------------------------------------------------------------------------
 	 */
 	/**
-	 * chappy test:
-	 * 	- login in chappy using jms
-	 * 	- logout from chappy using jms
+	 * test chappy:
+	 * 	- login in chappy using JMS
+	 * 	- logout from chappy using JMS
 	 */
 	@Test
 	public void jmsChappyLoginLogout() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
 	}
 	
+	/**
+	 * test chappy:
+	 *  - login in chappy using JMS
+	 *  - add 1 transformer and validate using JMS
+	 *  - logiout from chappy usin JMS
+	 */
 	@Test
 	public void jmsChappyAddTransformer() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			List<String> addTransformers = new ArrayList<>();
 			addTransformers.add("PreProcessingStep");
 			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
@@ -147,12 +153,11 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add 3 transformer steps
-	 *  - validate that they are on the server
-	 *  - run a flow with those steps
-	 *  - validate the return data
-	 *  - logout
+	 * 	- login in chappy using JMS
+	 * 	- add 3 transformer steps and validate using JMS
+	 *  - run a flow with those steps using JMS
+	 *  - validate the result of flow
+	 *  - logout from chappy using JMS
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -162,7 +167,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		addTransformers.add("ProcessingStep");
 		addTransformers.add("PostProcessingStep");
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
 					"blabla",
@@ -185,12 +190,11 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add enveloper and splitter
-	 *  - validate that they are on the server
-	 *  - run a flow with those steps with one input as split-envelope
+	 * 	- login in chappy using JMS
+	 * 	- add enveloper and splitter and validate using JMS
+	 *  - run a flow with those steps with one input as split-envelope using JMS
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using JMS
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -199,7 +203,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		addTransformers.add("EnveloperStep");
 		addTransformers.add("SplitterStep");
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
 					StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -222,12 +226,11 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add enveloper step
-	 *  - validate that they are on the server
-	 *  - run a flow with enveloper with two input messages
+	 * 	- login in chappy using JMS
+	 * 	- add enveloper step and validate using JMS
+	 *  - run a flow with enveloper with two input messages using JMS
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using JMS
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -235,7 +238,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(transaction);
 			transformer.addStringConfiguration(
@@ -262,12 +265,11 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add splitter step
-	 *  - validate that they are on the server
-	 *  - run a flow with enveloper with one input messages
+	 * 	- login in chappy using JMS
+	 * 	- add splitter step and validate using JMS
+	 *  - run a flow with enveloper with one input messages using JMS
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using JMS
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -276,7 +278,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("SplitterStep");
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
 					StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
@@ -301,15 +303,14 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy: 
-	 * 	- login
-	 * 	- add 2 custom transformers
-	 *  - validate that they are on the server
-	 *  - fail-over on the server side
-	 *  - add 1 custom transformer
-	 *  - validat that all 3 custom transformers are on the server
-	 *  - run the flow with one input message 
+	 * 	- login in chappy using JMS
+	 * 	- add 2 custom transformers and validate using JMS
+	 *  - fail-over JMS server
+	 *  - add 1 custom transformer using JMS
+	 *  - validate that all 3 custom transformers are on the server using JMS
+	 *  - run the flow with one input message using JMS
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using JMS
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -317,7 +318,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("PostProcessingStep");
-		IJMSTransactionHolder transaction = null;
+		ChappyClientTransactionHolder transaction = null;
 		try {
 			transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
@@ -375,17 +376,17 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy exception: 
-	 * 	- login
-	 *  - run the flow with one input message (the transformer is missing)
-	 *  - Chappy should return exception with precondition failed.
+	 * 	- login in chappy using JMS
+	 *  - run the flow with one input message (the transformer is missing) using JMS
+	 *		(Chappy should return exception with precondition failed.)
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using JMS
 	 * 
 	 */
 	@Test
 	public void exceptionMissingTransformerInTransactionException() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
 					StreamUtils.getStringFromResource("exceptions/missingtransformer.xml"),
 					StreamUtils.getStringFromResource("exceptions/missingtransformer.xml"),
@@ -402,17 +403,17 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy exception: 
-	 * 	- login
-	 *  - run the flow with one input message (the configuration xml is wrong for one step not supported tag in configuration)
-	 *  - Chappy should return exception with forbidden.
+	 * 	- login in chappy using JMS
+	 *  - run the flow with one input message (the configuration xml is wrong for one step not supported tag in configuration) using JMS
+	 *		(Chappy should return exception with forbidden.)
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chappy using JMS
 	 * 
 	 */
 	@Test
 	public void exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
 					StreamUtils.getStringFromResource("xml2json2xml.xml"),
 					StreamUtils.getStringFromResource("exceptions/xml2json2xmlwithconfigurations.xml"),
@@ -429,17 +430,17 @@ public class JMSClientTransactionFlowTransformationsTest {
 	
 	/**
 	 * test chappy exception: 
-	 * 	- login
-	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 instead of parameters)
-	 *  - Chappy should return exception with forbidden.
+	 * 	- login in chappy using JMS
+	 *  - run the flow with one input message (the configuration xml is wrong for one step parameters1 instead of parameters) using JMS
+	 *		(Chappy should return exception with forbidden.)
 	 *  - validate the return data
-	 *  - logout
+	 *  - logout from chapyy using  JMS
 	 * 
 	 */
 	@Test
 	public void exceptionXml2json2xmlStepsWrongXMLConfigurationTest() {
 		try {
-			IJMSTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
 					StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),
 					StreamUtils.getStringFromResource("exceptions/xml2json2xml.xml"),
