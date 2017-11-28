@@ -63,7 +63,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	/** flow configuration steps */
 	private FlowConfiguration configuration = null;
 	/** multi-part request from rest which contains mapping. */
-	private MultiDataQueryHolder multipart;
+	private MultiDataQueryHolder internalMultipart;
 	/** list of steps to be executed */
 	private List<ITransformerStep> stepList = new ArrayList<ITransformerStep>();
 	
@@ -90,7 +90,7 @@ public class StaticFlowRunner implements IFlowRunner{
 		} catch (JAXBException | SAXException e) {
 			throw ExceptionMappingProvider.getInstace().mapException(e);
 		}
-		this.multipart = multipart;
+		this.internalMultipart = multipart;
 	}
 
 	/* (non-Javadoc)
@@ -143,7 +143,23 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
     @Override
 	public StreamHolder executeSteps(final StreamHolder holder) throws Exception {
-    	IStatistics statistics = null; 
+    	return executeSteps(holder, this.internalMultipart);
+	}
+    
+    @Override
+   	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
+    	return executeSteps(holders, this.internalMultipart);
+   	}
+
+	@Override
+	public void configure(final String mode, final String configuration) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public StreamHolder executeSteps(final StreamHolder holder, final MultiDataQueryHolder multiPart) throws Exception {
+		IStatistics statistics = null; 
     	ILogs logs = null;
     	ITransaction transaction = null;
     	LocalDateTime startTime = null;
@@ -161,7 +177,7 @@ public class StaticFlowRunner implements IFlowRunner{
 				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), startTime, "started");
 				transaction.makePersistent(log);
 			}
-			step.execute(holder, multipart);
+			step.execute(holder, multiPart);
 			finishTime = LocalDateTime.now();
 			if (logs != null) {
 				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
@@ -177,10 +193,11 @@ public class StaticFlowRunner implements IFlowRunner{
     	}
 		return holder;
 	}
-    
-    @Override
-   	public List<StreamHolder> executeSteps(final List<StreamHolder> holders) throws Exception {
-    	IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
+
+	@Override
+	public List<StreamHolder> executeSteps(final List<StreamHolder> holders, final MultiDataQueryHolder multiPart)
+			throws Exception {
+		IStatistics statistics = StatisticsLogsProvider.getInstance().getStatistics(transactionCookie);
     	ILogs logs = StatisticsLogsProvider.getInstance().getLogs(transactionCookie);
     	LocalDateTime startTime = null;
     	LocalDateTime finishTime = null;
@@ -191,7 +208,7 @@ public class StaticFlowRunner implements IFlowRunner{
 			if (logs != null) {
 				logs.putLog(step.getClass().getSimpleName(), startTime, "started");
 			}
-   			step.execute(holders, multipart);
+   			step.execute(holders, multiPart);
 			finishTime = LocalDateTime.now();
 			if (logs != null) {
 				StatisticLog log = logs.putLog(step.getClass().getSimpleName(), finishTime, "executed");
@@ -204,12 +221,6 @@ public class StaticFlowRunner implements IFlowRunner{
    		}
    		transaction.commit();
    		return holders;
-   	}
-
-	@Override
-	public void configure(final String mode, final String configuration) {
-		// TODO Auto-generated method stub
-		
 	}
 
 

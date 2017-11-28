@@ -372,4 +372,53 @@ public class TransactionResources {
 
 		return Response.ok().cookie(new NewCookie(cookie)).build();
 	}
+	
+	/**
+	 * Transform a stream into an output stream using flow definition.
+	 * @param multipart multipart input which contains xsl, data and configuration
+	 * @param uriInfo contains query params for xsl or configuration
+	 * @return http response
+	 * @throws Exception 
+	 */
+	@Path(IRestResourcesConstants.REST_FLOW)
+	@PUT
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response processDataStreamExistingFlow(final FormDataMultiPart multipart,
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+    	
+		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
+		InputStream configurationStream = null;
+		String configuration = null;
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
+		if (queryParams != null) {
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
+		}
+		if (configuration == null || "".equals(configuration)) {
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
+		} else {
+			configurationStream = new ByteArrayInputStream(configuration.getBytes());
+		}
+		ByteArrayOutputStreamWrapper bos = WrapperUtils.fromInputStreamToOutputWrapper(inputValue);
+		
+		StreamHolder holder = new StreamHolder(new ByteArrayInputStreamWrapper(bos.getBuffer(), 0, bos.size()));
+		try {
+			bos.close();
+		} catch (IOException e) {
+		}
+		
+		bos = null;
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+		runner.createSteps(received);
+		runner.executeSteps(holder);
+		
+		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
+		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
+		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
+	}
 }

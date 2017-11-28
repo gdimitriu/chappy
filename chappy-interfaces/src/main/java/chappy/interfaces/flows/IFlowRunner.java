@@ -89,4 +89,21 @@ public interface IFlowRunner {
 	public void setConfigurations(final InputStream configurationStream,
 			final MultiDataQueryHolder multiPart) throws Exception;
 
+	/**
+	 * execute the flow constructed using the configuration.
+	 * @param holder input/output holder
+	 * @param multiPart multi part holding runtime info
+	 * @return 
+	 * @throws Exception
+	 */
+	public StreamHolder executeSteps(final StreamHolder holder, final MultiDataQueryHolder multiPart) throws Exception;
+	
+	/**
+	 * execute the flow constructed using the configuration.
+	 * @param list of holder input/output holders
+	 * @param multiPart multi part holding runtime info
+	 * @return list of holder input/output holders
+	 * @throws Exception
+	 */
+	public List<StreamHolder> executeSteps(final List<StreamHolder> holders, final MultiDataQueryHolder multiPart) throws Exception;
 }
