@@ -40,6 +40,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -187,6 +188,149 @@ public class RestTransactionFailOverAndPersistence {
 		}
 		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+	}
+	
+	@SuppressWarnings("resource")
+	@Test
+	public void push3CustomTransformersByTransactionAndAddFlowAndFailBeforeRestart() throws Exception {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class)
+				.register(JacksonJaxbJsonProvider.class)
+				.register(LocalDateTimeContextResolver.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
+				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password")
+				.queryParam(IChappyServiceNamesConstants.PERSIST, "true")
+				.request().get();
+		
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		multipartEntity = new FormDataMultiPart()
+				.field("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"));
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+					.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_FLOW)
+					.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, "first_Flow")
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add flow", Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
+		
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		//stop and restart the server
+		tearDown();
+		setUp();
+		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
+		TransactionProviders.getInstance().loadPersisted();
+
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+	}
+	
+	
+	@SuppressWarnings("resource")
+	@Test
+	public void push3CustomTransformersByTransactionAndAddFlowBeforeRestart() throws Exception {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class)
+				.register(JacksonJaxbJsonProvider.class)
+				.register(LocalDateTimeContextResolver.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
+				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password")
+				.queryParam(IChappyServiceNamesConstants.PERSIST, "true")
+				.request().get();
+		
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "ProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		multipartEntity = new FormDataMultiPart()
+				.field("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"));
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+					.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_FLOW)
+					.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, "first_Flow")
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add flow", Status.OK.getStatusCode(), response.getStatus());
+		
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		//stop and restart the server
+		tearDown();
+		setUp();
+		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
+		TransactionProviders.getInstance().loadPersisted();
+
 		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
 	}

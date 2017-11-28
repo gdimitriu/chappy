@@ -326,4 +326,50 @@ public class TransactionResources {
 		}
 
 	}
+	
+	/**
+	 * Add a flow to the cache of transaction by name.
+	 * @param multipart multipart input which contains xsl and configuration
+	 * @param uriInfo contains query params for xsl or configuration
+	 * @return http response
+	 * @throws Exception 
+	 */
+	@Path(IRestResourcesConstants.REST_ADD + "/" + IRestResourcesConstants.REST_FLOW)
+	@PUT
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response addFlow(final FormDataMultiPart multipart,
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+
+		InputStream configurationStream = null;
+		String configuration = null;
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
+		if (queryParams != null) {
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
+		} else {
+			return Response.status(Status.BAD_REQUEST).cookie(new NewCookie(cookie)).build();
+		}
+		if (!queryParams.containsKey(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME)) {
+			return Response.status(Status.BAD_REQUEST).cookie(new NewCookie(cookie)).build();
+		}
+		if (configuration == null || "".equals(configuration)) {
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
+		} else {
+			configurationStream = new ByteArrayInputStream(configuration.getBytes());
+		}
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+
+		runner.createSteps(received);
+		
+		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.putFlowRunner(flowName, runner);
+
+		return Response.ok().cookie(new NewCookie(cookie)).build();
+	}
 }
