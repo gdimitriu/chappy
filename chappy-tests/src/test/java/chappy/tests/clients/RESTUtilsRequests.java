@@ -152,6 +152,7 @@ public final class RESTUtilsRequests {
 		assertEquals("add flow " + flowName + " exception", Status.OK.getStatusCode(), addFlow.getStatusCode());
 		return transaction;
 	}
+	
 	/**
 	 * logout from the chappy
 	 * @param transaction to logout

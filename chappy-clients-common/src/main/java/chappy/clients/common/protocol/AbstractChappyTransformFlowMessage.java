@@ -39,6 +39,9 @@ public abstract class AbstractChappyTransformFlowMessage extends AbstractChappyP
 	/** configuration string */
 	private String configuration = null;
 	
+	/** flow name */
+	private String flowName = null;
+	
 	/**
 	 * default constructor
 	 */
@@ -52,10 +55,11 @@ public abstract class AbstractChappyTransformFlowMessage extends AbstractChappyP
 	 * @param input
 	 * @param config
 	 */
-	public AbstractChappyTransformFlowMessage(final String input, final String config) {
+	public AbstractChappyTransformFlowMessage(final String input, final String config, final String flowName) {
 		inputs = new ArrayList<>();
 		inputs.add(input);
 		configuration = config;
+		this.setFlowName(flowName);
 	}
 	
 	/**
@@ -140,5 +144,19 @@ public abstract class AbstractChappyTransformFlowMessage extends AbstractChappyP
 	 */
 	public void setStringConfiguration(final String config) {
 		configuration = config;
+	}
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName() {
+		return flowName;
+	}
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(final String flowName) {
+		this.flowName = flowName;
 	}
 }

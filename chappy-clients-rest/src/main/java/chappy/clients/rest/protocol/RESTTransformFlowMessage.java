@@ -64,16 +64,16 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 	 * @param input
 	 * @param config
 	 */
-	public RESTTransformFlowMessage(final String input, final String config) {
-		super(input, config);
+	public RESTTransformFlowMessage(final String input, final String config, final String flowName) {
+		super(input, config, flowName);
 	}
 
 	/**
 	 * @param input
 	 * @param configuration
 	 */
-	public RESTTransformFlowMessage(final String input, final MediaType inputType, final  String configuration) {
-		super(input, configuration);
+	public RESTTransformFlowMessage(final String input, final MediaType inputType, final  String configuration, final String flowName) {
+		super(input, configuration, flowName);
 		this.inputType = inputType;
 	}
 
@@ -104,10 +104,18 @@ public class RESTTransformFlowMessage extends AbstractChappyTransformFlowMessage
 				multipartEntity = multipartEntity.field(IChappyServiceNamesConstants.INPUT_DATA, str);
 			}
 		}
-		Invocation builder =target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW_MULTI)
+		Invocation builder = null;
+		if (getConfiguration() != null) { 
+			builder =target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW_MULTI)
 				.queryParam(IChappyServiceNamesConstants.CONFIGURATION, getConfiguration())
 				.request(new String[] { MediaType.MULTIPART_FORM_DATA }).cookie(CookieUtils.encodeCookie(getCookie()))
 				.buildPut(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		} else {
+			builder =target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_FLOW_MULTI)
+					.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, getFlowName())
+					.request(new String[] { MediaType.MULTIPART_FORM_DATA }).cookie(CookieUtils.encodeCookie(getCookie()))
+					.buildPut(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		}
 		return builder;
 	}
 

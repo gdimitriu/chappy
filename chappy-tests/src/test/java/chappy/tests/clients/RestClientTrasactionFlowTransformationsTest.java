@@ -24,17 +24,13 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,15 +41,12 @@ import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogout;
+import chappy.clients.rest.ChappyRESTRunExistingFlow;
 import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
-import chappy.interfaces.rest.resources.IRestPathConstants;
-import chappy.interfaces.rest.resources.IRestResourcesConstants;
-import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
-import chappy.policy.cookies.CookieUtils;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.rest.transformers.test.RestCallsUtils;
@@ -431,23 +424,18 @@ public class RestClientTrasactionFlowTransformationsTest {
 		RESTUtilsRequests.chappyAddFlow("first_Flow",
 				StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"), transaction);
 
-		@SuppressWarnings("resource")
-		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field(IChappyServiceNamesConstants.INPUT_DATA, "blabla");
-		Response response = null;
-		try {
-			response = transaction.getRestTarget().path(IRestPathConstants.PATH_TO_TRANSACTION)
-						.path(IRestResourcesConstants.REST_FLOW)
-						.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, "first_Flow")
-						.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(CookieUtils.encodeCookie(transaction.getCookie()))
-						.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
-		} catch (JsonProcessingException e) {
-			fail("could not encode cookie" + e.getLocalizedMessage());
-		}
-		if (response.getStatus() >= 0) {
-			InputStream inputStream = response.readEntity(InputStream.class);
+		ChappyRESTRunExistingFlow transformer = new ChappyRESTRunExistingFlow(
+				"blabla",
+				"first_Flow",
+				transaction).send();
+		
+		if (transformer.getStatusCode() >= 0) {
+			List<String> actual = transformer.getOutputResultAsString();
+			assertEquals(actual.size(), 1);
 			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
-						StreamUtils.toStringFromStream(inputStream));
+						actual.get(0));
+		} else {
+			fail("processing error on server");
 		}
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
