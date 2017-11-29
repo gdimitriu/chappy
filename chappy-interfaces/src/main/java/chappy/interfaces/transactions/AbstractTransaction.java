@@ -21,7 +21,11 @@ package chappy.interfaces.transactions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import chappy.interfaces.flows.IFlowRunner;
 
 /**
  * @author Gabriel Dimitriu
@@ -40,6 +44,9 @@ public abstract class AbstractTransaction implements ITransaction {
 	
 	/** cookie transactionID */
 	private String cookieTransactionId;
+	
+	/** cache of flow runners */
+	private Map<String, IFlowRunner> flowRunners = new HashMap<>();	
 	
 	/**
 	 * 
@@ -134,5 +141,35 @@ public abstract class AbstractTransaction implements ITransaction {
 	 */
 	public void setCookieTransactionId(String cookieTransactionID) {
 		this.cookieTransactionId = cookieTransactionID;
+	}
+	
+	@Override
+	public void putFlowRunner(final String nameOfFlow, final IFlowRunner flowRunner) {
+		flowRunners.put(nameOfFlow, flowRunner);		
+	}
+	
+	@Override
+	public IFlowRunner getFlowRunner(final String nameOfFlow) {
+		if (flowRunners.containsKey(nameOfFlow)) {
+			return flowRunners.get(nameOfFlow);
+		}
+		return null;
+	}
+	
+	@Override
+	public void removeFlowRunner(final String nameOfFlow) {
+		if (flowRunners.containsKey(nameOfFlow)) {
+			flowRunners.remove(nameOfFlow);
+		}
+	}
+	
+	@Override
+	public void setFlowRunners(final Map<String, IFlowRunner> runners) {
+		flowRunners = runners;
+	}
+	
+	@Override
+	public Map<String, IFlowRunner> getFlowRunners() {
+		return flowRunners;
 	}
 }

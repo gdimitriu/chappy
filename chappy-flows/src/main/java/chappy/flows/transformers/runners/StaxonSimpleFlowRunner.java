@@ -123,4 +123,23 @@ public class StaxonSimpleFlowRunner implements IFlowRunner {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#executeSteps(chappy.utils.streams.wrappers.StreamHolder, chappy.interfaces.flows.MultiDataQueryHolder)
+	 */
+	@Override
+	public StreamHolder executeSteps(StreamHolder holder, MultiDataQueryHolder multiPart) throws Exception {
+		//nothing to transform yet.
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.flows.IFlowRunner#executeSteps(java.util.List, chappy.interfaces.flows.MultiDataQueryHolder)
+	 */
+	@Override
+	public List<StreamHolder> executeSteps(List<StreamHolder> holders, MultiDataQueryHolder multiPart)
+			throws Exception {
+		//nothing to transform yet.
+		return null;
+	}
+
 }

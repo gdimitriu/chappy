@@ -67,6 +67,7 @@ import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.tests.utils.ClassUtils;
 import chappy.tests.utils.TestUtils;
@@ -514,13 +515,73 @@ public class ProcessingRestTestManual {
 		assertEquals("could not logout", logout.getStatusCode(), Status.OK.getStatusCode());
 		System.out.println(logout.getStatus());
 	}
+	
+	@SuppressWarnings("resource")
+	public void cachingTests() throws FileNotFoundException {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class)
+				.register(JacksonJaxbJsonProvider.class)
+				.register(LocalDateTimeContextResolver.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
+				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password")
+				.queryParam(IChappyServiceNamesConstants.PERSIST, "true")
+				.request().get();
+		
+		assertEquals("wrong authentication", response.getStatus(), Status.OK.getStatusCode());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get("userData");
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field("name", "PreProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "PostProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		multipartEntity = new FormDataMultiPart()
+				.field("name", "ProcessingStep")
+				.field("data", new ClassUtils().getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", response.getStatus(), Status.OK.getStatusCode());
+		cookie = response.getCookies().get("userData");
+		
+		multipartEntity = new FormDataMultiPart()
+				.field("configuration", StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"));
+		target = client.target(baseUri).register(MultiPartFeature.class);
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+					.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_FLOW)
+					.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, "first_Flow")
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		System.out.println(response.toString());
+	}
 
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
-		//test.push3CustomTransformersByTransactionAndMakeTransformation();
+		test.cachingTests();
 		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
 		//test.xml2xmlXsltOneStepWParametersTest();
-		test.clientLoginLogout();
+		//test.clientLoginLogout();
 	}
 
 	

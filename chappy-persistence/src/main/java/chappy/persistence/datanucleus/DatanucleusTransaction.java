@@ -26,6 +26,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
@@ -221,7 +222,10 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		return null;
 	}
 	
-	private void updatePersistenceData() {
+	/**
+	 * upgrade the persistence data
+	 */
+	public void updatePersistenceData() {
 		try {
 			DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
 			persistedTransaction = obj;
@@ -230,6 +234,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			e.printStackTrace();
 		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
+		persistedTransaction.setFlowRunners(getFlowRunners());
 		Transaction transaction = persistenceFlowManager.currentTransaction();
 		transaction.begin();
 		persistedTransaction = persistenceFlowManager.makePersistent(persistedTransaction);
@@ -254,7 +259,6 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		if (cookie.getTransactionId() == null) {
 			cookie.setTransactionId(getTransactionId());
 		} else {
-//			setCookieTransactionID(cookie.getTransactionId());
 			setTransactionId(getTransactionId());
 		}
 	}
@@ -267,6 +271,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			obj.setCookieTransactionId(getTransactionId());
 		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
+		persistedTransaction.setFlowRunners(getFlowRunners());
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		flowTransaction.begin();
 		persistenceFlowManager.makePersistent(persistedTransaction);
@@ -280,8 +285,6 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	public void setPersistedTransaction(DatanucleusFlowTransactionPersistence persistedTransaction) {
 		this.persistedTransaction = persistedTransaction;
 	}
-
-
 	
 	/**
 	 * set the system flow persistence manager
@@ -289,5 +292,11 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 */
 	public void setPersistenceFlowManager(PersistenceManager pm) {
 		persistenceFlowManager = pm;
+	}
+	
+	@Override
+	public void putFlowRunner(final String nameOfFlow, final IFlowRunner flowRunner) {
+		super.putFlowRunner(nameOfFlow, flowRunner);
+		persist();
 	}
 }

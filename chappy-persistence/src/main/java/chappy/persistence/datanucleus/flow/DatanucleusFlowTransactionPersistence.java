@@ -20,7 +20,9 @@
 package chappy.persistence.datanucleus.flow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -29,6 +31,7 @@ import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.datanucleus.DatanucleusTransaction;
@@ -53,6 +56,10 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	
 	@Persistent(defaultFetchGroup = "true")
 	private String cookieTransactionId;
+	
+	@Persistent(defaultFetchGroup = "true")
+	@Join(column = "DatanucleusFlowTransactionPersistence_runners")
+	private Map<String, IFlowRunner> flowRunners = new HashMap<>();
 	
 	/**
 	 * 
@@ -134,6 +141,16 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 		DatanucleusTransaction trans = new DatanucleusTransaction(transactionId, true, listOftransformers, cookieTransactionId);
 		trans.setPersistedTransaction(this);
 		trans.setPersistenceFlowManager(pm);
+		trans.setFlowRunners(flowRunners);
 		return trans;
+	}
+	
+	public Map<String, IFlowRunner> getFlowRunners() {
+		return this.flowRunners;
+	}
+	
+	public void setFlowRunners(final Map<String, IFlowRunner> runners) {
+		this.flowRunners.clear();
+		this.flowRunners.putAll(runners);
 	}
 }

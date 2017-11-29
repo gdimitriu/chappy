@@ -66,8 +66,8 @@ public class MixedChappyServer {
 	 * @throws Exception
 	 */
 	public void startAll() throws Exception {
-		startRESTServer(false);
 		startJMSServer(false);
+		startRESTServer(false);
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 	

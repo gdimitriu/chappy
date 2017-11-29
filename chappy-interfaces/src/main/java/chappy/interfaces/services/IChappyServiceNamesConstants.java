@@ -56,6 +56,9 @@ public interface IChappyServiceNamesConstants {
 	/** get the statistic query request */
 	public String GET_STATISTICS = "getStatistics";
 	
+	/** chappy flow name */
+	public String CHAPPY_FLOW_NAME = "chappy_flow_name";
+	
 	/** mode for staxon (deprecated) */
 	public String MODE = "mode";
 	

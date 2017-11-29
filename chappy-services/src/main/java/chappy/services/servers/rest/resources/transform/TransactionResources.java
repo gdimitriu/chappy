@@ -326,4 +326,148 @@ public class TransactionResources {
 		}
 
 	}
+	
+	/**
+	 * Add a flow to the cache of transaction by name.
+	 * @param multipart multipart input which contains xsl and configuration
+	 * @param uriInfo contains query params for xsl or configuration
+	 * @return http response
+	 * @throws Exception 
+	 */
+	@Path(IRestResourcesConstants.REST_ADD + "/" + IRestResourcesConstants.REST_FLOW)
+	@PUT
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response addFlow(final FormDataMultiPart multipart,
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+
+		InputStream configurationStream = null;
+		String configuration = null;
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters(); 
+		if (queryParams != null) {
+			configuration = queryParams.getFirst(IChappyServiceNamesConstants.CONFIGURATION);
+		} else {
+			return Response.status(Status.BAD_REQUEST).cookie(new NewCookie(cookie)).build();
+		}
+		if (!queryParams.containsKey(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME)) {
+			return Response.status(Status.BAD_REQUEST).cookie(new NewCookie(cookie)).build();
+		}
+		if (configuration == null || "".equals(configuration)) {
+			configurationStream = multipart.getField(IChappyServiceNamesConstants.CONFIGURATION).getEntityAs(InputStream.class);
+		} else {
+			configurationStream = new ByteArrayInputStream(configuration.getBytes());
+		}
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+
+		runner.createSteps(received);
+		
+		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.putFlowRunner(flowName, runner);
+
+		return Response.ok().cookie(new NewCookie(cookie)).build();
+	}
+	
+	/**
+	 * Transform a stream into an output stream using flow definition with multiple inputs.
+	 * @param multipart multipart input which contains xsl, data and configuration
+	 * @param uriInfo contains query params for xsl or configuration
+	 * @return http response
+	 * @throws Exception 
+	 */
+	@Path(IRestResourcesConstants.REST_FLOW)
+	@PUT
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response processDataStreamExistingFlow(final FormDataMultiPart multipart,
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+		if (!queryParams.containsKey(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME)) {
+			return Response.status(Status.BAD_REQUEST).cookie(new NewCookie(cookie)).build();
+		}
+    	
+		InputStream inputValue = multipart.getField(IChappyServiceNamesConstants.INPUT_DATA).getEntityAs(InputStream.class);
+		
+		ByteArrayOutputStreamWrapper bos = WrapperUtils.fromInputStreamToOutputWrapper(inputValue);
+		
+		StreamHolder holder = new StreamHolder(new ByteArrayInputStreamWrapper(bos.getBuffer(), 0, bos.size()));
+		try {
+			bos.close();
+		} catch (IOException e) {
+		}
+		
+		bos = null;
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.getFlowRunner(flowName).executeSteps(holder, multiData);
+		
+		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
+		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
+		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
+	}
+	
+	/**
+	 * request to run a flow with multiple input-output elements.
+	 * @param multipart input data
+	 * @param uriInfo
+	 * @param hh response
+	 * @return
+	 * @throws Exception
+	 */
+	@Path(IRestResourcesConstants.REST_FLOW_MULTI)
+	@PUT
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response runExistingFlowIntegration(final FormDataMultiPart multipart,
+			@Context final UriInfo uriInfo, @Context final HttpHeaders hh) throws Exception {
+		
+		Map<String, Cookie> cookies = hh.getCookies();
+		Cookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		IChappyCookie received = CookieUtils.decodeCookie(cookie);
+
+		MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+		if (!queryParams.containsKey(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME)) {
+			return Response.status(Status.BAD_REQUEST).cookie(new NewCookie(cookie)).build();
+		}
+		
+    	List<FormDataBodyPart> bodyParts = multipart.getFields(IChappyServiceNamesConstants.INPUT_DATA);
+    	List<InputStream> inputValues = new ArrayList<InputStream>();
+    	for (FormDataBodyPart bodyPart : bodyParts) {
+    		inputValues.add(bodyPart.getEntityAs(InputStream.class));
+    	}
+
+    	/* create the list of input stream holders */
+		List<StreamHolder> holders = new ArrayList<StreamHolder>();
+		for (InputStream input : inputValues) {
+			ByteArrayOutputStreamWrapper bos = WrapperUtils.fromInputStreamToOutputWrapper(input);
+		
+			holders.add(new StreamHolder(new ByteArrayInputStreamWrapper(bos.getBuffer(), 0, bos.size())));
+			try {
+				bos.close();
+			} catch (IOException e) {
+			}
+		}
+		
+		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
+
+		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.getFlowRunner(flowName).executeSteps(holders, multiData);
+		
+		List<String> retList = new ArrayList<String>();
+		for (StreamHolder holder : holders) {
+			retList.add(StreamUtils.toStringFromStream(holder.getInputStream()));
+		}
+		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(retList){};
+		return Response.ok().type(MediaType.APPLICATION_JSON).entity(returnList).cookie(new NewCookie(cookie)).build();
+	}
 }
