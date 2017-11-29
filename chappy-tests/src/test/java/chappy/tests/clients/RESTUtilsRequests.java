@@ -28,11 +28,11 @@ import java.util.List;
 import javax.ws.rs.core.Response.Status;
 
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.rest.ChappyRESTAddFlow;
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogin;
 import chappy.clients.rest.ChappyRESTLogout;
-import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.tests.rest.transformers.test.RestCallsUtils;
 import chappy.tests.utils.TestUtils;
 
@@ -74,7 +74,7 @@ public final class RESTUtilsRequests {
 	 * @param port in which the transformers should be added.
 	 * @return chappy transaction holder
 	 */
-	public static IRESTTransactionHolder chappyLoginAddCustomTransformers(final List<String> addTransformers, final int port) {
+	public static ChappyClientTransactionHolder chappyLoginAddCustomTransformers(final List<String> addTransformers, final int port) {
 		ChappyClientTransactionHolder transaction = chappyLogin(port);
 		return chppyAddCustomTransformersAndValidate(addTransformers, transaction);
 	}
@@ -85,14 +85,14 @@ public final class RESTUtilsRequests {
 	 * @param transaction the client transaction 
 	 * @return chappy transaction holder
 	 */
-	public static IRESTTransactionHolder chppyAddCustomTransformers(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
+	public static ChappyClientTransactionHolder chppyAddCustomTransformers(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
 		// add transformers in transaction
 		for (String transf : addTransformers) {
 			ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer(transf, transaction);
 			try {
 				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 				addTransformer.send();
-				assertEquals("add transformer " + transf + " exception", addTransformer.getStatusCode(), Status.OK.getStatusCode());
+				assertEquals("add transformer " + transf + " exception", Status.OK.getStatusCode(), addTransformer.getStatusCode());
 			} catch (IOException e) {
 				e.printStackTrace();
 				fail("exception occured at add transformer" + e.getLocalizedMessage());
@@ -121,14 +121,14 @@ public final class RESTUtilsRequests {
 	 * @param transaction the client transaction
 	 * @return chappy transaction holder
 	 */
-	public static IRESTTransactionHolder chppyAddCustomTransformersAndValidate(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
+	public static ChappyClientTransactionHolder chppyAddCustomTransformersAndValidate(final List<String> addTransformers, final ChappyClientTransactionHolder transaction) {
 		// add transformers in transaction
 		for (String transf : addTransformers) {
 			ChappyRESTAddTransformer addTransformer = new ChappyRESTAddTransformer(transf, transaction);
 			try {
 				addTransformer.setTransformer(transf, RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
 				addTransformer.send();
-				assertEquals("add transformer " + transf + " exception", addTransformer.getStatusCode(), Status.OK.getStatusCode());
+				assertEquals("add transformer " + transf + " exception", Status.OK.getStatusCode(), addTransformer.getStatusCode());
 			} catch (IOException e) {
 				e.printStackTrace();
 				fail("exception occured at add transformer" + e.getLocalizedMessage());
@@ -138,7 +138,20 @@ public final class RESTUtilsRequests {
 		chappyValidateTransformers(addTransformers, transaction);
 		return transaction;
 	}
+	
+	/**
+	 * @param flowName
+	 * @param flowConfiguration
+	 * @param transaction
+	 * @return
+	 */
+	public static ChappyClientTransactionHolder chappyAddFlow(final String flowName, final String flowConfiguration, final ChappyClientTransactionHolder transaction) {
 
+		ChappyRESTAddFlow addFlow = new ChappyRESTAddFlow(flowName, flowConfiguration, transaction);
+		addFlow.send();
+		assertEquals("add flow " + flowName + " exception", Status.OK.getStatusCode(), addFlow.getStatusCode());
+		return transaction;
+	}
 	/**
 	 * logout from the chappy
 	 * @param transaction to logout

@@ -51,7 +51,6 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
-import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
@@ -60,7 +59,6 @@ import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.policy.cookies.CookieUtils;
-import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.services.RESTtoInternalWrapper;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
@@ -212,11 +210,12 @@ public class TransactionResources {
 		
 		bos = null;
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
-		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
-		runner.createSteps(received);
-		runner.executeSteps(holder);
 		
+		List<StreamHolder> holders = new ArrayList<StreamHolder>();
+		holders.add(holder);
+
+		TransactionOperations.runStaticFlow(received, configurationStream, holders, multiData);
+
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
 		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
 		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
@@ -272,10 +271,8 @@ public class TransactionResources {
 		
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		
-		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
-		runner.createSteps(received);
-		runner.executeSteps(holders);
+		TransactionOperations.runStaticFlow(received, configurationStream, holders, multiData);
+		
 		List<String> retList = new ArrayList<String>();
 		for (StreamHolder holder : holders) {
 			retList.add(StreamUtils.toStringFromStream(holder.getInputStream()));
@@ -283,6 +280,7 @@ public class TransactionResources {
 		GenericEntity<List<String>> returnList = new GenericEntity<List<String>>(retList){};
 		return Response.ok().type(MediaType.APPLICATION_JSON).entity(returnList).cookie(new NewCookie(cookie)).build();
 	}
+
 	
 	/**
 	 * get the list of added steps in this transaction.
@@ -361,17 +359,14 @@ public class TransactionResources {
 			configurationStream = new ByteArrayInputStream(configuration.getBytes());
 		}
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
-		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
-
-		runner.createSteps(received);
 		
 		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
-		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
-		transaction.putFlowRunner(flowName, runner);
+		
+		TransactionOperations.addStaticFlowRunner(received, configurationStream, flowName, multiData);
 
 		return Response.ok().cookie(new NewCookie(cookie)).build();
 	}
+
 	
 	/**
 	 * Transform a stream into an output stream using flow definition with multiple inputs.
@@ -407,13 +402,19 @@ public class TransactionResources {
 		bos = null;
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
-		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
-		transaction.getFlowRunner(flowName).executeSteps(holder, multiData);
+		
+		List<StreamHolder> holders = new ArrayList<StreamHolder>();
+		
+		holders.add(holder);
+		
+		TransactionOperations.runStaticFlowRunnerByName(received, holders, multiData, flowName);
 		
 		ByteArrayInputStreamWrapper inputStream = holder.getInputStream();
 		RestStreamingOutput stream = new RestStreamingOutput(inputStream.getBuffer(), 0, inputStream.size());
 		return Response.ok().entity(stream).cookie(new NewCookie(cookie)).build();
 	}
+
+	
 	
 	/**
 	 * request to run a flow with multiple input-output elements.
@@ -460,8 +461,8 @@ public class TransactionResources {
 		MultiDataQueryHolder multiData = RESTtoInternalWrapper.RESTtoInternal(multipart, queryParams);
 
 		String flowName = queryParams.getFirst(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME);
-		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
-		transaction.getFlowRunner(flowName).executeSteps(holders, multiData);
+		
+		TransactionOperations.runStaticFlowRunnerByName(received, holders, multiData, flowName);
 		
 		List<String> retList = new ArrayList<String>();
 		for (StreamHolder holder : holders) {

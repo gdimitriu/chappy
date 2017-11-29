@@ -24,16 +24,22 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.rest.ChappyRESTAddTransformer;
@@ -42,8 +48,12 @@ import chappy.clients.rest.ChappyRESTLogout;
 import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
+import chappy.interfaces.rest.resources.IRestPathConstants;
+import chappy.interfaces.rest.resources.IRestResourcesConstants;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
+import chappy.policy.cookies.CookieUtils;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.tests.rest.transformers.test.RestCallsUtils;
@@ -394,5 +404,53 @@ public class RestClientTrasactionFlowTransformationsTest {
 		assertEquals("Status should be 403", Status.FORBIDDEN.getStatusCode(), transformer.getStatusCode());
 		assertEquals(StreamUtils.getStringFromResource("exceptions/xml2json2xml.out"),
 				transformer.getTransactionErrorMessage());
+	}
+	
+	
+	/**
+	 * test chappy: 
+	 * 	- login in chappy using REST
+	 * 	- add 3 transformer steps and validate using REST
+	 *  - add the flow using REST
+	 *  - run a flow with those steps using REST
+	 *  - validate the return data
+	 *  - logout from chappy using REST
+	 * @throws FileNotFoundException
+	 * @throws JsonProcessingException 
+	 */
+	@Test
+	public void push3CustomTransformersByTransactionPushFlowAndMakeTransformation() throws FileNotFoundException {
+		List<String> addTransformers = new ArrayList<>();
+		addTransformers.add("PreProcessingStep");
+		addTransformers.add("ProcessingStep");
+		addTransformers.add("PostProcessingStep");
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
+		
+		RESTUtilsRequests.chappyAddFlow("first_Flow",
+				StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"), transaction);
+
+		@SuppressWarnings("resource")
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.INPUT_DATA, "blabla");
+		Response response = null;
+		try {
+			response = transaction.getRestTarget().path(IRestPathConstants.PATH_TO_TRANSACTION)
+						.path(IRestResourcesConstants.REST_FLOW)
+						.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, "first_Flow")
+						.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(CookieUtils.encodeCookie(transaction.getCookie()))
+						.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		} catch (JsonProcessingException e) {
+			fail("could not encode cookie" + e.getLocalizedMessage());
+		}
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+						StreamUtils.toStringFromStream(inputStream));
+		}
+		
+		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 }
