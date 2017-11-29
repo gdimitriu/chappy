@@ -26,7 +26,7 @@ Transaction functional behavioral:
 - On logout the added custom transformers are deleted from system.
 - Transaction holds references to the statistics of each transformation operation.
 - Transaction is persisted until the user log-out.
-- Caching of the flow is done in transaction which is persisted (the request is now only for REST because the clients are not implemented yet). 
+- Caching of the flow is done in transaction which is persisted (the request is now only for REST because the JMS clients and server part are not implemented yet). 
 
 Transformer functional behavioral:
 - Predefined steps are :

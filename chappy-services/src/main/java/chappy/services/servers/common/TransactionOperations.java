@@ -19,14 +19,20 @@
  */
 package chappy.services.servers.common;
 
+import java.io.InputStream;
 import java.util.List;
 
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
+import chappy.interfaces.flows.IFlowRunner;
+import chappy.interfaces.flows.MultiDataQueryHolder;
+import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.policy.provider.SystemPolicyProvider;
+import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
 import chappy.providers.transaction.TransactionProviders;
+import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
  * This provide utility methods for transaction operations.
@@ -79,4 +85,56 @@ public class TransactionOperations {
     	transaction.commit();
 		return transaction;
 	}
+	
+	/**
+	 * Add Static flow Runner to the cache.
+	 * @param received cookie
+	 * @param configurationStream
+	 * @param queryParams
+	 * @param multiData
+	 * @throws Exception
+	 */
+	public static void addStaticFlowRunner(final IChappyCookie received, final InputStream configurationStream,
+			final String flowName, final MultiDataQueryHolder multiData) throws Exception {
+		
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+
+		runner.createSteps(received);
+
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.putFlowRunner(flowName, runner);
+	}
+	
+	/**
+	 * run a static flow runner from the cache.
+	 * @param received
+	 * @param holder
+	 * @param multiData
+	 * @param flowName
+	 * @throws Exception
+	 */
+	public static void runStaticFlowRunnerByName(final IChappyCookie received, final List<StreamHolder> holders, final MultiDataQueryHolder multiData,
+			String flowName) throws Exception {
+		
+		ITransaction transaction = TransactionProviders.getInstance().getTransaction(received);
+		transaction.getFlowRunner(flowName).executeSteps(holders, multiData);
+	}
+	
+	/**
+	 * run a static flow only one time.
+	 * @param received
+	 * @param configurationStream
+	 * @param holders
+	 * @param multiData
+	 * @throws Exception
+	 */
+	public static void runStaticFlow(final IChappyCookie received, final InputStream configurationStream, final List<StreamHolder> holders,
+			final MultiDataQueryHolder multiData) throws Exception {
+		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
+				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, multiData);
+		runner.createSteps(received);
+		runner.executeSteps(holders);
+	}
+	
 }

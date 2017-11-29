@@ -51,7 +51,7 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 		} else if (client instanceof JMSTransactionHolder) {
 			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
 		}
-		setProtocol(new JMSTransformFlowMessage(input, configuration));
+		setProtocol(new JMSTransformFlowMessage(input, configuration, null));
 		getProtocol().setCookie(client.getCookie());
 	}
 

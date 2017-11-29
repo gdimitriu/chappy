@@ -32,6 +32,7 @@ import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
+ * Chappy transform a flow  request client for REST.
  * @author Gabriel Dimitriu
  *
  */
@@ -54,7 +55,7 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 		} else if (client instanceof RESTTransactionHolder) {
 			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
 		}
-		setProtocol(new RESTTransformFlowMessage(input, configuration));
+		setProtocol(new RESTTransformFlowMessage(input, configuration, null));
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
 	
@@ -70,7 +71,25 @@ public class ChappyRESTTransformFlow extends AbstractChappyTransformFlow impleme
 		} else if (client instanceof RESTTransactionHolder) {
 			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
 		}
-		setProtocol(new RESTTransformFlowMessage(input, type, configuration));
+		setProtocol(new RESTTransformFlowMessage(input, type, configuration, null));
+		getProtocol().setCookie(clientTransaction.getCookie());
+	}
+	
+
+	/**
+	 * @param input string for the transformation
+	 * @param configuration of the transformation flow
+	 * @param flowName the name of the flow
+	 * @param client the chappy client transaction
+	 */
+	public ChappyRESTTransformFlow(final String input, final MediaType type, final String configuration, final String flowName,
+			final IClientTransaction client) {
+		if (client instanceof ChappyClientTransactionHolder) {
+			clientTransaction = (ChappyClientTransactionHolder) client;
+		} else if (client instanceof RESTTransactionHolder) {
+			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
+		}
+		setProtocol(new RESTTransformFlowMessage(input, type, configuration, flowName));
 		getProtocol().setCookie(clientTransaction.getCookie());
 	}
 	

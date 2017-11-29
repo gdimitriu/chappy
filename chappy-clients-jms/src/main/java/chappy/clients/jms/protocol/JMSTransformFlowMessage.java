@@ -63,8 +63,8 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 		// TODO Auto-generated constructor stub
 	}
 
-	public JMSTransformFlowMessage(final String input, final String configuration) {
-		super(input, configuration);
+	public JMSTransformFlowMessage(final String input, final String configuration, final String flowName) {
+		super(input, configuration, flowName);
 	}
 
 	@Override

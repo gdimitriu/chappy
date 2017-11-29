@@ -34,13 +34,11 @@ import javax.jms.Session;
 import chappy.clients.jms.protocol.JMSTransformFlowMessage;
 import chappy.interfaces.exception.MalformedXSDXMLException;
 import chappy.interfaces.exception.NotExistingClassException;
-import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
 import chappy.interfaces.jms.resources.JMSAbstractProducerConsumer;
-import chappy.interfaces.services.IChappyServiceNamesConstants;
-import chappy.providers.flow.runners.TransformersFlowRunnerProvider;
+import chappy.services.servers.common.TransactionOperations;
 import chappy.utils.streams.StreamUtils;
 import chappy.utils.streams.wrappers.ByteArrayInputStreamWrapper;
 import chappy.utils.streams.wrappers.StreamHolder;
@@ -148,17 +146,15 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 			byte[] buffer = input.getBytes();
 			holders.add(new StreamHolder(new ByteArrayInputStreamWrapper(buffer, 0, buffer.length)));
 		}
-		
-		
-		IFlowRunner runner = TransformersFlowRunnerProvider.getInstance()
-				.createFlowRunner(IChappyServiceNamesConstants.STATIC_FLOW, configurationStream, transformer.getMultidataQuery());
-		runner.createSteps(transformer.getCookie());
-		runner.executeSteps(holders);
+
+		TransactionOperations.runStaticFlow(transformer.getCookie(), configurationStream, holders, transformer.getMultidataQuery());
+
 		/* create the output */
 		List<String> retList = new ArrayList<String>();
 		for (StreamHolder holder : holders) {
 			retList.add(StreamUtils.toStringFromStream(holder.getInputStream()));
-		}		
+		}
+		
 		transformer.setOutputs(retList);
 		Message reply = transformer.encodeReplyMessage(session);
 		

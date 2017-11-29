@@ -35,10 +35,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogout;
+import chappy.clients.rest.ChappyRESTRunExistingFlow;
 import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
@@ -394,5 +397,48 @@ public class RestClientTrasactionFlowTransformationsTest {
 		assertEquals("Status should be 403", Status.FORBIDDEN.getStatusCode(), transformer.getStatusCode());
 		assertEquals(StreamUtils.getStringFromResource("exceptions/xml2json2xml.out"),
 				transformer.getTransactionErrorMessage());
+	}
+	
+	
+	/**
+	 * test chappy: 
+	 * 	- login in chappy using REST
+	 * 	- add 3 transformer steps and validate using REST
+	 *  - add the flow using REST
+	 *  - run a flow with those steps using REST
+	 *  - validate the return data
+	 *  - logout from chappy using REST
+	 * @throws FileNotFoundException
+	 * @throws JsonProcessingException 
+	 */
+	@Test
+	public void push3CustomTransformersByTransactionPushFlowAndMakeTransformation() throws FileNotFoundException {
+		List<String> addTransformers = new ArrayList<>();
+		addTransformers.add("PreProcessingStep");
+		addTransformers.add("ProcessingStep");
+		addTransformers.add("PostProcessingStep");
+		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(port);
+		
+		RESTUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
+		
+		RESTUtilsRequests.chappyAddFlow("first_Flow",
+				StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"), transaction);
+
+		ChappyRESTRunExistingFlow transformer = new ChappyRESTRunExistingFlow(
+				"blabla",
+				"first_Flow",
+				transaction).send();
+		
+		if (transformer.getStatusCode() >= 0) {
+			List<String> actual = transformer.getOutputResultAsString();
+			assertEquals(actual.size(), 1);
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+						actual.get(0));
+		} else {
+			fail("processing error on server");
+		}
+		
+		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
 	}
 }
