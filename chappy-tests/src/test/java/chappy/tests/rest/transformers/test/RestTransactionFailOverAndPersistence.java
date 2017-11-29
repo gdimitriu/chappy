@@ -40,7 +40,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -116,7 +115,7 @@ public class RestTransactionFailOverAndPersistence {
 	}
 	
 	@SuppressWarnings("resource")
-	@Ignore @Test
+	@Test
 	public void push3CustomTransformersByTransactionAndMakeTransformationGetStatisticsBeforeRestart() throws Exception {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
@@ -193,7 +192,7 @@ public class RestTransactionFailOverAndPersistence {
 	}
 	
 	@SuppressWarnings("resource")
-	@Ignore @Test
+	@Test
 	public void push3CustomTransformersByTransactionAndAddFlowAndFailBeforeRestart() throws Exception {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
@@ -259,7 +258,7 @@ public class RestTransactionFailOverAndPersistence {
 	
 	
 	@SuppressWarnings("resource")
-	@Ignore @Test
+	@Test
 	public void push3CustomTransformersByTransactionAndAddFlowBeforeRestart() throws Exception {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
