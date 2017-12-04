@@ -30,6 +30,7 @@ import java.util.List;
 import javax.jms.JMSException;
 
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
+import chappy.clients.jms.ChappyJMSAddFlow;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSListTransformers;
 import chappy.clients.jms.ChappyJMSLogin;
@@ -152,7 +153,7 @@ public final class JMSUtilsRequests {
 	 * @param transaction holder from login
 	 * @throws Exception
 	 */
-	public static void chappyLogout(IJMSTransactionHolder transaction) throws Exception {
+	public static void chappyLogout(final IJMSTransactionHolder transaction) throws Exception {
 		ChappyJMSLogout logout = new ChappyJMSLogout(transaction);
 		logout.send();
 		while(logout.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
@@ -161,6 +162,23 @@ public final class JMSUtilsRequests {
 		assertNull("there should be no exeception", logout.getTransactionException());
 		assertFalse("should be no exception", logout.hasException());
 		assertEquals("reply message is wrong", JMSUtilsRequests.CHAPPY_RECEIVED_OK, logout.getTransactionErrorMessage());
+	}
+	
+	/**
+	 * send a flow to chappy
+	 * @param flowName
+	 * @param configuration
+	 * @param transaction
+	 * @return transaction
+	 * @throws Exception
+	 */
+	public static IJMSTransactionHolder chappyAddFlow(final String flowName, final String configuration,
+			final IJMSTransactionHolder transaction) throws Exception {
+		ChappyJMSAddFlow flow = new ChappyJMSAddFlow(flowName, configuration, transaction);
+		flow.send();
+		while(flow.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+		assertEquals("add flow " + flowName + " did not completed", IJMSStatus.OK, flow.getStatus());
+		return transaction;
 	}
 	
 }

@@ -140,10 +140,11 @@ public final class RESTUtilsRequests {
 	}
 	
 	/**
+	 * send a flow to chappy.
 	 * @param flowName
 	 * @param flowConfiguration
 	 * @param transaction
-	 * @return
+	 * @return transaction
 	 */
 	public static ChappyClientTransactionHolder chappyAddFlow(final String flowName, final String flowConfiguration, final ChappyClientTransactionHolder transaction) {
 

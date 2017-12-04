@@ -34,6 +34,7 @@ import org.junit.Test;
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSListTransformers;
+import chappy.clients.jms.ChappyJMSRunExistingFlow;
 import chappy.clients.jms.ChappyJMSTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfigurations;
@@ -175,6 +176,47 @@ public class JMSClientTransactionFlowTransformationsTest {
 					"blabla",
 					StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"),
 					transaction).send();
+			while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			if (transformer.getStatusCode() >= 0) {
+				List<String> actual = transformer.getOutputResultAsString();
+				assertEquals(1, actual.size());
+				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+							actual.get(0));
+			} else {
+				fail("processing error on server");
+			}
+			JMSUtilsRequests.chappyLogout(transaction);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+	}
+	
+	/**
+	 * test chappy: 
+	 * 	- login in chappy using JMS
+	 * 	- add 3 transformer steps and validate using JMS
+	 *  - add a flow using JMS
+	 *  - run a flow with those steps using JMS
+	 *  - validate the result of flow
+	 *  - logout from chappy using JMS
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void push3CustomTransformersByTransactionAndFlowMakeTransformation() throws FileNotFoundException {
+		List<String> addTransformers = new ArrayList<>();
+		addTransformers.add("PreProcessingStep");
+		addTransformers.add("ProcessingStep");
+		addTransformers.add("PostProcessingStep");
+		try {
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
+			
+			JMSUtilsRequests.chappyAddFlow("first_Flow",
+					StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"),
+					transaction);
+			
+			ChappyJMSTransformFlow transformer = new ChappyJMSRunExistingFlow(
+					"blabla", "first_Flow", transaction).send();
 			while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
 			if (transformer.getStatusCode() >= 0) {
 				List<String> actual = transformer.getOutputResultAsString();
@@ -364,6 +406,83 @@ public class JMSClientTransactionFlowTransformationsTest {
 				"blabla",
 				StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"),
 				transaction).send();
+		while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+		if (transformer.getStatusCode() >= 0) {
+			List<String> actual = transformer.getOutputResultAsString();
+			assertEquals(1, actual.size());
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+						actual.get(0));
+		} else {
+			fail("processing error on server");
+		}
+		JMSUtilsRequests.chappyLogout(transaction);
+	}
+	
+	/**
+	 * test chappy: 
+	 * 	- login in chappy using JMS
+	 * 	- add 2 custom transformers and validate using JMS
+	 *  - fail-over JMS server
+	 *  - add 1 custom transformer using JMS
+	 *  - validate that all 3 custom transformers are on the server using JMS
+	 *  - add a flow using JMS
+	 *  - run the flow with one input message using JMS
+	 *  - validate the return data
+	 *  - logout from chappy using JMS
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void failOverAfterPut2CustomTransformersAddANewOneAndFlowMakeTransformation() throws Exception {
+		List<String> addTransformers = new ArrayList<>();
+		addTransformers.add("PreProcessingStep");
+		addTransformers.add("PostProcessingStep");
+		ChappyClientTransactionHolder transaction = null;
+		try {
+			transaction = JMSUtilsRequests.chappyLogin(serverPort);
+			JMSUtilsRequests.chppyAddCustomTransformersAndValidate(addTransformers, transaction);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+		
+		//stop and restart the server
+		tearDown();
+		setUp();
+		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
+		TransactionProviders.getInstance().loadPersisted();
+				
+		//fail-over ended
+		// add transformers in transaction
+		ChappyJMSAddTransformer addTransformer = new ChappyJMSAddTransformer("ProcessingStep", transaction);
+		try {
+			addTransformer.setTransformer("ProcessingStep", RestCallsUtils.CUSTOM_TRANSFORMERS_DUMMY);
+			addTransformer.send();
+			while(addTransformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			assertEquals("add transformer " +  "ProcessingStep" + " exception", IJMSStatus.OK, addTransformer.getStatus());
+			addTransformers.add("ProcessingStep");
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("exception occured at add transformer" + e.getLocalizedMessage());
+		}
+		
+		//validate the new added transformer
+		try {
+			// list the added transformers
+			ChappyJMSListTransformers listTransformers = new ChappyJMSListTransformers(transaction).send();
+			while(listTransformers.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			assertEquals("internal error for list transformers",IJMSStatus.OK, listTransformers.getStatus());
+			List<String> transformers = listTransformers.getListOfTransformersName();
+			TestUtils.compareTwoListWithoutOrder(addTransformers, transformers);
+		} catch (Exception e) {
+			fail("exception occured at add transformer" + e.getLocalizedMessage());
+		}
+		
+		JMSUtilsRequests.chappyAddFlow("first_Flow",
+				StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"),
+				transaction);
+		
+		//transform
+		ChappyJMSTransformFlow transformer = new ChappyJMSRunExistingFlow(
+				"blabla", "first_Flow",	transaction).send();
 		while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
 		if (transformer.getStatusCode() >= 0) {
 			List<String> actual = transformer.getOutputResultAsString();
