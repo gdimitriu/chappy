@@ -406,5 +406,63 @@ public class MixedJMSClientRESTClientTransactionTest {
 			fail(e.getLocalizedMessage());
 		}
 	}
+	
+	/**
+	 * test chappy:
+	 *  - login in chappy using JMS
+	 *  - add 1 transformer using REST
+	 *  - stop the REST server
+	 *  - add 2 transformers using JMS
+	 *  - start the REST server
+	 *  - validate transformers using REST
+	 *  - add the flow using REST
+	 *  - run the flow using JMS
+	 *  - validate the result of flow
+	 *  - logout from chappy using REST
+	 */
+	@Test
+	public void failOVerChappyJLoginRAdd1TransformerRStopJAdd2TransformerRStartRListRAddFlowJRFlowRLogout() {
+		try {
+			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
+			
+			List<String> addRest = new ArrayList<>();
+			addRest.add("PreProcessingStep");
+			RESTUtilsRequests.chppyAddCustomTransformers(addRest, transaction);
+			
+			//stop the CHAPPY REST
+			server.stopRESTServer();
+			
+			List<String> addJms = new ArrayList<>();
+			addJms.add("PostProcessingStep");
+			addJms.add("ProcessingStep");
+			JMSUtilsRequests.chppyAddCustomTransformers(addJms, transaction);
+			
+			//start the CHAPPY REST
+			server.startRESTServer(false);
+			
+			addRest.addAll(addJms);
+			RESTUtilsRequests.chappyValidateTransformers(addRest, transaction);
+			
+			RESTUtilsRequests.chappyAddFlow("first_Flow",
+					StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"), transaction);
+			
+			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
+					"blabla", transaction, "first_Flow").send();
+			while(transformer.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			
+			if (transformer.getStatusCode() >= 0) {
+				List<String> actual = transformer.getOutputResultAsString();
+				assertEquals(1, actual.size());
+				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+							actual.get(0));
+			} else {
+				fail("processing error on server");
+			}
+			
+			RESTUtilsRequests.chappyLogout(transaction);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+	}
 }
 	

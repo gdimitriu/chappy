@@ -71,9 +71,14 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 	public Message encodeInboundMessage(final Session session) throws JMSException {
 		ObjectMessage message = session.createObjectMessage();
 		message.setStringProperty(IJMSCommands.COMMAND_PROPERTY, IJMSCommands.FLOW);
+		if (getFlowName() != null) {
+			message.setStringProperty(IJMSProtocolKeys.FLOW_NAME, getFlowName());
+		}
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IJMSProtocolKeys.COOKIE_KEY, getCookie());
-		map.put(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY, getConfiguration());
+		if (getConfiguration() != null && !"".equals(getConfiguration())) {
+			map.put(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY, getConfiguration());
+		}
 		map.put(IJMSProtocolKeys.FLOW_QUERIES_KEY, queries.getQueries());
 		map.put(IJMSProtocolKeys.DATA_FLOW_NR_KEY, getInputs().size());
 		for (int i = 0; i < getInputs().size(); i++) {
@@ -91,7 +96,12 @@ public class JMSTransformFlowMessage extends AbstractChappyTransformFlowMessage 
 		if (retObj.containsKey(IJMSProtocolKeys.COOKIE_KEY)) {
 			setCookie((IChappyCookie) retObj.get(IJMSProtocolKeys.COOKIE_KEY));
 		}
-		setConfiguration((String) retObj.get(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY));
+		if (message.propertyExists(IJMSProtocolKeys.FLOW_NAME)) {
+			setFlowName(message.getStringProperty(IJMSProtocolKeys.FLOW_NAME));
+		}
+		if (retObj.containsKey(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY)) {
+			setConfiguration((String) retObj.get(IJMSProtocolKeys.FLOW_CONFIGURATION_KEY));
+		}
 		queries.setQueries((MultiValuedMap<String, String>) retObj.get(IJMSProtocolKeys.FLOW_QUERIES_KEY));
 		int size = (Integer) retObj.get(IJMSProtocolKeys.DATA_FLOW_NR_KEY);
 		List<String> inputs = new ArrayList<>();
