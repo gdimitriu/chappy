@@ -79,7 +79,7 @@ public class RESTAddFlowMessage extends AbstractChappyAddFlowMessage implements 
 	public Invocation encodeInboundMessage(final WebTarget target) throws JsonProcessingException {		
 		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
-				.field(IChappyServiceNamesConstants.CONFIGURATION, getFlowDefinition());
+				.field(IChappyServiceNamesConstants.CONFIGURATION, getConfiguration());
 		Invocation builder  = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
 					.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_FLOW)
 					.queryParam(IChappyServiceNamesConstants.CHAPPY_FLOW_NAME, getFlowName())

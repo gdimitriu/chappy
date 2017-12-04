@@ -45,6 +45,7 @@ public class JMSQueuesProvider {
 		systemQueues.add(IJMSQueueNameConstants.AUTHENTICATION);
 		systemQueues.add(IJMSQueueNameConstants.TRANSACTION_RETURN);
 		systemQueues.add(IJMSQueueNameConstants.LIST_TRANSFORMERS);
+		systemQueues.add(IJMSQueueNameConstants.ADD_FLOW);
 	}
 
 	

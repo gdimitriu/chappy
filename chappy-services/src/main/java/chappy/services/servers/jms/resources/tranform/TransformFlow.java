@@ -135,19 +135,22 @@ public class TransformFlow  extends JMSAbstractProducerConsumer {
 	 * @param message the received message.
 	 * @throws Exception
 	 */
-	private void transformFlow(final Session session, final Message message, final JMSTransformFlowMessage transformer) throws Exception {		
-		InputStream configurationStream = null;
-		if (transformer.getConfiguration() != null && !"".equals(transformer.getConfiguration())) {
-			configurationStream = new ByteArrayInputStream(transformer.getConfiguration().getBytes());
-		}
+	private void transformFlow(final Session session, final Message message, final JMSTransformFlowMessage transformer) throws Exception {
+		
 		/* create the list of input stream holders */
 		List<StreamHolder> holders = new ArrayList<StreamHolder>();
 		for (String input : transformer.getInputs()) {
 			byte[] buffer = input.getBytes();
 			holders.add(new StreamHolder(new ByteArrayInputStreamWrapper(buffer, 0, buffer.length)));
 		}
-
-		TransactionOperations.runStaticFlow(transformer.getCookie(), configurationStream, holders, transformer.getMultidataQuery());
+		
+		InputStream configurationStream = null;
+		if (transformer.getConfiguration() != null && !"".equals(transformer.getConfiguration())) {
+			configurationStream = new ByteArrayInputStream(transformer.getConfiguration().getBytes());
+			TransactionOperations.runStaticFlow(transformer.getCookie(), configurationStream, holders, transformer.getMultidataQuery());
+		} else if (transformer.getFlowName() != null && !"".equals(transformer.getFlowName())) {
+			TransactionOperations.runStaticFlowRunnerByName(transformer.getCookie(), holders, transformer.getMultidataQuery(), transformer.getFlowName());
+		}
 
 		/* create the output */
 		List<String> retList = new ArrayList<String>();

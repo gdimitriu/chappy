@@ -22,21 +22,21 @@ package chappy.clients.jms;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import chappy.clients.common.AbstractChappyTransformFlow;
+import chappy.clients.common.AbstractChappyAddFlow;
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.common.transaction.JMSTransactionHolder;
-import chappy.clients.jms.protocol.JMSTransformFlowMessage;
+import chappy.clients.jms.protocol.JMSAddFlowMessage;
 import chappy.interfaces.jms.IJMSClient;
 import chappy.interfaces.jms.protocol.IJMSMessages;
 import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * JMS request for run a static flow.
+ * JMS request for add a static flow.
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implements IJMSClient {
+public class ChappyJMSAddFlow extends AbstractChappyAddFlow implements IJMSClient {
 
 	/** client transaction coming from login */
 	private ChappyClientTransactionHolder clientTransaction = new ChappyClientTransactionHolder();
@@ -44,36 +44,23 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 	/**
 	 * 
 	 */
-	public ChappyJMSTransformFlow(final String input, final String configuration, final IClientTransaction client) {
+	public ChappyJMSAddFlow(final String flowName, final String configuration, final IClientTransaction client) {
 		if (client instanceof ChappyClientTransactionHolder) {
 			clientTransaction = (ChappyClientTransactionHolder) client;
 		} else if (client instanceof JMSTransactionHolder) {
 			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
 		}
-		setProtocol(new JMSTransformFlowMessage(input, configuration, null));
+		setProtocol(new JMSAddFlowMessage(flowName, configuration));
 		getProtocol().setCookie(client.getCookie());
 	}
 	
-	/**
-	 * 
-	 */
-	public ChappyJMSTransformFlow(final String input, final IClientTransaction client, final String flowName) {
+	public ChappyJMSAddFlow(final IClientTransaction client) {
 		if (client instanceof ChappyClientTransactionHolder) {
 			clientTransaction = (ChappyClientTransactionHolder) client;
 		} else if (client instanceof JMSTransactionHolder) {
 			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
 		}
-		setProtocol(new JMSTransformFlowMessage(input, null, flowName));
-		getProtocol().setCookie(client.getCookie());
-	}
-
-	public ChappyJMSTransformFlow(final IClientTransaction client) {
-		if (client instanceof ChappyClientTransactionHolder) {
-			clientTransaction = (ChappyClientTransactionHolder) client;
-		} else if (client instanceof JMSTransactionHolder) {
-			clientTransaction.setJmsTransaction((JMSTransactionHolder) client);
-		}
-		setProtocol(new JMSTransformFlowMessage());
+		setProtocol(new JMSAddFlowMessage());
 		getProtocol().setCookie(client.getCookie());
 	}
 
@@ -83,10 +70,10 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 	@Override
 	public void onMessage(final Message message) {
 		try {
-			setProtocol(JMSTransformFlowMessage.createDecodedReplyMessage(message));
+			setProtocol(JMSAddFlowMessage.createDecodedReplyMessage(message));
 		} catch (JMSException e) {
 			if (getProtocol() == null) {
-				setProtocol(new JMSTransformFlowMessage());
+				setProtocol(new JMSAddFlowMessage());
 			}
 			getProtocol().setReplyMessage(e.getLocalizedMessage());
 			getProtocol().setException(e);
@@ -102,7 +89,7 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 		if (getProtocol() == null) {
 			return IJMSStatus.REPLY_NOT_READY;
 		}
-		return ((JMSTransformFlowMessage) getProtocol()).getStatus();
+		return ((JMSAddFlowMessage) getProtocol()).getStatus();
 	}
 
 	/* (non-Javadoc)
@@ -131,8 +118,8 @@ public class ChappyJMSTransformFlow extends AbstractChappyTransformFlow implemen
 	 * @see chappy.interfaces.jms.IJMSClient#send()
 	 */
 	@Override
-	public ChappyJMSTransformFlow send() throws JMSException {
-		Message message = ((JMSTransformFlowMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
+	public ChappyJMSAddFlow send() throws JMSException {
+		Message message = ((JMSAddFlowMessage) getProtocol()).encodeInboundMessage(clientTransaction.getCurrentSession());
 		message.setJMSReplyTo(clientTransaction.getCurrentReplyToDestination());
 		clientTransaction.getCurrentMessageProducer().send(message);
 		clientTransaction.getCurrentMessageConsumer().setMessageListener(this);		

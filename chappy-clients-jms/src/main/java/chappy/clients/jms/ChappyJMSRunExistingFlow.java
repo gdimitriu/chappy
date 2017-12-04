@@ -17,34 +17,40 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.jms.protocol;
+package chappy.clients.jms;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.jms.JMSException;
+
+import chappy.interfaces.transactions.IClientTransaction;
 
 /**
- * JMS Commands that will be routed.
+ * Chappy run an existing flow request client for JMS.
  * @author Gabriel Dimitriu
- *
  */
-public interface IJMSCommands {
+public class ChappyJMSRunExistingFlow extends ChappyJMSTransformFlow {
 
-	String COMMAND_PROPERTY = "command";
-	String LOGIN = "login";
-	String LOGOUT = "logout";
-	String FLOW = "flow";
-	String ADD_TRANSFORMER = "add_transformer";
-	String LIST_TRANSFORMERS = "list_transformers";
-	String ADD_FLOW = "add_flow";
-	
-	public static List<String> getAllCommands() {
-		List<String >commands = new ArrayList<String>();
-		commands.add(LOGIN);
-		commands.add(LOGOUT);
-		commands.add(FLOW);
-		commands.add(ADD_TRANSFORMER);
-		commands.add(LIST_TRANSFORMERS);
-		commands.add(ADD_FLOW);
-		return commands;
+	/**
+	 * @param input
+	 * @param configuration
+	 * @param client
+	 */
+	public ChappyJMSRunExistingFlow(final String input, final String flowName, final IClientTransaction client) {
+		super(input, client, flowName);
 	}
+
+	/**
+	 * @param client
+	 */
+	public ChappyJMSRunExistingFlow(final IClientTransaction client) {
+		super(client);
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.rest.IRESTClient#send()
+	 */
+	@Override
+	public ChappyJMSRunExistingFlow send() throws JMSException {
+		return (ChappyJMSRunExistingFlow) super.send();
+	}
+
 }
