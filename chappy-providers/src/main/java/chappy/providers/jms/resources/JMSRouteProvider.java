@@ -45,6 +45,7 @@ public class JMSRouteProvider {
 		routes.put(IJMSCommands.ADD_TRANSFORMER, IJMSQueueNameConstants.ADD_TRANSFORMER);
 		routes.put(IJMSCommands.FLOW, IJMSQueueNameConstants.TRANSFORM);
 		routes.put(IJMSCommands.LIST_TRANSFORMERS, IJMSQueueNameConstants.LIST_TRANSFORMERS);
+		routes.put(IJMSCommands.ADD_FLOW, IJMSQueueNameConstants.ADD_FLOW);
 	}
 	
 	public static JMSRouteProvider getInstance() {

@@ -41,6 +41,13 @@ public abstract class AbstractChappyAddFlowMessage extends AbstractChappyProtoco
 
 	/**
 	 * @param flowName
+	 */
+	public AbstractChappyAddFlowMessage(final String flowName) {
+		this.flowName = flowName;
+	}
+	
+	/**
+	 * @param flowName
 	 * @param flowDefiniton
 	 */
 	public AbstractChappyAddFlowMessage(final String flowName, final String flowDefiniton) {
@@ -51,14 +58,14 @@ public abstract class AbstractChappyAddFlowMessage extends AbstractChappyProtoco
 	/**
 	 * @return the flowDefinition
 	 */
-	public String getFlowDefinition() {
+	public String getConfiguration() {
 		return flowDefinition;
 	}
 
 	/**
 	 * @param flowDefinition the flowDefinition to set
 	 */
-	public void setFlowDefinition(String flowDefinition) {
+	public void setConfiguration(final String flowDefinition) {
 		this.flowDefinition = flowDefinition;
 	}
 

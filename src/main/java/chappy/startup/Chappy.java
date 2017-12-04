@@ -30,6 +30,7 @@ import chappy.interfaces.services.IServiceServer;
 import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.providers.services.ServicesProvider;
 import chappy.services.servers.jms.resources.TransactionRouter;
+import chappy.services.servers.jms.resources.tranform.AddFlow;
 import chappy.services.servers.jms.resources.tranform.AddTransformer;
 import chappy.services.servers.jms.resources.tranform.Authentication;
 import chappy.services.servers.jms.resources.tranform.ListTransformers;
@@ -54,6 +55,7 @@ public class Chappy {
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddTransformer());
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransformFlow());
 		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new ListTransformers());
+		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddFlow());
 		try {
 			@SuppressWarnings("unused")
 			IServiceServer service = ServicesProvider.getInstance().getNewServiceServer("rest");

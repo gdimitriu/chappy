@@ -32,4 +32,5 @@ public interface IJMSQueueNameConstants {
 	String TRANSACTION = "transaction";
 	String TRANSACTION_RETURN = "transaction_return";
 	String LIST_TRANSFORMERS = "list_transformers";
+	String ADD_FLOW = "add_flow";
 }

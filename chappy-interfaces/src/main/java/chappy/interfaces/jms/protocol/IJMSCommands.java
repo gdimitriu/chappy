@@ -35,6 +35,7 @@ public interface IJMSCommands {
 	String FLOW = "flow";
 	String ADD_TRANSFORMER = "add_transformer";
 	String LIST_TRANSFORMERS = "list_transformers";
+	String ADD_FLOW = "add_flow";
 	
 	public static List<String> getAllCommands() {
 		List<String >commands = new ArrayList<String>();
@@ -43,6 +44,7 @@ public interface IJMSCommands {
 		commands.add(FLOW);
 		commands.add(ADD_TRANSFORMER);
 		commands.add(LIST_TRANSFORMERS);
+		commands.add(ADD_FLOW);
 		return commands;
 	}
 }
