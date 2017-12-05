@@ -22,11 +22,14 @@ package chappy.interfaces.jms;
 import javax.jms.JMSException;
 import javax.jms.MessageListener;
 
+import chappy.interfaces.jms.protocol.IJMSStatus;
+import chappy.interfaces.services.IChappyClient;
+
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IJMSClient extends MessageListener {
+public interface IJMSClient extends MessageListener, IChappyClient {
 
 	/**
 	 * send the data to Chappy.
@@ -37,8 +40,20 @@ public interface IJMSClient extends MessageListener {
 	
 	
 	/**
-	 * This contains everithing neeed to continue communication to chappy.
+	 * This contains everything needed to continue communication to chappy.
 	 * @return Transaction Holder for JMS
 	 */
 	public IJMSTransactionHolder createTransactionHolder() throws Exception;
+	
+	
+	/**
+	 * Blocking receive with pool in thread.
+	 * @param pollingTime the time in seconds between two poll.
+	 * @return ChappyJMSInstance.
+	 * @throws Exception
+	 */
+	public default Object receivePoll(final long pollTime) throws Exception {
+		while(getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(pollTime);
+		return this;
+	}
 }

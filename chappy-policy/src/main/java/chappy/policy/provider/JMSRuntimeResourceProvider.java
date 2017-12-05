@@ -21,8 +21,12 @@ package chappy.policy.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import org.reflections.Reflections;
 
 import chappy.interfaces.jms.resources.IJMSRuntimeResource;
+import javassist.Modifier;
 
 /**
  * Singleton provider for the registered resources. 
@@ -37,11 +41,16 @@ public class JMSRuntimeResourceProvider {
 	/** list of resources available at startup */
 	private List<IJMSRuntimeResource> systemResources = null;
 	
+	/** list of resources register by system/user */
+	private List<IJMSRuntimeResource> registeredResources= null;
+	
 	/**
 	 * 
 	 */
 	private JMSRuntimeResourceProvider() {
 		systemResources = new ArrayList<>();
+		registeredResources = new ArrayList<>();
+		loadServerRuntimeResources();
 	}
 
 	/**
@@ -52,10 +61,21 @@ public class JMSRuntimeResourceProvider {
 	}
 	
 	/**
+	 * reload all default resources keep registered resources.
+	 */
+	public void reload() {
+		systemResources = new ArrayList<>();
+		loadServerRuntimeResources();
+	}
+	
+	/**
 	 * @return list of resources.
 	 */
 	public List<IJMSRuntimeResource> getAllResources() {
-		return systemResources;
+		List<IJMSRuntimeResource> all = new ArrayList<>();
+		all.addAll(systemResources);
+		all.addAll(registeredResources);
+		return all;
 	}
 	
 	
@@ -64,7 +84,7 @@ public class JMSRuntimeResourceProvider {
 	 * @param resource to be register.
 	 */
 	public void registerSystemRuntimeResource(final IJMSRuntimeResource resource) {
-		systemResources.add(resource);
+		registeredResources.add(resource);
 	}
 
 	
@@ -75,8 +95,27 @@ public class JMSRuntimeResourceProvider {
 	 */
 	public boolean isSystemRuntimeResource(final Object resource) {
 		if (resource instanceof IJMSRuntimeResource) {
-			return true;
+			if (systemResources.contains(resource)) {
+				return true;
+			}
 		}
 		return false;
+	}
+	
+	/**
+	 * scan and load server JMS resources from all chappy packages.
+	 */
+	private void loadServerRuntimeResources() {
+		Reflections reflection = new Reflections("chappy");
+		Set<Class<? extends IJMSRuntimeResource>> resources = reflection.getSubTypesOf(IJMSRuntimeResource.class);
+		for (Class<? extends IJMSRuntimeResource> resource : resources) {
+			if (!Modifier.isAbstract(resource.getModifiers()) && !resource.isInterface()) {
+				try {
+					systemResources.add(resource.newInstance());
+				} catch (InstantiationException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
