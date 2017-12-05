@@ -65,7 +65,6 @@ public class JMSRuntimeResourceProvider {
 	 */
 	public void reload() {
 		systemResources = new ArrayList<>();
-		systemResources.addAll(registeredResources);
 		loadServerRuntimeResources();
 	}
 	
@@ -73,7 +72,10 @@ public class JMSRuntimeResourceProvider {
 	 * @return list of resources.
 	 */
 	public List<IJMSRuntimeResource> getAllResources() {
-		return systemResources;
+		List<IJMSRuntimeResource> all = new ArrayList<>();
+		all.addAll(systemResources);
+		all.addAll(registeredResources);
+		return all;
 	}
 	
 	
@@ -83,7 +85,6 @@ public class JMSRuntimeResourceProvider {
 	 */
 	public void registerSystemRuntimeResource(final IJMSRuntimeResource resource) {
 		registeredResources.add(resource);
-		systemResources.add(resource);
 	}
 
 	
@@ -94,7 +95,9 @@ public class JMSRuntimeResourceProvider {
 	 */
 	public boolean isSystemRuntimeResource(final Object resource) {
 		if (resource instanceof IJMSRuntimeResource) {
-			return true;
+			if (systemResources.contains(resource)) {
+				return true;
+			}
 		}
 		return false;
 	}
