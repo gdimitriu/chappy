@@ -9,7 +9,7 @@ The user role configuration and upgrade of the is done on HTTPS using custom mad
 Chappy wish to implement the following functional characteristics of the long time running application server:
 - Predefined service for transformation using staxon and saxon for one time transformation without transactions.
 - Internal transaction (a user could logon the system using JMS/REST and it will receive a cookie which will be used in the rest of the process). Transaction is persisted until the user logout.
-- Auto-discovery of new packages for connectors. (only REST auto-discovery is implemented) 
+- Auto-discovery of new packages for resources. 
 - Hot-plugin of the transformation steps.
 - Persistence of the logs in configured storage.
 - Persistence of running steps and flows for the fail-over situation.
@@ -60,7 +60,7 @@ Chappy uses the following libraries and technologies:
 - JAXB for data-binding.
 - JUnit for unitests.
 - Maven for building.
-- maven-surefire-plugin to run the unitests in maven.
+- maven-surefire-plugin to run the unitests in maven (there are not working after added jms and mixed).
 
 Run the tests from the package chappy-tests using maven (for JMS is not working yet, in eclipse they are all green):
 - the JAVA_HOME is needed to be set into the main pom due to cassandra needs.

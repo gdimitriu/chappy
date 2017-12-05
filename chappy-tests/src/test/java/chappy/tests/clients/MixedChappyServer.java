@@ -27,14 +27,7 @@ import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
-import chappy.policy.provider.JMSRuntimeResourceProvider;
 import chappy.services.servers.jms.ServerJMS;
-import chappy.services.servers.jms.resources.TransactionRouter;
-import chappy.services.servers.jms.resources.tranform.AddFlow;
-import chappy.services.servers.jms.resources.tranform.AddTransformer;
-import chappy.services.servers.jms.resources.tranform.Authentication;
-import chappy.services.servers.jms.resources.tranform.ListTransformers;
-import chappy.services.servers.jms.resources.tranform.TransformFlow;
 import chappy.services.servers.rest.ServerJetty;
 
 /**
@@ -139,12 +132,6 @@ public class MixedChappyServer {
 				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		serverJMS = new ServerJMS();
-		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransactionRouter());
-		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new Authentication());
-		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddTransformer());
-		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new TransformFlow());
-		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new ListTransformers());
-		JMSRuntimeResourceProvider.getInstance().registerSystemRuntimeResource(new AddFlow());
 		serverJMS.configure(configuration);
 		Thread thread = new Thread() {
 			public void run() {
