@@ -479,7 +479,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 	 *  - add a flow using JMS
 	 *  - run the flow with one input message using REST
 	 *  - validate the result of flow
-	 *  - logout using REST
+	 *  - logout using JMS
 	 * @throws FileNotFoundException
 	 */
 	@Test
@@ -522,6 +522,93 @@ public class MixedJMSClientRESTClientTransactionTest {
 				fail("processing error on server");
 			}
 			
+			JMSUtilsRequests.chappyLogout(transaction);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+	}
+	
+	/**
+	 * test chappy: 
+	 * 	- login using JMS
+	 * 	- add 3 custom transformers using JMS
+	 *  - validate that they are on the server using REST
+	 *  - stop the JMS server
+	 *  - add 1 custom transformer using REST
+	 *  - start the JMS server
+	 *  - validate that all 4 custom transformers are on the server using REST
+	 *  - add a first flow using JMS
+	 *  - add a second flow using JMS 
+	 *  - restart the JMS server.
+	 *  - run the first flow with one input message using REST
+	 *  - validate the result of flow
+	 *  - run the second flow with one input message using JMS
+	 *  - validate the result of flow
+	 *  - logout using JMS
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void failOverChappyRLoginJAdd1TransformerJStopRAdd4TransformerJStartJListJAddFlowJStopJStartRFlowJFlowJLogout() {
+		try {
+			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(server.getRestPort());
+			
+			List<String> addJms = new ArrayList<>();
+			addJms.add("PreProcessingStep");
+			JMSUtilsRequests.chppyAddCustomTransformers(addJms, transaction);
+			
+			//stop the CHAPPY JMS
+			server.stopJMSServer();
+			
+			List<String> addRest = new ArrayList<>();
+			addRest.add("PostProcessingStep");
+			addRest.add("ProcessingStep");
+			addRest.add("EnveloperStep");
+			addRest.add("SplitterStep");
+			RESTUtilsRequests.chppyAddCustomTransformers(addRest, transaction);
+			
+			//start the CHAPPY JMS
+			server.startJMSServer(false);
+			
+			addJms.addAll(addRest);
+			JMSUtilsRequests.chappyValidateTransformers(addJms, transaction);
+			
+			JMSUtilsRequests.chappyAddFlow("first_Flow",
+					StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"),
+					transaction);
+			
+			JMSUtilsRequests.chappyAddFlow("splitter",
+					StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterEnveloperStep.xml"),
+							transaction);
+			
+			//stop the CHAPPY JMS
+			server.stopJMSServer();
+			//start the CHAPPY JMS
+			server.startJMSServer(false);
+			ChappyRESTTransformFlow transformer = new ChappyRESTRunExistingFlow(
+					"blabla", "first_Flow", transaction).send();
+
+			if (transformer.getStatusCode() >= 0) {
+				List<String> actual = transformer.getOutputResultAsString();
+				assertEquals(1, actual.size());
+				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+							actual.get(0));
+			} else {
+				fail("processing error on server");
+			}
+			
+			ChappyJMSTransformFlow transformerJMS = new ChappyJMSRunExistingFlow(
+					StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
+					"splitter", transaction).send();
+
+			while(transformerJMS.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
+			if (transformerJMS.getStatusCode() >= 0) {
+				List<String> actual = transformerJMS.getOutputResultAsString();
+				assertEquals(1, actual.size());
+				assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
+							actual.get(0));
+			} else {
+				fail("processing error on server");
+			}
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
