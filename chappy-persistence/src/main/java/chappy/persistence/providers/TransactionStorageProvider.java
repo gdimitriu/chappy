@@ -141,7 +141,7 @@ public class TransactionStorageProvider {
 			mapOfTransactionTransientData.put(cookie.generateStorageId(), transaction);
 		}
 		transaction.start();
-		transaction.persist();
+		transaction.persist(cookie);
 		
 	}
 }

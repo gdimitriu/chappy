@@ -199,7 +199,7 @@ public class ChappyTransaction extends AbstractTransaction {
 	 * @see chappy.interfaces.transactions.ITransaction#persist()
 	 */
 	@Override
-	public void persist() {
+	public void persist(final IChappyCookie cookie) {
 		// ChappyTransaction is not persistence capable.
 	}
 }

@@ -39,6 +39,8 @@ import chappy.utils.changebytecode.ChangeByteCode;
 import chappy.utils.loaders.JavaClassLoaderSimple;
 
 /**
+ * Custom transformer storage provider.
+ * This hold the custom transformers persisted or transient.
  * @author Gabriel Dimitriu
  *
  */

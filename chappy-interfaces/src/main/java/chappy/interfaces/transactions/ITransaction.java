@@ -162,7 +162,7 @@ public interface ITransaction {
 	/**
 	 * persist the transaction if the transaction is capable.
 	 */
-	void persist();
+	void persist(final IChappyCookie cookie);
 
 	/**
 	 * @return the cookieTransactionId

@@ -52,6 +52,7 @@ public class TransactionProviders {
 	 * @return void
 	 */
 	public void loadPersisted() {
+		storageProvider = new TransactionStorageProvider();
 		storageProvider.loadPersisted();
 	}
 	
