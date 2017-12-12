@@ -255,16 +255,17 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			setCookieTransactionId(cookie.getTransactionId());
 		}
 		setTransactionId(persistedTransaction.getTransactionId());
-		flowTransaction.commit();
+		flowTransaction.commit();		
 		if (cookie.getTransactionId() == null) {
 			cookie.setTransactionId(getTransactionId());
 		} else {
 			setTransactionId(getTransactionId());
 		}
+		persist(cookie);
 	}
 
 	@Override
-	public void persist() {
+	public void persist(final IChappyCookie cookie) {
 		DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
 		persistedTransaction = obj;
 		if (getTransactionId() != null) {
@@ -272,6 +273,9 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
 		persistedTransaction.setFlowRunners(getFlowRunners());
+		if (cookie != null) {
+			persistedTransaction.setStorageId(cookie.generateStorageId());
+		}
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		flowTransaction.begin();
 		persistenceFlowManager.makePersistent(persistedTransaction);
@@ -297,6 +301,6 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	@Override
 	public void putFlowRunner(final String nameOfFlow, final IFlowRunner flowRunner) {
 		super.putFlowRunner(nameOfFlow, flowRunner);
-		persist();
+		persist(null);
 	}
 }

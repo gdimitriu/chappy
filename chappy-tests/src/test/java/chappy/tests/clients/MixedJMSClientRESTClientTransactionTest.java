@@ -35,6 +35,8 @@ import chappy.clients.jms.ChappyJMSTransformFlow;
 import chappy.clients.rest.ChappyRESTRunExistingFlow;
 import chappy.clients.rest.ChappyRESTTransformFlow;
 import chappy.interfaces.jms.protocol.IJMSStatus;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
+import chappy.providers.transaction.TransactionProviders;
 import chappy.utils.streams.StreamUtils;
 
 /**
@@ -580,10 +582,19 @@ public class MixedJMSClientRESTClientTransactionTest {
 					StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/basicSplitterEnveloperStep.xml"),
 							transaction);
 			
-			//stop the CHAPPY JMS
+			//stop the CHAPPY
 			server.stopJMSServer();
-			//start the CHAPPY JMS
+			server.stopRESTServer();
+			
+			//clean the repository
+			CustomTransformerStorageProvider.getInstance().cleanRepository();
+			//start the CHAPPY
 			server.startJMSServer(false);
+			server.startRESTServer(false);
+			//load the repos
+			CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
+			TransactionProviders.getInstance().loadPersisted();
+			
 			ChappyRESTTransformFlow transformer = new ChappyRESTRunExistingFlow(
 					"blabla", "first_Flow", transaction).send();
 
@@ -596,11 +607,10 @@ public class MixedJMSClientRESTClientTransactionTest {
 				fail("processing error on server");
 			}
 			
-			ChappyJMSTransformFlow transformerJMS = new ChappyJMSRunExistingFlow(
+			ChappyJMSTransformFlow transformerJMS = (ChappyJMSTransformFlow) new ChappyJMSRunExistingFlow(
 					StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/enveloperStepResponse.txt"),
-					"splitter", transaction).send();
+					"splitter", transaction).send().receivePoll(1000);
 
-			while(transformerJMS.getStatus().equals(IJMSStatus.REPLY_NOT_READY)) Thread.sleep(1000);
 			if (transformerJMS.getStatusCode() >= 0) {
 				List<String> actual = transformerJMS.getOutputResultAsString();
 				assertEquals(1, actual.size());
