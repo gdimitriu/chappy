@@ -42,6 +42,8 @@ import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.loaders.JavaClassLoaderSimple;
+import chappy.loaders.resolver.ClassLoaderSingletonProvider;
+import chappy.loaders.resolver.exceptions.*;
 import chappy.persistence.discovery.PersistenceCapableProvider;
 import chappy.utils.streams.StreamUtils;
 
@@ -79,6 +81,13 @@ public class DatanucleusPersistence implements IPersistence {
 		List<String> classes = null;
 		try {
 			JavaClassLoaderSimple compileClassLoader = new JavaClassLoaderSimple(ClassLoader.getSystemClassLoader());
+			try {
+				ClassLoaderSingletonProvider.getInstance().registerClassLoader("compile", compileClassLoader);
+				ClassLoaderSingletonProvider.getInstance().setDefaultClassLoader("compile");
+			} catch (ChappyClassLoaderAlreadyRegistered | ChappyClassLoaderNotRegistered e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//add discovery classes
 			classes = PersistenceCapableProvider.getPersistenceType(type);
 			for (String name : classes) {
@@ -110,6 +119,14 @@ public class DatanucleusPersistence implements IPersistence {
 		props.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, runtimeClassLoader);
 		props.put("datanucleus.autoStartClassNames", classes.get(0));
 		props.put(PropertyNames.PROPERTY_MAX_FETCH_DEPTH, "-1");
+		props.put(PropertyNames.PROPERTY_CLASSLOADER_RESOLVER_NAME, "chappy.loaders.resolver.ChappyClassLoaderResolver");
+		try {
+			ClassLoaderSingletonProvider.getInstance().registerClassLoader("runtime", runtimeClassLoader);
+			ClassLoaderSingletonProvider.getInstance().setDefaultClassLoader("runtime");
+		} catch (ChappyClassLoaderAlreadyRegistered | ChappyClassLoaderNotRegistered e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//create manager factory
 		persistenceManagerFactory = JDOHelper.getPersistenceManagerFactory(props);
 		Collection<String> col = enhancer.getMetaDataManager().getClassesWithMetaData();
