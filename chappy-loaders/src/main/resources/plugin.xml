@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<plugin id="loader" name="DataNucleus plug-ins" provider-name="My Company">
+<plugin id="loader" name="DataNucleus plug-ins" provider-name="Chappy">
     <extension point="org.datanucleus.classloader_resolver">
-        <class-loader-resolver name="poc_datanucleus.resolver.ChappyClassLoaderResolver" class-name="poc_datanucleus.resolver.ChappyClassLoaderResolver"/>
+        <class-loader-resolver name="chappy.loaders.resolver.ChappyClassLoaderResolver" class-name="chappy.loaders.resolver.ChappyClassLoaderResolver"/>
     </extension>
 </plugin>

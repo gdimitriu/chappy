@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ChappyLoader
-Bundle-SymbolicName: poc_datanucleus.resolver.ChappyClassLoaderResolver
+Bundle-SymbolicName: chappy.loaders.resolver.ChappyClassLoaderResolver
 Bundle-Version: 1.0.0
 Bundle-Vendor: My Company

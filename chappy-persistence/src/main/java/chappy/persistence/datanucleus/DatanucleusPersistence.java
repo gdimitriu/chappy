@@ -41,8 +41,8 @@ import chappy.configurations.system.PersistenceConfiguration;
 import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
+import chappy.loaders.JavaClassLoaderSimple;
 import chappy.persistence.discovery.PersistenceCapableProvider;
-import chappy.utils.loaders.JavaClassLoaderSimple;
 import chappy.utils.streams.StreamUtils;
 
 /**

@@ -21,4 +21,4 @@
  * @author Gabriel Dimitriu
  *
  */
-package chappy.loaders.resolver;
+package chappy.loaders.resolver.exceptions;
