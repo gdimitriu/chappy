@@ -65,7 +65,7 @@ public class DatanucleusPersistence implements IPersistence {
 	public void configure(final PersistenceConfiguration configuration, final String type) {
 		persistenceUnit = new PersistenceUnitMetaData(configuration.getPersistenceUnit(), "RESOURCE_LOCAL", null);
 		FeaturePersistenceConfiguration[] features = configuration.getFeatures();
-		persistenceUnit.setExcludeUnlistedClasses();
+		persistenceUnit.setExcludeUnlistedClasses(true);
 		for (FeaturePersistenceConfiguration feature : features) {
 			for (PropertyConfiguration propery : feature.getAllProperties()) {
 				persistenceUnit.addProperty(propery.getName(), propery.getValue());
