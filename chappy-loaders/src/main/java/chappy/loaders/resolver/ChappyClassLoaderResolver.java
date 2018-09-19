@@ -19,9 +19,9 @@
  */
 package chappy.loaders.resolver;
 
-import org.datanucleus.ClassLoaderResolverImpl;
+import java.util.List;
 
-import chappy.loaders.resolver.exceptions.ChappyClassLoaderNotRegistered;
+import org.datanucleus.ClassLoaderResolverImpl;
 
 /**
  * @author gdimitriu
@@ -46,41 +46,53 @@ public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {
 
 	@Override
 	public Class classForName(final String name) {
-		try {
-			ClassLoader classLoader = ClassLoaderSingletonProvider.getInstance().getDefaultClassLoader();
-			return super.classForName(name, classLoader);
-		} catch (ChappyClassLoaderNotRegistered e) {
-			return super.classForName(name); 
+		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
+		for (ClassLoader classLoader : classLoaders) {
+			try {
+				return super.classForName(name, classLoader);
+			} catch (Throwable e) {
+
+			}
 		}
+		return super.classForName(name); 
 	}
 	
 	@Override
 	public Class classForName(final String name, final boolean init) {
-		try {
-			ClassLoader classLoader = ClassLoaderSingletonProvider.getInstance().getDefaultClassLoader();
-			return super.classForName(name, classLoader, init);
-		} catch (ChappyClassLoaderNotRegistered e) {
-			return super.classForName(name, init); 
+		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
+		for (ClassLoader classLoader : classLoaders) {
+			try {
+				return super.classForName(name, classLoader, init);
+			} catch (Throwable e) {
+
+			}
 		}
+		return super.classForName(name,init); 
 	}
 	
 	@Override
 	public Class classForName(String name, ClassLoader primary, boolean initialize) {
-		try {
-			ClassLoader classLoader = ClassLoaderSingletonProvider.getInstance().getDefaultClassLoader();
-			return super.classForName(name, classLoader, initialize);
-		} catch (ChappyClassLoaderNotRegistered e) {
-			return super.classForName(name, primary, initialize); 
+		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
+		for (ClassLoader classLoader : classLoaders) {
+			try {
+				return super.classForName(name, classLoader, initialize);
+			} catch (Throwable e) {
+
+			}
 		}
+		return super.classForName(name, primary, initialize); 
 	}
 	
 	@Override
 	public Class classForName(String name, ClassLoader primary) {
-		try {
-			ClassLoader classLoader = ClassLoaderSingletonProvider.getInstance().getDefaultClassLoader();
-			return super.classForName(name, classLoader);
-		} catch (ChappyClassLoaderNotRegistered e) {
-			return super.classForName(name, primary); 
+		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
+		for (ClassLoader classLoader : classLoaders) {
+			try {
+				return super.classForName(name, classLoader);
+			} catch (Throwable e) {
+
+			}
 		}
+		return super.classForName(name, primary ); 
 	}
 }

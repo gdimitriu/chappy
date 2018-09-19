@@ -19,6 +19,8 @@
  */
 package chappy.loaders.resolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,10 +54,7 @@ public class ClassLoaderSingletonProvider {
 	}
 
 	public void registerClassLoader(final String name, final ClassLoader loader) throws ChappyClassLoaderAlreadyRegistered {
-		if (classLoaders.containsKey(name)) {
-			throw new ChappyClassLoaderAlreadyRegistered(name);
-		}
-		classLoaders.put(name, loader);
+		classLoaders.put(name, loader);		
 	}
 	
 	public ClassLoader getRegisteredClassLoader(final String name) {
@@ -82,5 +81,27 @@ public class ClassLoaderSingletonProvider {
 			return classLoaders.get(defaultClassLoader);
 		}
 		throw new ChappyClassLoaderNotRegistered(defaultClassLoader);
+	}
+	
+	public List<ClassLoader> getAllRuntimeClassLoaders() {
+		List<ClassLoader> allRuntime = new ArrayList<>();
+		for (String key :classLoaders.keySet()) {
+			if (key.startsWith("runtime-")) {
+				allRuntime.add(classLoaders.get(key));
+			}
+		}
+		return allRuntime;
+	}
+	
+	public Class<?> loadClass(final String name) throws ClassNotFoundException {
+		List<ClassLoader> classLoaders = getAllRuntimeClassLoaders();
+		for (ClassLoader classLoader : classLoaders) {
+			try {
+				return classLoader.loadClass(name);
+			} catch (Throwable e) {
+
+			}
+		}
+		return ClassLoader.getSystemClassLoader().loadClass(name); 
 	}
 }
