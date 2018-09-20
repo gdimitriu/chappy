@@ -42,7 +42,10 @@ import chappy.loaders.JavaClassLoaderSimple;
 import chappy.loaders.resolver.ClassLoaderSingletonProvider;
 import chappy.loaders.resolver.exceptions.*;
 import chappy.persistence.discovery.PersistenceCapableProvider;
+import chappy.utils.files.DeleteUtils;
 import chappy.utils.streams.StreamUtils;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This is the specialization of the persistence for the framework Datanucleus.
@@ -70,12 +73,25 @@ public class DatanucleusPersistence implements IPersistence {
 				persistenceUnit.addProperty(propery.getName(), propery.getValue());
 			}
 		}
+		//create temporary directory
+		Path tempDirectory = null;
+		try {
+			tempDirectory = Files.createTempDirectory("enhacerChappy");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String tempDirectoryPath = "d:\\tmp";
+		if (tempDirectory != null) {
+			tempDirectoryPath = tempDirectory.toAbsolutePath().toString();
+		}
 		//enhance classes
 		DataNucleusEnhancer enhancer = new DataNucleusEnhancer("JDO", null);
 		enhancer = enhancer.setVerbose(true);
 		enhancer = enhancer.setSystemOut(true);
-		enhancer = enhancer.setOutputDirectory("d:\\tmp");
+		enhancer = enhancer.setOutputDirectory(tempDirectoryPath);
 		enhancer = enhancer.addPersistenceUnit(persistenceUnit);
+		
 
 		List<String> classes = null;
 		try {
@@ -128,6 +144,8 @@ public class DatanucleusPersistence implements IPersistence {
 		}
 		//create manager factory
 		persistenceManagerFactory = JDOHelper.getPersistenceManagerFactory(props);
+		//delete recursive the created directory.
+		DeleteUtils.recursiveDeleteDir(tempDirectory.toFile());
 	}
 
 	/* (non-Javadoc)

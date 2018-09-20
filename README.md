@@ -71,5 +71,4 @@ Run the tests from the package chappy-tests using maven (for JMS is not working 
 
 NOTE:
 - Only runs in dev environment is working in this moment (eclipse).
-- because I do have some problems with classloaders for datanucleus enhancement the system works (with persistence and transaction) only in eclipse environment and at second start of server (first run the datanucleus will enhance the classes which could be loaded at second run by the system class-loader).
 - Standalone distribution is not yet created.
