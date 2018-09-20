@@ -30,5 +30,22 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-clients-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-clients-jms"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-clients-rest"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-configurations"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-exceptions"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-flows"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-interfaces"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-loaders"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-mappings"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-persistence"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-policy"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-providers"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-services"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-statistics-logs"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-transformers"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-utils"/>
+	<classpathentry kind="lib" path="/chappy-loaders/target/chappy-loaders-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

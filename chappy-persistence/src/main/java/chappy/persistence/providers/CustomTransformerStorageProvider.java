@@ -34,9 +34,9 @@ import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.interfaces.transformers.ITransformerStep;
+import chappy.loaders.JavaClassLoaderSimple;
 import chappy.remapper.bytecode.RemapperValue;
 import chappy.utils.changebytecode.ChangeByteCode;
-import chappy.utils.loaders.JavaClassLoaderSimple;
 
 /**
  * Custom transformer storage provider.

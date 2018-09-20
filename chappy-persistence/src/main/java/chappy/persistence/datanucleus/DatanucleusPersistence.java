@@ -20,7 +20,6 @@
 package chappy.persistence.datanucleus;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +27,6 @@ import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.metadata.JDOMetadata;
-
 import org.datanucleus.PropertyNames;
 import org.datanucleus.enhancer.DataNucleusEnhancer;
 import org.datanucleus.exceptions.NucleusException;
@@ -41,9 +38,14 @@ import chappy.configurations.system.PersistenceConfiguration;
 import chappy.configurations.system.PropertyConfiguration;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
+import chappy.loaders.JavaClassLoaderSimple;
+import chappy.loaders.resolver.ClassLoaderSingletonProvider;
+import chappy.loaders.resolver.exceptions.*;
 import chappy.persistence.discovery.PersistenceCapableProvider;
-import chappy.utils.loaders.JavaClassLoaderSimple;
+import chappy.utils.files.DeleteUtils;
 import chappy.utils.streams.StreamUtils;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This is the specialization of the persistence for the framework Datanucleus.
@@ -71,14 +73,36 @@ public class DatanucleusPersistence implements IPersistence {
 				persistenceUnit.addProperty(propery.getName(), propery.getValue());
 			}
 		}
+		//create temporary directory
+		Path tempDirectory = null;
+		try {
+			tempDirectory = Files.createTempDirectory("enhacerChappy");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String tempDirectoryPath = "d:\\tmp";
+		if (tempDirectory != null) {
+			tempDirectoryPath = tempDirectory.toAbsolutePath().toString();
+		}
 		//enhance classes
 		DataNucleusEnhancer enhancer = new DataNucleusEnhancer("JDO", null);
-		enhancer.setVerbose(true);
-		enhancer.setSystemOut(true);
-		enhancer.addPersistenceUnit(persistenceUnit);
+		enhancer = enhancer.setVerbose(true);
+		enhancer = enhancer.setSystemOut(true);
+		enhancer = enhancer.setOutputDirectory(tempDirectoryPath);
+		enhancer = enhancer.addPersistenceUnit(persistenceUnit);
+		
+
 		List<String> classes = null;
 		try {
 			JavaClassLoaderSimple compileClassLoader = new JavaClassLoaderSimple(ClassLoader.getSystemClassLoader());
+			try {
+				ClassLoaderSingletonProvider.getInstance().registerClassLoader("compile-" + configuration.getPersistenceUnit(), compileClassLoader);
+				ClassLoaderSingletonProvider.getInstance().setDefaultClassLoader("compile-" + configuration.getPersistenceUnit());
+			} catch (ChappyClassLoaderAlreadyRegistered | ChappyClassLoaderNotRegistered e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//add discovery classes
 			classes = PersistenceCapableProvider.getPersistenceType(type);
 			for (String name : classes) {
@@ -110,23 +134,18 @@ public class DatanucleusPersistence implements IPersistence {
 		props.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, runtimeClassLoader);
 		props.put("datanucleus.autoStartClassNames", classes.get(0));
 		props.put(PropertyNames.PROPERTY_MAX_FETCH_DEPTH, "-1");
+		props.put(PropertyNames.PROPERTY_CLASSLOADER_RESOLVER_NAME, "chappy.loaders.resolver.ChappyClassLoaderResolver");
+		try {
+			ClassLoaderSingletonProvider.getInstance().registerClassLoader("runtime-"+configuration.getPersistenceUnit(), runtimeClassLoader);
+			ClassLoaderSingletonProvider.getInstance().setDefaultClassLoader("runtime-"+configuration.getPersistenceUnit());
+		} catch (ChappyClassLoaderAlreadyRegistered | ChappyClassLoaderNotRegistered e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//create manager factory
 		persistenceManagerFactory = JDOHelper.getPersistenceManagerFactory(props);
-		Collection<String> col = enhancer.getMetaDataManager().getClassesWithMetaData();
-		JDOMetadata mdata = persistenceManagerFactory.newMetadata();
-		for (String name : classes) {
-			Class<?> cl = null;
-			try {
-				cl = Class.forName(name);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//			ClassMetadata cdata = mdata.newClassMetadata(cl);
-//			AbstractClassMetaData cdata1 = enhancer.getMetaDataManager().getMetaDataForClass(cl, ((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getClassLoaderResolver(runtimeClassLoader));
-//			((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getMetaDataManager().addORMDataToClass(cl,((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getClassLoaderResolver(runtimeClassLoader));
-//			((JDOPersistenceManagerFactory) persistenceManagerFactory).getNucleusContext().getMetaDataManager().unloadMetaDataForClass(name);
-		}
+		//delete recursive the created directory.
+		DeleteUtils.recursiveDeleteDir(tempDirectory.toFile());
 	}
 
 	/* (non-Javadoc)
@@ -172,7 +191,7 @@ public class DatanucleusPersistence implements IPersistence {
 		Set<?> rezultat = reflection.getSubTypesOf(interfaceof);
 		if(!rezultat.isEmpty()) {
 			try {
-				return runtimeClassLoader.loadClass(((Class<?>) rezultat.iterator().next()).getName());
+				return ClassLoaderSingletonProvider.getInstance().loadClass(((Class<?>) rezultat.iterator().next()).getName());
 			} catch (ClassNotFoundException e) {
 				return null;
 			}

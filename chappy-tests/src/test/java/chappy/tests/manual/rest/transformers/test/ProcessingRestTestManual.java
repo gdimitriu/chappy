@@ -69,6 +69,8 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.statisticslogs.StatisticLog;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
+import chappy.providers.transaction.TransactionProviders;
 import chappy.tests.utils.ClassUtils;
 import chappy.tests.utils.TestUtils;
 import chappy.utils.streams.StreamUtils;
@@ -469,7 +471,7 @@ public class ProcessingRestTestManual {
 			e.printStackTrace();
 		}
 		login.send();
-		assertEquals("wrong authentication", login.getStatusCode(), Status.OK.getStatusCode());
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), login.getStatusCode());
 		System.out.println(login.getCookie().getUserName());
 		System.out.println(login.getCookie().getTransactionId());
 		IRESTTransactionHolder transaction = login.createTransactionHolder();
@@ -575,13 +577,85 @@ public class ProcessingRestTestManual {
 					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
 		System.out.println(response.toString());
 	}
+	
+	public void push3CustomTransformersByTransactionAndMakeTransformationGetStatistics_NW() throws Exception {
+		Client client = ClientBuilder.newClient()
+				.register(MultiPartFeature.class)
+				.register(MultiPartWriter.class)
+				.register(JacksonJaxbJsonProvider.class)
+				.register(LocalDateTimeContextResolver.class);
+		WebTarget target = client.target(baseUri);
+		
+		Response response = target.path(IRestPathConstants.PATH_TO_TRANSACTION).path(IRestResourcesConstants.REST_LOGIN)
+				.queryParam(IChappyServiceNamesConstants.LOGIN_USER, "gdimitriu")
+				.queryParam(IChappyServiceNamesConstants.LOGIN_PASSWORD, "password")
+				.queryParam(IChappyServiceNamesConstants.PERSIST, "true")
+				.request().get();
+		
+		assertEquals("wrong authentication", Status.OK.getStatusCode(), response.getStatus());
+		
+		Map<String, NewCookie> cookies = response.getCookies();
+		
+		NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		FormDataMultiPart multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PreProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PostProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("PostProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 
+		multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "ProcessingStep")
+				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()
+						.getClassAsString("ProcessingStep", CUSTOM_TRANSFORMERS_DUMMY));
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_ADD).path(IRestResourcesConstants.REST_TRANSFORMER)
+				.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+				.post(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		assertEquals("could not add transformer", Status.OK.getStatusCode(), response.getStatus());
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		multipartEntity = new FormDataMultiPart()
+				.field(IChappyServiceNamesConstants.INPUT_DATA, "blabla");
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+					.path(IRestResourcesConstants.REST_TRANSFORM).path(IRestResourcesConstants.REST_FLOW)
+					.queryParam(IChappyServiceNamesConstants.CONFIGURATION, StreamUtils
+							.getStringFromResource("transaction/dynamic/dummytransformers/dummySteps.xml"))
+					.request(new String[]{MediaType.MULTIPART_FORM_DATA}).cookie(cookie)
+					.put(Entity.entity(multipartEntity, multipartEntity.getMediaType()));
+		if (response.getStatus() >= 0) {
+			InputStream inputStream = response.readEntity(InputStream.class);
+			assertEquals(StreamUtils.getStringFromResource("transaction/dynamic/dummytransformers/dummyStepsResponse.txt"),
+						StreamUtils.toStringFromStream(inputStream));
+		}
+		cookie = response.getCookies().get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
+		
+		response = target.path(IRestPathConstants.PATH_TO_TRANSACTION)
+				.path(IRestResourcesConstants.REST_LOGOUT).request().cookie(cookie).get();
+	}
+	
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
-		test.cachingTests();
+		//test.push3CustomTransformersByTransactionAndMakeTransformationGetStatistics();
+		System.out.println("finished");
+		//test.cachingTests();
 		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
 		//test.xml2xmlXsltOneStepWParametersTest();
-		//test.clientLoginLogout();
+		test.clientLoginLogout();
 	}
 
 	

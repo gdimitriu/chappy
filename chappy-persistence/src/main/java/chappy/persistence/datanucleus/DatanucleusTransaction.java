@@ -30,8 +30,8 @@ import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.markers.ISystemFlowPersistence;
 import chappy.interfaces.markers.ISystemUpgradePersistence;
 import chappy.interfaces.persistence.ICustomStepPersistence;
-import chappy.persistence.datanucleus.flow.DatanucleusFlowTransactionPersistence;
 import chappy.persistence.transaction.AbstractPersistenceTransaction;
+import chappy.loaders.resolver.*;
 /**
  * @author Gabriel Dimitriu
  *
@@ -58,7 +58,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	private Transaction flowTransaction = null;
 	
 	/** persistence transaction */
-	private DatanucleusFlowTransactionPersistence persistedTransaction = new DatanucleusFlowTransactionPersistence();
+	private ISystemFlowPersistence persistedTransaction = null;
 	
 	/**
 	 * 
@@ -227,7 +227,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	 */
 	public void updatePersistenceData() {
 		try {
-			DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
+			ISystemFlowPersistence obj = (ISystemFlowPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
 			persistedTransaction = obj;
 		} catch (Exception e) {
 			
@@ -247,6 +247,13 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	@Override
 	public void generateTransactionId(final IChappyCookie cookie) {
 		start();
+		try {
+			persistedTransaction = (ISystemFlowPersistence) ClassLoaderSingletonProvider.getInstance().getRegisteredClassLoader("runtime-SystemFlow").loadClass
+					("chappy.persistence.datanucleus.flow.DatanucleusFlowTransactionPersistence").newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		flowTransaction = persistenceFlowManager.currentTransaction();
 		persistedTransaction.setStorageId(cookie.generateStorageId());
 		flowTransaction.begin();
@@ -266,7 +273,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 
 	@Override
 	public void persist(final IChappyCookie cookie) {
-		DatanucleusFlowTransactionPersistence obj = (DatanucleusFlowTransactionPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
+		ISystemFlowPersistence obj = (ISystemFlowPersistence) persistenceFlowManager.detachCopy(persistedTransaction);
 		persistedTransaction = obj;
 		if (getTransactionId() != null) {
 			obj.setCookieTransactionId(getTransactionId());
@@ -286,7 +293,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 	/**
 	 * @param persistedTransaction the persistedTransaction to set
 	 */
-	public void setPersistedTransaction(DatanucleusFlowTransactionPersistence persistedTransaction) {
+	public void setPersistedTransaction(ISystemFlowPersistence persistedTransaction) {
 		this.persistedTransaction = persistedTransaction;
 	}
 	

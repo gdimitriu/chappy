@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.utils.loaders;
+package chappy.loaders;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -52,14 +52,19 @@ public class JavaClassLoaderSimple extends ClassLoader {
 	}
 	
 	public Class<?> loadClass(final String name, final String data) throws ClassNotFoundException {
-		
+		if (types.containsKey(name)) {
+			return types.get(name);
+		}
 		byte[] buffer = Base64.getDecoder().decode(data);
 		Class<?> type = defineClass(null, buffer, 0, buffer.length);
 		types.put(name,type);
 		return type;
 	}
 	
-	public Class<?> loadClass(final String name, final byte[] buffer) throws ClassNotFoundException {	
+	public Class<?> loadClass(final String name, final byte[] buffer) throws ClassNotFoundException {
+		if (types.containsKey(name)) {
+			return types.get(name);
+		}
 		Class<?> type = defineClass(null, buffer, 0, buffer.length);
 		types.put(name,type);
 		return type;

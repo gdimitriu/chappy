@@ -19,7 +19,12 @@
  */
 package chappy.interfaces.markers;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.jdo.PersistenceManager;
+
+import chappy.interfaces.flows.IFlowRunner;
 
 /**
  * Marker for system flow persistence.
@@ -33,10 +38,14 @@ public interface ISystemFlowPersistence {
 	 */
 	public String getStorageId();
 	
+	public void setStorageId(String storageId);
+	
 	/**
 	 * @return the transactionId
 	 */
 	public String getTransactionId();
+	
+	public void setTransactionId(final String transactionId);
 	
 	/**
 	 * create the real element from the persisted data.
@@ -48,4 +57,15 @@ public interface ISystemFlowPersistence {
 	 * @return the cookieTransactionId
 	 */
 	public String getCookieTransactionId();
+	
+	public void setCookieTransactionId(final String transactionId);
+	
+	public List<String> getListOftransformers();
+	
+	public void setListOftransformers(final List<String> listOftransformers);
+	
+	public Map<String, IFlowRunner> getFlowRunners();
+	
+	public void setFlowRunners(final Map<String, IFlowRunner> runners);
+	
 }
