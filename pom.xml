@@ -92,6 +92,8 @@
 		<module>chappy-clients-rest</module>
 		<module>chappy-clients-common</module>
 		<module>chappy-loaders</module>
+		<module>chappy-program</module>
+		<module>chappy-distribution</module>
 	</modules>
 	<dependencies>
 	<!-- this is neeed by cassandra  -->

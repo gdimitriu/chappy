@@ -8,34 +8,10 @@
 	</parent>
 	<artifactId>chappy-installer</artifactId>
 	<name>chappy-installer</name>
-	<properties>
-		<install_folder>install</install_folder>
-	</properties>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<excludeTransitive>false</excludeTransitive>
-							<includeArtifactIds>chappy-utils, chappy-interfaces, chappy-configurations, chappy-flows,
-								chappy-services, chappy-mappings, chappy-change-bytecode, chappy-clients-jms</includeArtifactIds>
-							<outputDirectory>${install_folder}/lib</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-tests</artifactId>
+			<artifactId>chappy-distribution</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
 	</dependencies>
