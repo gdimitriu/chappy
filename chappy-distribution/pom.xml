@@ -127,4 +127,5 @@
 			<version>${chappy.version}</version>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
 </project>
