@@ -47,5 +47,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-transformers"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-utils"/>
 	<classpathentry kind="lib" path="/chappy-loaders/target/chappy-loaders-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chappy-program"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -29,6 +29,7 @@
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<excludeGroupIds>com.github.gdimitriu.chappy</excludeGroupIds>
+							<excludeTypes>*.pom</excludeTypes>
 						</configuration>
 					</execution>
 					<execution>
@@ -44,7 +45,6 @@
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<includeGroupIds>com.github.gdimitriu.chappy</includeGroupIds>
 							<excludeArtifactIds>chappy-program</excludeArtifactIds>
-							<excludeTypes>*.pom</excludeTypes>
 						</configuration>
 					</execution>
 					<execution>

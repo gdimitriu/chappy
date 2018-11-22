@@ -361,17 +361,25 @@
 		</dependency>
 
 		<!-- ENABLE THIS FOR MongoDB -->
-		<!-- dependency> <groupId>org.datanucleus</groupId> <artifactId>datanucleus-mongodb</artifactId> 
-			<version>[5.0.0-m1, 5.9)</version> </dependency> <dependency> <groupId>org.mongodb</groupId> 
-			<artifactId>mongo-java-driver</artifactId> <version>3.0.0</version> </dependency -->
-
+		<!-- 
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-mongodb</artifactId> 
+			<version>[5.0.0-m1, 5.9)</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId> 
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+ -->
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<!-- this is needed by cassandra 
+		<!-- this is needed by cassandra --> 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>22.0</version>
-		</dependency> -->
+		</dependency>
 		<!-- ENABLE THIS FOR Cassandra -->
 		<dependency>
 			<groupId>org.datanucleus</groupId>
