@@ -25,7 +25,9 @@
 					 com.github.gdimitriu.chappy:chappy-transformers,
 					 com.github.gdimitriu.chappy:chappy-mappings,
 					 com.github.gdimitriu.chappy:chappy-services, 
-					 com.github.gdimitriu.chappy:chappy-clients-common, com.github.gdimitriu.chappy:chappy-clients-rest, com.github.gdimitriu.chappy:chappy-clients-jms
+					 com.github.gdimitriu.chappy:chappy-clients-common,
+					 com.github.gdimitriu.chappy:chappy-clients-rest,
+					 com.github.gdimitriu.chappy:chappy-clients-jms
 					</dependenciesToScan>
 					<additionalClasspathElements>
 						<additionalClasspathElement>${project.basedir}/src/test/resources/</additionalClasspathElement>
@@ -83,6 +85,11 @@
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-clients-jms</artifactId>
 			<version>${chappy.version}</version>
+		</dependency>
+		<dependency>
+   			<groupId>commons-io</groupId>
+   			<artifactId>commons-io</artifactId>
+   			<version>2.6</version>
 		</dependency>
 	</dependencies>
 </project>

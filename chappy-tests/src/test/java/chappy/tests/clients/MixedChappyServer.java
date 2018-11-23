@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.services.IServiceJMS;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.jms.ServerJMS;
@@ -165,5 +166,19 @@ public class MixedChappyServer {
 	public void stopRESTServer() throws Exception {
 		this.serverREST.stopServer();
 		this.serverREST = null;
+	}
+
+	/**
+	 * @return the serverREST
+	 */
+	public IServiceServer getServerREST() {
+		return serverREST;
+	}
+
+	/**
+	 * @return the serverJMS
+	 */
+	public IServiceJMS getServerJMS() {
+		return (IServiceJMS) serverJMS;
 	}
 }

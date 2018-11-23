@@ -22,11 +22,13 @@ package chappy.tests.clients;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,6 +41,7 @@ import chappy.clients.jms.ChappyJMSTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.jms.protocol.IJMSStatus;
+import chappy.interfaces.services.IServiceJMS;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
@@ -82,6 +85,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		};
 		thread.start();
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
+		Thread.currentThread().sleep(1000);
 	}
 	
 	/**
@@ -90,6 +94,9 @@ public class JMSClientTransactionFlowTransformationsTest {
 	@AfterClass
 	public static void tearDown() throws Exception {
 		server.stopServer();
+		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getBindindDirectory()));
+		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getJournalDirectory()));
+		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getLargeMessageDirectory()));
 	}
 	
 	/*

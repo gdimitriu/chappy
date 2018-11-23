@@ -46,7 +46,7 @@
 		</property>
 		<property>
 			<name>journalDirectory</name>
-			<value>..\persistence\target/data/journal</value>
+			<value>../persistence/data/journal</value>
 		</property>
 		<property>
 			<name>serverHost</name>
@@ -65,12 +65,12 @@
 			<value>true</value>
 		</property>
 		<property>
-			<name>bingindDirectory</name>
-			<value>..\persistence\data\binding</value>
+			<name>bindindDirectory</name>
+			<value>../persistence/data/binding</value>
 		</property>
 		<property>
 			<name>largeMessageDirectory</name>
-			<value>..\persistence\data\largeMessage</value>
+			<value>../persistence/data/largeMessage</value>
 		</property>
 	</configuration>
 	<persistence>

@@ -64,6 +64,14 @@
 			<name>serverPersistenceEnabled</name>
 			<value>true</value>
 		</property>
+		<property>
+			<name>bindindDirectory</name>
+			<value>target/data/binding</value>
+		</property>
+		<property>
+			<name>largeMessageDirectory</name>
+			<value>target/data/largeMessage</value>
+		</property>
 	</configuration>
 	<persistence>
 		<persistenceUnit>default</persistenceUnit>

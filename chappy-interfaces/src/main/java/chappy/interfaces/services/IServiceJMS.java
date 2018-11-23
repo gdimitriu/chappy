@@ -59,7 +59,7 @@ public interface IServiceJMS extends IServiceServer{
 	/**
 	 * @return the binding directory
 	 */
-	public String getBingindDirectory();
+	public String getBindindDirectory();
 
 	/**
 	 * @return the large message directory
