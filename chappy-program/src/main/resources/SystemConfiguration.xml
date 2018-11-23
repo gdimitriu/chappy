@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+
+    This file is part of chappy project.
+
+    Chappy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Chappy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Chappy.  If not, see <http://www.gnu.org/licenses/>. 
+ -->
+<configurations>
+	<configuration>
+		<name>rest</name>
+		<property>
+			<name>serverPort</name>
+			<value>8100</value>
+		</property>
+	</configuration>
+	<configuration>
+		<name>jms</name>
+		<property>
+			<name>serverPort</name>
+			<value>61616</value>
+		</property>
+		<property>
+			<name>serverName</name>
+			<value>ChappyJMSserver</value>
+		</property>
+		<property>
+			<name>protocolType</name>
+			<value>tcp</value>
+		</property>
+		<property>
+			<name>connectionDefaultFactoryName</name>
+			<value>default</value>
+		</property>
+		<property>
+			<name>journalDirectory</name>
+			<value>..\persistence\target/data/journal</value>
+		</property>
+		<property>
+			<name>serverHost</name>
+			<value>localhost</value>
+		</property>
+		<property>
+			<name>queueDurable</name>
+			<value>true</value>
+		</property>
+		<property>
+			<name>serverSecurityEnabled</name>
+			<value>true</value>
+		</property>
+		<property>
+			<name>serverPersistenceEnabled</name>
+			<value>true</value>
+		</property>
+		<property>
+			<name>bingindDirectory</name>
+			<value>..\persistence\data\binding</value>
+		</property>
+		<property>
+			<name>largeMessageDirectory</name>
+			<value>..\persistence\data\largeMessage</value>
+		</property>
+	</configuration>
+	<persistence>
+		<persistenceUnit>default</persistenceUnit>
+		<framework>datanucleus</framework>
+		<feature>			
+			<plugin>ODF</plugin>
+			<property>
+				<name>javax.jdo.option.ConnectionURL</name>
+				<value>odf:file:..\persistence\chappy.ods</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.Mapping</name>
+				<value>odf</value>
+			</property>
+		</feature>
+	</persistence>
+	<persistence>
+		<persistenceUnit>system</persistenceUnit>
+		<framework>datanucleus</framework>
+		<feature>
+			<plugin>ODF</plugin>
+			<property>
+				<name>javax.jdo.option.ConnectionURL</name>
+				<value>odf:file:..\persistence\chappy.ods</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.Mapping</name>
+				<value>odf</value>
+			</property>
+		</feature>
+	</persistence>
+</configurations>
