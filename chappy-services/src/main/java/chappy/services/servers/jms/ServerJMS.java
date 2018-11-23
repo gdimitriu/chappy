@@ -97,10 +97,17 @@ public class ServerJMS implements IServiceJMS {
 	/** server persistence is enabled */
 	private String serverPersistenceEnabled = "true";
 	
+	/** binding directory */
+	private String bingindDirectory = "data\bindings";
+	
+	/** large message directory */
+	private String largeMessageDirectory = "data\\largemessage";
+
 	//typical to JMS
 		
 	/** name of the queue */
 	private Set<String> queuesNames = null;
+
 	
 	
 	/**
@@ -154,6 +161,8 @@ public class ServerJMS implements IServiceJMS {
 		// Step 1. Create ActiveMQ Artemis core configuration, and set the properties accordingly
 	    Configuration configuration = new ConfigurationImpl().setPersistenceEnabled(Boolean.parseBoolean(serverPersistenceEnabled))
 	    		.setJournalDirectory(journalDirectory)
+	    		.setBindingsDirectory(bingindDirectory)
+	    		.setLargeMessagesDirectory(largeMessageDirectory)
 	    		.setSecurityEnabled(Boolean.parseBoolean(serverSecurityEnabled))
 	    		.addAcceptorConfiguration(protocolType, protocolType + "://" + serverHost + ":" + serverPort)
 	    		.addConnectorConfiguration(serverName, protocolType + "://" + serverHost + ":" + serverPort);
@@ -289,6 +298,22 @@ public class ServerJMS implements IServiceJMS {
 		return journalDirectory;
 	}
 
+	/**
+	 * @return the bingindDirectory
+	 */
+	@Override
+	public String getBingindDirectory() {
+		return bingindDirectory;
+	}
+
+	/**
+	 * @return the largeMessageDirectory
+	 */
+	@Override
+	public String getLargeMessageDirectory() {
+		return largeMessageDirectory;
+	}
+	
 	@Override
 	public boolean isQueueDurable() {
 		return Boolean.parseBoolean(queueDurable);

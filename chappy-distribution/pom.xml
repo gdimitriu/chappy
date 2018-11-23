@@ -24,12 +24,12 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/chappy/lib/thirdparties</outputDirectory>
+							<outputDirectory>${project.build.directory}/chappy/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<excludeGroupIds>com.github.gdimitriu.chappy</excludeGroupIds>
-							<excludeTypes>*.pom</excludeTypes>
+							<excludeTypes>pom</excludeTypes>
 						</configuration>
 					</execution>
 					<execution>
@@ -59,6 +59,7 @@
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<includeArtifactIds>chappy-program</includeArtifactIds>
+							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
 				</executions>
@@ -105,6 +106,24 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-antrun-plugin</artifactId>
+            	<executions>
+            		<execution>
+            			<id>create structure</id>
+            			<phase>package</phase>
+            			<goals>
+            				<goal>run</goal>
+            			</goals>
+            			<configuration>
+            				<tasks>
+            					<mkdir dir="${project.build.directory}/chappy/persistence" />
+            				</tasks>
+            			</configuration>
+            		</execution>
+            	</executions>
             </plugin>
 		</plugins>
 	</build>
