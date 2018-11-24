@@ -148,6 +148,7 @@ public class ServerJMS implements IServiceJMS {
 		runtimeConsumers.entrySet().stream().forEach(runtimeConsumer -> runtimeConsumer.getValue().stop());
 		jmsServer.stop();
 		runtimeConsumers.clear();
+		System.out.println("JMS server has been stopped.");
 	}
 
 	/* (non-Javadoc)

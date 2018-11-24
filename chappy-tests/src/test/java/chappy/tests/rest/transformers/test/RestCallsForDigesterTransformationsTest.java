@@ -35,6 +35,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +54,7 @@ import chappy.utils.streams.StreamUtils;
  */
 public class RestCallsForDigesterTransformationsTest {
 
-	private IServiceServer server = null;
+	private static IServiceServer server = null;
 
 	private int port = 0;
 
@@ -88,10 +89,17 @@ public class RestCallsForDigesterTransformationsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
-	public void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDown() throws Exception {
 		server.stopServer();
+		server = null;
 	}
+	
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
+	}
+	
 
 	@Test
 	public void xml2json2xmlStepsTest() {

@@ -27,9 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSRunExistingFlow;
@@ -47,6 +50,7 @@ import chappy.utils.streams.StreamUtils;
  * @author Gabriel Dimitriu
  *
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MixedJMSClientRESTClientTransactionTest {
 	
 	/** server port for connection */
@@ -61,7 +65,11 @@ public class MixedJMSClientRESTClientTransactionTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		server.startAll();
-		Thread.currentThread().sleep(1000);
+	}
+	
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 	
 	/**
@@ -95,6 +103,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -104,13 +113,14 @@ public class MixedJMSClientRESTClientTransactionTest {
 	 * 	- login in chappy using REST
 	 * 	- logout from chappy using JMS
 	 */
-	@Test
+	@Test 
 	public void chappyRLoginJLogout() {
 		try {
 			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(server.getRestPort());
 			
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -138,6 +148,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -159,6 +170,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -170,7 +182,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 	 *  - validate transformer using JMS
 	 *  - logout from chappy using REST
 	 */
-	@Test
+	@Test 
 	public void chappyJLoginRAddTransformerJListRLogout() {
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
@@ -183,6 +195,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -207,6 +220,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -253,6 +267,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -267,7 +282,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 	 *  - validate the result of flow
 	 *  - logout from chappy using REST
 	 */
-	@Test
+	@Test 
 	public void chappyJLoginRAdd1TransformerJAdd2TransformerRListJFlowRLogout() {
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSPort);
@@ -301,6 +316,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -359,6 +375,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -415,6 +432,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -473,6 +491,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			RESTUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -534,6 +553,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}
@@ -629,6 +649,7 @@ public class MixedJMSClientRESTClientTransactionTest {
 			}
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
+			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
 	}

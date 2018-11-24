@@ -17,21 +17,15 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.all;
+package chappy.tests.clients;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import chappy.tests.clients.AllClientsSuiteTests;
-import chappy.tests.configurations.system.test.AllSystemConfigurationSuiteTests;
-import chappy.tests.rest.transformers.test.AllRestCallTransformationsSuiteTests;
-
 @RunWith(Suite.class)
-@SuiteClasses({AllClientsSuiteTests.class,
-		AllSystemConfigurationSuiteTests.class,
-		AllRestCallTransformationsSuiteTests.class
-	})
-public class AllTests {
+@SuiteClasses({ JMSClientTransactionFlowTransformationsTest.class,
+		RestClientTrasactionFlowTransformationsTest.class })
+public class AllClientsMavenSuiteTests {
 
 }

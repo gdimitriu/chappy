@@ -58,7 +58,7 @@ public class RestCallsForFlowTransformationsExceptionsTest {
 
 	private static final String CUSTOM_TRANSFORMERS_DUMMY = "chappy.tests.rest.transformers.dummy";
 
-	private IServiceServer server = null;
+	private static IServiceServer server = null;
 
 	private int port = 0;
 

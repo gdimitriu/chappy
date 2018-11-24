@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -98,6 +99,11 @@ public class RestClientTrasactionFlowTransformationsTest {
 	@AfterClass
 	public static void tearDown() throws Exception {
 		server.stopServer();
+	}
+	
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 	
 	/*

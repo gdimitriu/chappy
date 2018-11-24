@@ -11,23 +11,34 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
+				<version>3.0.0-M1</version>
+				<dependencies>
+					<!-- https://mvnrepository.com/artifact/org.apache.maven.surefire/surefire-junit4 -->
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit4</artifactId>
+						<version>3.0.0-M1</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<useSystemClassLoader>true</useSystemClassLoader>
+					<includes>
+						<include>**/chappy/tests/all/AllMavenTests.java</include>
+					</includes>
 					<dependenciesToScan>
-					 com.github.gdimitriu.chappy:chappy-configurations,
-					 com.github.gdimitriu.chappy:chappy-interfaces,
-					 com.github.gdimitriu.chappy:chappy-providers,
-					 com.github.gdimitriu.chappy:chappy-policy,
-					 com.github.gdimitriu.chappy:chappy-exceptions,
-					 com.github.gdimitriu.chappy:chappy-persistence,
-					 com.github.gdimitriu.chappy:chappy-flows,
-					 com.github.gdimitriu.chappy:chappy-transformers,
-					 com.github.gdimitriu.chappy:chappy-mappings,
-					 com.github.gdimitriu.chappy:chappy-services, 
-					 com.github.gdimitriu.chappy:chappy-clients-common,
-					 com.github.gdimitriu.chappy:chappy-clients-rest,
-					 com.github.gdimitriu.chappy:chappy-clients-jms
+						com.github.gdimitriu.chappy:chappy-configurations,
+						com.github.gdimitriu.chappy:chappy-interfaces,
+						com.github.gdimitriu.chappy:chappy-providers,
+						com.github.gdimitriu.chappy:chappy-policy,
+						com.github.gdimitriu.chappy:chappy-exceptions,
+						com.github.gdimitriu.chappy:chappy-persistence,
+						com.github.gdimitriu.chappy:chappy-flows,
+						com.github.gdimitriu.chappy:chappy-transformers,
+						com.github.gdimitriu.chappy:chappy-mappings,
+						com.github.gdimitriu.chappy:chappy-services,
+						com.github.gdimitriu.chappy:chappy-clients-common,
+						com.github.gdimitriu.chappy:chappy-clients-rest,
+						com.github.gdimitriu.chappy:chappy-clients-jms
 					</dependenciesToScan>
 					<additionalClasspathElements>
 						<additionalClasspathElement>${project.basedir}/src/test/resources/</additionalClasspathElement>
@@ -87,9 +98,16 @@
 			<version>${chappy.version}</version>
 		</dependency>
 		<dependency>
-   			<groupId>commons-io</groupId>
-   			<artifactId>commons-io</artifactId>
-   			<version>2.6</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

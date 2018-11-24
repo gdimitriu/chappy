@@ -145,6 +145,7 @@ public class MixedChappyServer {
 			}
 		};
 		thread.start();
+		Thread.sleep(4000);
 		if (clean) {
 			CustomTransformerStorageProvider.getInstance().cleanRepository();
 		}

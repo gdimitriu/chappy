@@ -23,15 +23,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import chappy.tests.clients.AllClientsSuiteTests;
+import chappy.tests.clients.AllClientsMavenSuiteTests;
 import chappy.tests.configurations.system.test.AllSystemConfigurationSuiteTests;
 import chappy.tests.rest.transformers.test.AllRestCallTransformationsSuiteTests;
 
 @RunWith(Suite.class)
-@SuiteClasses({AllClientsSuiteTests.class,
+@SuiteClasses({AllClientsMavenSuiteTests.class,
 		AllSystemConfigurationSuiteTests.class,
 		AllRestCallTransformationsSuiteTests.class
 	})
-public class AllTests {
+public class AllMavenTests {
 
 }

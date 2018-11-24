@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,7 +86,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		};
 		thread.start();
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
-		Thread.currentThread().sleep(1000);
+		Thread.sleep(1000);
 	}
 	
 	/**
@@ -97,6 +98,11 @@ public class JMSClientTransactionFlowTransformationsTest {
 		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getBindindDirectory()));
 		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getJournalDirectory()));
 		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getLargeMessageDirectory()));
+	}
+	
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 	
 	/*

@@ -13,6 +13,7 @@
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-distribution</artifactId>
 			<version>${chappy.version}</version>
+			<type>pom</type>
 		</dependency>
 	</dependencies>
 </project>

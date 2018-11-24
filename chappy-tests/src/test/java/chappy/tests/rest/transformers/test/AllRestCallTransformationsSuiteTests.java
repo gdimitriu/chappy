@@ -33,6 +33,6 @@ import org.junit.runners.Suite.SuiteClasses;
 		RestTrasactionFlowTransformationsTest.class,
 		RestUserCallsForFlowTransformationsTest.class
 		})
-public class AllRestCallTransformationsSuiteTest {
+public class AllRestCallTransformationsSuiteTests {
 
 }
