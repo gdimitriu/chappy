@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.configurations.system.SystemConfigurations;
+import chappy.interfaces.services.IServiceJMS;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.jms.ServerJMS;
@@ -96,18 +97,7 @@ public class MixedChappyServer {
 		restPort = Integer.parseInt(configuration.getProperty());
 		UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + restPort + "/" }, false);
 		serverREST = new ServerJetty(restPort);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					serverREST.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					fail("could not start server " + e.getLocalizedMessage());
-				}
-			}
-		};
-		thread.start();
+		serverREST.startServer();
 		if (clean) {
 			CustomTransformerStorageProvider.getInstance().cleanRepository();
 		}
@@ -133,17 +123,7 @@ public class MixedChappyServer {
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		serverJMS = new ServerJMS();
 		serverJMS.configure(configuration);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					serverJMS.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		thread.start();
+		serverJMS.startServer();
 		if (clean) {
 			CustomTransformerStorageProvider.getInstance().cleanRepository();
 		}
@@ -165,5 +145,19 @@ public class MixedChappyServer {
 	public void stopRESTServer() throws Exception {
 		this.serverREST.stopServer();
 		this.serverREST = null;
+	}
+
+	/**
+	 * @return the serverREST
+	 */
+	public IServiceServer getServerREST() {
+		return serverREST;
+	}
+
+	/**
+	 * @return the serverJMS
+	 */
+	public IServiceJMS getServerJMS() {
+		return (IServiceJMS) serverJMS;
 	}
 }

@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -77,18 +78,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 		port = Integer.parseInt(configuration.getProperty());
 		UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					server.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					fail("could not start server " + e.getLocalizedMessage());
-				}
-			}
-		};
-		thread.start();
+		server.startServer();
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
@@ -97,7 +87,14 @@ public class RestClientTrasactionFlowTransformationsTest {
 	 */
 	@AfterClass
 	public static void tearDown() throws Exception {
-		server.stopServer();
+		if (server != null) {
+			server.stopServer();
+		}
+	}
+	
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 	
 	/*

@@ -60,6 +60,8 @@ public class ServerJetty implements IServiceServer {
 	public void stopServer() throws Exception {
 		if(server != null) {
 			server.stop();
+			System.out.println("Jetty server is stopped.");
+			server = null;
 		}
 	}
 	
@@ -100,9 +102,7 @@ public class ServerJetty implements IServiceServer {
 		PersistenceProvider.getInstance().getSystemFlowPersistence();
 		PersistenceProvider.getInstance().getSystemUpgradePersistence();
 		server.start();
-		System.out.println(String.format("Application started.%nHit enter to stop it..."));
-		System.in.read();
-		server.stop();
+		System.out.println(String.format("Sever Jetty is started."));
 	}
 
 	@Override

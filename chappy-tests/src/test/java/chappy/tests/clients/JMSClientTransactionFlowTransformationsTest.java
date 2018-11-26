@@ -22,15 +22,17 @@ package chappy.tests.clients;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSListTransformers;
@@ -39,6 +41,7 @@ import chappy.clients.jms.ChappyJMSTransformFlow;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfigurations;
 import chappy.interfaces.jms.protocol.IJMSStatus;
+import chappy.interfaces.services.IServiceJMS;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
@@ -65,23 +68,18 @@ public class JMSClientTransactionFlowTransformationsTest {
 	 */
 	@BeforeClass
 	public static void setUp() throws Exception {
+		startJMSServer();
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
+	}
+
+	private static void startJMSServer() throws Exception {
 		SystemConfigurationProvider.getInstance().readSystemConfiguration(
 				JMSClientTransactionFlowTransformationsTest.class.getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		server = new ServerJMS();
 		server.configure(configuration);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					server.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		thread.start();
-		CustomTransformerStorageProvider.getInstance().cleanRepository();
+		server.startServer();
+		Thread.sleep(1000);
 	}
 	
 	/**
@@ -89,7 +87,17 @@ public class JMSClientTransactionFlowTransformationsTest {
 	 */
 	@AfterClass
 	public static void tearDown() throws Exception {
-		server.stopServer();
+		if (server != null) {
+			server.stopServer();
+			FileUtils.deleteDirectory(new File(((IServiceJMS) server).getBindindDirectory()));
+			FileUtils.deleteDirectory(new File(((IServiceJMS) server).getJournalDirectory()));
+			FileUtils.deleteDirectory(new File(((IServiceJMS) server).getLargeMessageDirectory()));
+		}
+	}
+	
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 	
 	/*
@@ -358,7 +366,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		}
 		
 		//stop and restart the server
-		tearDown();
+		server.stopServer();
 		setUp();
 		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
 		TransactionProviders.getInstance().loadPersisted();
@@ -432,7 +440,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		}
 		
 		//stop and restart the server
-		tearDown();
+		server.stopServer();
 		setUp();
 		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
 		TransactionProviders.getInstance().loadPersisted();

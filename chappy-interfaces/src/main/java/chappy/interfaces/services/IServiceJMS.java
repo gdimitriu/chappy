@@ -55,6 +55,16 @@ public interface IServiceJMS extends IServiceServer{
 	 * @return the journalDirectory
 	 */
 	public String getJournalDirectory();
+	
+	/**
+	 * @return the binding directory
+	 */
+	public String getBindindDirectory();
+
+	/**
+	 * @return the large message directory
+	 */
+	public String getLargeMessageDirectory();
 
 	/**
 	 * @return the queueDurable

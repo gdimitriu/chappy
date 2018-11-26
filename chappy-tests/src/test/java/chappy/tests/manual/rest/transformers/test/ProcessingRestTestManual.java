@@ -69,8 +69,6 @@ import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.rest.resources.IRestResourcesConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.statisticslogs.StatisticLog;
-import chappy.persistence.providers.CustomTransformerStorageProvider;
-import chappy.providers.transaction.TransactionProviders;
 import chappy.tests.utils.ClassUtils;
 import chappy.tests.utils.TestUtils;
 import chappy.utils.streams.StreamUtils;
@@ -578,6 +576,7 @@ public class ProcessingRestTestManual {
 		System.out.println(response.toString());
 	}
 	
+	@SuppressWarnings("resource")
 	public void push3CustomTransformersByTransactionAndMakeTransformationGetStatistics_NW() throws Exception {
 		Client client = ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
@@ -598,6 +597,7 @@ public class ProcessingRestTestManual {
 		
 		NewCookie cookie = cookies.get(IChappyServiceNamesConstants.COOKIE_USER_DATA);
 		
+		@SuppressWarnings("resource")
 		FormDataMultiPart multipartEntity = new FormDataMultiPart()
 				.field(IChappyServiceNamesConstants.TRANSFORMER_NAME, "PreProcessingStep")
 				.field(IChappyServiceNamesConstants.TRANSFORMER_DATA, new ClassUtils()

@@ -1,5 +1,5 @@
 /**
-    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+    Copyright (c) 2018 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
     This file is part of chappy project.
@@ -17,19 +17,14 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.clients;
+package chappy.tests.configurations.system.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-/**
- * Functional tests for Chappy clients with JMS and REST protocol.
- * @author Gabriel Dimitriu
- *
- */
 @RunWith(Suite.class)
-@SuiteClasses({ JMSClientTransactionFlowTransformationsTest.class, RestClientTrasactionFlowTransformationsTest.class, MixedJMSClientRESTClientTransactionTest.class })
-public class AllRestJmsClientsSuiteTest {
+@SuiteClasses({ SystemConfigurationTest.class })
+public class AllSystemConfigurationSuiteTests {
 
 }

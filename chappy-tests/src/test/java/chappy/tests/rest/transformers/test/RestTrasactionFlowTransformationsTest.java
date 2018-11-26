@@ -41,7 +41,8 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import chappy.configurations.providers.SystemConfigurationProvider;
@@ -62,47 +63,44 @@ import chappy.utils.streams.StreamUtils;
  */
 public class RestTrasactionFlowTransformationsTest {
 
-	private IServiceServer server = null;
+	private static IServiceServer server = null;
 
-	private int port = 0;
+	private static int port = 0;
 
-	private URI baseUri;
+	private static URI baseUri;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUp() throws Exception {
 
-		SystemConfigurationProvider.getInstance().readSystemConfiguration(
-				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(RestTrasactionFlowTransformationsTest.class.
+				getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
 		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					server.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		thread.start();
+		server.startServer();
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
-	public void tearDown() throws Exception {
-		server.stopServer();
+	@AfterClass
+	public static void tearDown() throws Exception {
+		if (server != null) {
+			server.stopServer();
+		}
 	}
 
+	@After
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
+	}
+	
 	@SuppressWarnings("resource")
 	@Test
 	public void push3CustomTransformersByTransactionAndMakeTransformation() throws FileNotFoundException {

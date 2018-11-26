@@ -60,15 +60,12 @@ Chappy uses the following libraries and technologies:
 - JAXB for data-binding.
 - JUnit for unitests.
 - Maven for building.
-- maven-surefire-plugin to run the unitests in maven (there are not working after added jms and mixed).
+- maven-surefire-plugin to run the unitests in maven (there are not working after added mixed).
+- Maven for creating the distribution zip with all dependencies
+- ClassPaths are put into the running jar so no need for classPath settings.
 
-Run the tests from the package chappy-tests using maven (for JMS is not working yet, in eclipse they are all green):
+Run the tests from the package chappy-tests using maven :
 - the JAVA_HOME is needed to be set into the main pom due to cassandra needs.
 - the port could be modified from systemTestConfiguration.xml from the test resources.
 - mvn build, test
-- to run the suite all modules should be added into the classpath.
 - the chappy.tests.manual.rest.transformers.test contains the manual tests
-
-NOTE:
-- Only runs in dev environment is working in this moment (eclipse).
-- Standalone distribution is not yet created.
