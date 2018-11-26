@@ -60,6 +60,8 @@ public class ServerJetty implements IServiceServer {
 	public void stopServer() throws Exception {
 		if(server != null) {
 			server.stop();
+			System.out.println("Jetty server is stopped.");
+			server = null;
 		}
 	}
 	

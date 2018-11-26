@@ -32,7 +32,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import chappy.configurations.providers.SystemConfigurationProvider;
@@ -40,6 +41,7 @@ import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.rest.resources.IRestPathConstants;
 import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
 import chappy.utils.streams.StreamUtils;
 
@@ -51,19 +53,19 @@ public class RestCallsForStaxonTransformationsTest {
 
 	private static final String CONFIGURATION_AUTOPRIMITIVE = "<?xml version=\"1.0\"?><configuration><autoPrimitive>false</autoPrimitive><autoArray>false</autoArray></configuration>";
 
-	private IServiceServer server = null;
+	private static IServiceServer server = null;
 
-	private int port = 0;
+	private static int port = 0;
 
-	private URI baseUri;
+	private static URI baseUri;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception {
-		SystemConfigurationProvider.getInstance().readSystemConfiguration(
-				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+	@BeforeClass
+	public static void setUp() throws Exception {
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(RestCallsForStaxonTransformationsTest.class.
+				getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
@@ -85,9 +87,16 @@ public class RestCallsForStaxonTransformationsTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@AfterClass
+	public static void tearDown() throws Exception {
+		if (server != null) {
+			server.stopServer();
+		}
+	}
+	
 	@After
-	public void tearDown() throws Exception {
-		server.stopServer();
+	public void cleanUp() {
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
 	@Test

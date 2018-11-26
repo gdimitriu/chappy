@@ -98,7 +98,9 @@ public class RestClientTrasactionFlowTransformationsTest {
 	 */
 	@AfterClass
 	public static void tearDown() throws Exception {
-		server.stopServer();
+		if (server != null) {
+			server.stopServer();
+		}
 	}
 	
 	@After

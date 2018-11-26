@@ -77,11 +77,13 @@ public class MixedJMSClientRESTClientTransactionTest {
 	 */
 	@AfterClass
 	public static void tearDown() throws Exception {
-		IServiceJMS jmsServer = server.getServerJMS();
-		server.stopAll();
-		FileUtils.deleteDirectory(new File(jmsServer.getBindindDirectory()));
-		FileUtils.deleteDirectory(new File(jmsServer.getJournalDirectory()));
-		FileUtils.deleteDirectory(new File(jmsServer.getLargeMessageDirectory()));
+		if (server != null) {
+			IServiceJMS jmsServer = server.getServerJMS();
+			server.stopAll();
+			FileUtils.deleteDirectory(new File(jmsServer.getBindindDirectory()));
+			FileUtils.deleteDirectory(new File(jmsServer.getJournalDirectory()));
+			FileUtils.deleteDirectory(new File(jmsServer.getLargeMessageDirectory()));
+		}
 	}
 	
 	/*

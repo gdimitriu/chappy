@@ -36,7 +36,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import chappy.configurations.providers.SystemConfigurationProvider;
@@ -56,17 +56,17 @@ public class RestCallsForDigesterTransformationsTest {
 
 	private static IServiceServer server = null;
 
-	private int port = 0;
+	private static int port = 0;
 
-	private URI baseUri;
+	private static URI baseUri;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception {
-		SystemConfigurationProvider.getInstance().readSystemConfiguration(
-				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+	@BeforeClass
+	public static void setUp() throws Exception {
+		SystemConfigurationProvider.getInstance().readSystemConfiguration(RestCallsForDigesterTransformationsTest.class.
+				getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());
@@ -91,8 +91,10 @@ public class RestCallsForDigesterTransformationsTest {
 	 */
 	@AfterClass
 	public static void tearDown() throws Exception {
-		server.stopServer();
-		server = null;
+		if (server != null) {
+			server.stopServer();
+			server = null;
+		}
 	}
 	
 	@After

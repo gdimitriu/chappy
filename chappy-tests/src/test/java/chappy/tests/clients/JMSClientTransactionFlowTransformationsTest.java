@@ -28,11 +28,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSAddTransformer;
@@ -69,6 +72,11 @@ public class JMSClientTransactionFlowTransformationsTest {
 	 */
 	@BeforeClass
 	public static void setUp() throws Exception {
+		startJMSServer();
+		CustomTransformerStorageProvider.getInstance().cleanRepository();
+	}
+
+	private static void startJMSServer() throws JAXBException, SAXException, InterruptedException {
 		SystemConfigurationProvider.getInstance().readSystemConfiguration(
 				JMSClientTransactionFlowTransformationsTest.class.getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
@@ -85,7 +93,6 @@ public class JMSClientTransactionFlowTransformationsTest {
 			}
 		};
 		thread.start();
-		CustomTransformerStorageProvider.getInstance().cleanRepository();
 		Thread.sleep(1000);
 	}
 	
@@ -94,10 +101,12 @@ public class JMSClientTransactionFlowTransformationsTest {
 	 */
 	@AfterClass
 	public static void tearDown() throws Exception {
-		server.stopServer();
-		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getBindindDirectory()));
-		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getJournalDirectory()));
-		FileUtils.deleteDirectory(new File(((IServiceJMS) server).getLargeMessageDirectory()));
+		if (server != null) {
+			server.stopServer();
+			FileUtils.deleteDirectory(new File(((IServiceJMS) server).getBindindDirectory()));
+			FileUtils.deleteDirectory(new File(((IServiceJMS) server).getJournalDirectory()));
+			FileUtils.deleteDirectory(new File(((IServiceJMS) server).getLargeMessageDirectory()));
+		}
 	}
 	
 	@After
@@ -371,7 +380,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		}
 		
 		//stop and restart the server
-		tearDown();
+		server.stopServer();
 		setUp();
 		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
 		TransactionProviders.getInstance().loadPersisted();
@@ -445,7 +454,7 @@ public class JMSClientTransactionFlowTransformationsTest {
 		}
 		
 		//stop and restart the server
-		tearDown();
+		server.stopServer();
 		setUp();
 		CustomTransformerStorageProvider.getInstance().loadPersistenceCustomTransformers();
 		TransactionProviders.getInstance().loadPersisted();
