@@ -86,17 +86,7 @@ public class RestTransactionFailOverAndPersistence {
 		port = Integer.parseInt(configuration.getProperty());
 		baseUri = UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + port + "/" }, false);
 		server = new ServerJetty(port);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					server.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		thread.start();
+		server.startServer();
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 

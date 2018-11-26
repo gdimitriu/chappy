@@ -28,15 +28,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.xml.sax.SAXException;
-
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
 import chappy.clients.jms.ChappyJMSAddTransformer;
 import chappy.clients.jms.ChappyJMSListTransformers;
@@ -76,23 +72,13 @@ public class JMSClientTransactionFlowTransformationsTest {
 		CustomTransformerStorageProvider.getInstance().cleanRepository();
 	}
 
-	private static void startJMSServer() throws JAXBException, SAXException, InterruptedException {
+	private static void startJMSServer() throws Exception {
 		SystemConfigurationProvider.getInstance().readSystemConfiguration(
 				JMSClientTransactionFlowTransformationsTest.class.getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		server = new ServerJMS();
 		server.configure(configuration);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					server.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		thread.start();
+		server.startServer();
 		Thread.sleep(1000);
 	}
 	

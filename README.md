@@ -69,6 +69,3 @@ Run the tests from the package chappy-tests using maven (for JMS is not working 
 - the port could be modified from systemTestConfiguration.xml from the test resources.
 - mvn build, test
 - the chappy.tests.manual.rest.transformers.test contains the manual tests
-
-Known bugs:
-- still some tests are failing in surfire and not in eclipse (even with exclusion of Mixed)

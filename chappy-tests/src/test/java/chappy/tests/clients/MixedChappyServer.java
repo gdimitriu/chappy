@@ -97,18 +97,7 @@ public class MixedChappyServer {
 		restPort = Integer.parseInt(configuration.getProperty());
 		UriBuilder.fromUri("{arg}").build(new String[] { "http://localhost:" + restPort + "/" }, false);
 		serverREST = new ServerJetty(restPort);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					serverREST.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					fail("could not start server " + e.getLocalizedMessage());
-				}
-			}
-		};
-		thread.start();
+		serverREST.startServer();
 		if (clean) {
 			CustomTransformerStorageProvider.getInstance().cleanRepository();
 		}
@@ -134,18 +123,7 @@ public class MixedChappyServer {
 		SystemConfigurations configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration();
 		serverJMS = new ServerJMS();
 		serverJMS.configure(configuration);
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					serverJMS.startServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		thread.start();
-		Thread.sleep(4000);
+		serverJMS.startServer();
 		if (clean) {
 			CustomTransformerStorageProvider.getInstance().cleanRepository();
 		}

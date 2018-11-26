@@ -102,9 +102,7 @@ public class ServerJetty implements IServiceServer {
 		PersistenceProvider.getInstance().getSystemFlowPersistence();
 		PersistenceProvider.getInstance().getSystemUpgradePersistence();
 		server.start();
-		System.out.println(String.format("Sever Jetty is started.%nHit enter to stop it..."));
-		System.in.read();
-		server.stop();
+		System.out.println(String.format("Sever Jetty is started."));
 	}
 
 	@Override

@@ -23,7 +23,7 @@
 				<configuration>
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<includes>
-						<include>**/chappy/tests/all/AllMavenTests.java</include>
+						<include>**/chappy/tests/all/AllTests.java</include>
 					</includes>
 					<dependenciesToScan>
 						com.github.gdimitriu.chappy:chappy-configurations,
