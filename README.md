@@ -64,7 +64,7 @@ Chappy uses the following libraries and technologies:
 - Maven for creating the distribution zip with all dependencies
 - ClassPaths are put into the running jar so no need for classPath settings.
 
-Run the tests from the package chappy-tests using maven (for JMS is not working yet, in eclipse they are all green):
+Run the tests from the package chappy-tests using maven :
 - the JAVA_HOME is needed to be set into the main pom due to cassandra needs.
 - the port could be modified from systemTestConfiguration.xml from the test resources.
 - mvn build, test
