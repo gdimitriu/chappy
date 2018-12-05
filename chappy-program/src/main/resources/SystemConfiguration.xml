@@ -50,7 +50,7 @@
 		</property>
 		<property>
 			<name>serverHost</name>
-			<value>localhost</value>
+			<value>0.0.0.0</value>
 		</property>
 		<property>
 			<name>queueDurable</name>

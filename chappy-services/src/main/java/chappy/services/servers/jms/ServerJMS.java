@@ -86,7 +86,7 @@ public class ServerJMS implements IServiceJMS {
 	private String journalDirectory = "target/data/journal";
 	
 	/** name of the server host */
-	private String serverHost = "localhost";
+	private String serverHost = "0.0.0.0";
 	
 	/** durability of queue */
 	private String queueDurable = "true";

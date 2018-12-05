@@ -124,6 +124,6 @@ public class ServerJetty implements IServiceServer {
 
 	@Override
 	public String getServerHost() {
-		return "localhost";
+		return "0.0.0.0";
 	}
 }
