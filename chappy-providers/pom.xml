@@ -24,6 +24,26 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!--  ACTIVEMQ JMS SERVER -->
+		<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-all</artifactId>
+			<version>5.15.0</version>
+			<type>pom</type>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.activemq/artemis-jms-server -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>artemis-jms-server</artifactId>
+			<version>${activeMQArtemisJms.version}</version>
+		</dependency>
+		<!-- Chappy dependencies -->
+		<dependency>
+			<groupId>com.github.gdimitriu.chappy</groupId>
+			<artifactId>chappy-clients-common</artifactId>
+			<version>${chappy.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-interfaces</artifactId>

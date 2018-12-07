@@ -34,6 +34,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.SAXException;
 
+import chappy.clients.common.cookie.CookieFactory;
 import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.flows.transformers.staticflows.FlowConfiguration;
 import chappy.flows.transformers.staticflows.StepConfiguration;
@@ -45,7 +46,6 @@ import chappy.interfaces.statisticslogs.IStatistics;
 import chappy.interfaces.statisticslogs.StatisticLog;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.interfaces.transformers.ITransformerStep;
-import chappy.providers.cookie.CookieFactory;
 import chappy.providers.transaction.StatisticsLogsProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.providers.transformers.TransformerProvider;

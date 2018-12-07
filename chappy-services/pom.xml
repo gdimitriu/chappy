@@ -23,6 +23,34 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- HTTP/REST SERVER -->
+		<!-- Jetty server -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-http</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<!-- REST SERVER -->
+		<!-- jersey -->
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<!-- Chappy dependencies -->
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-utils</artifactId>
@@ -58,5 +86,6 @@
 			<artifactId>chappy-clients-rest</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
+		
 	</dependencies>
 </project>

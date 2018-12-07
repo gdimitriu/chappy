@@ -76,30 +76,84 @@
 	<persistence>
 		<persistenceUnit>default</persistenceUnit>
 		<framework>datanucleus</framework>
-		<feature>			
+		<feature>
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:..\persistence\chappy.ods</value>
+				<value>odf:file:..\\persistence\chappy.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
 				<value>odf</value>
 			</property>
+			<property>
+				<name>datanucleus.autoCreateSchema</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>datanucleus.autoCreateTables</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>datanucleus.autoCreateColumns</name>
+				<value>true</value>
+			</property>
 		</feature>
 	</persistence>
 	<persistence>
-		<persistenceUnit>system</persistenceUnit>
+		<persistenceUnit>SystemLogs</persistenceUnit>
 		<framework>datanucleus</framework>
 		<feature>
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:..\persistence\chappy.ods</value>
+				<value>odf:file:..\\persistence\happyLogs.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
 				<value>odf</value>
+			</property>
+			<property>
+				<name>datanucleus.schema.autoCreateAll</name>
+				<value>true</value>
+			</property>
+		</feature>
+	</persistence>
+	<persistence>
+		<persistenceUnit>SystemUpgrade</persistenceUnit>
+		<framework>datanucleus</framework>
+		<feature>
+			<plugin>ODF</plugin>
+			<property>
+				<name>javax.jdo.option.ConnectionURL</name>
+				<value>odf:file:..\\persistence\chappyUpgrade.ods</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.Mapping</name>
+				<value>odf</value>
+			</property>
+			<property>
+				<name>datanucleus.schema.autoCreateAll</name>
+				<value>true</value>
+			</property>
+		</feature>
+	</persistence>
+	<persistence>
+		<persistenceUnit>SystemFlow</persistenceUnit>
+		<framework>datanucleus</framework>
+		<feature>
+			<plugin>ODF</plugin>
+			<property>
+				<name>javax.jdo.option.ConnectionURL</name>
+				<value>odf:file:..\\persistence\chappyFlows.ods</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.Mapping</name>
+				<value>odf</value>
+			</property>
+			<property>
+				<name>datanucleus.schema.autoCreateAll</name>
+				<value>true</value>
 			</property>
 		</feature>
 	</persistence>

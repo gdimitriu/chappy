@@ -41,10 +41,10 @@ import chappy.interfaces.rest.IRESTTransactionHolder;
 public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJMSTransactionHolder{
 	
 	/** holder for the jms transaction */
-	private JMSTransactionHolder jmsTransaction = null;
+	private IJMSTransactionHolder jmsTransaction = null;
 	
 	/** holder for the rest transaction */
-	private RESTTransactionHolder restTransaction = null;
+	private IRESTTransactionHolder restTransaction = null;
 
 	/**
 	 * 
@@ -108,7 +108,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	 * @return the jmsTransaction
 	 * @throws Exception exception if the connection could not be created.
 	 */
-	public JMSTransactionHolder getJmsTransaction() throws Exception {
+	public IJMSTransactionHolder getJmsTransaction() throws Exception {
 		if (jmsTransaction == null && restTransaction != null) {
 			jmsTransaction = new JMSTransactionHolder(restTransaction.getCookie());
 		}
@@ -125,7 +125,7 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	/**
 	 * @return the restTransaction
 	 */
-	public RESTTransactionHolder getRestTransaction() {
+	public IRESTTransactionHolder getRestTransaction() {
 		if (restTransaction == null && jmsTransaction != null) {
 			restTransaction = new RESTTransactionHolder(jmsTransaction.getCookie());
 		}
@@ -133,10 +133,10 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 	}
 
 	/**
-	 * @param restTransaction the restTransaction to set
+	 * @param client the restTransaction to set
 	 */
-	public void setRestTransaction(final RESTTransactionHolder restTransaction) {
-		this.restTransaction = restTransaction;
+	public void setRestTransaction(final IRESTTransactionHolder client) {
+		this.restTransaction = client;
 	}
 
 	@Override
@@ -243,5 +243,23 @@ public class ChappyClientTransactionHolder implements IRESTTransactionHolder, IJ
 			return jmsTransaction.closeAll();
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isClosed() {
+		if (jmsTransaction != null) {
+			return jmsTransaction.isClosed();
+		}
+		return true;
+	}
+
+	@Override
+	public void setCookie(final IChappyCookie cookie) {
+		if (jmsTransaction != null) {
+			jmsTransaction.setCookie(cookie);
+		}
+		if (restTransaction != null) {
+			restTransaction.setCookie(cookie);
+		}
 	}
 }

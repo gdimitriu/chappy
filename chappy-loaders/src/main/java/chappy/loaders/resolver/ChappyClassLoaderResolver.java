@@ -24,7 +24,7 @@ import java.util.List;
 import org.datanucleus.ClassLoaderResolverImpl;
 
 /**
- * @author gdimitriu
+ * @author Gabriel Dimitriu
  *
  */
 public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {

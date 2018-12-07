@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.clients;
+package chappy.tests.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -37,8 +37,6 @@ import chappy.clients.jms.ChappyJMSLogin;
 import chappy.clients.jms.ChappyJMSLogout;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.protocol.IJMSStatus;
-import chappy.tests.rest.transformers.test.RestCallsUtils;
-import chappy.tests.utils.TestUtils;
 
 /**
  * JMS requests utils for testing purpose.

@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;
 import chappy.interfaces.services.IServiceServer;
+import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.services.ServicesProvider;
 
 /**
@@ -66,6 +67,7 @@ public class Chappy {
 				SystemConfigurationProvider.getInstance().readSystemConfiguration();
 			}
 			system.configurureAllServices();
+			CustomTransformerStorageProvider.getInstance();
 			system.startAllServices();
 		} catch (JAXBException | SAXException e) {
 			e.printStackTrace();

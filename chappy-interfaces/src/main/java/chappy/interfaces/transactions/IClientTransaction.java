@@ -31,5 +31,10 @@ public interface IClientTransaction {
 	/**
 	 * @return cookie for the client transaction.
 	 */
-	public IChappyCookie getCookie();	
+	public IChappyCookie getCookie();
+	
+	/**
+	 * @param chappyCookie the chappyCookie to set
+	 */
+	public void setCookie(IChappyCookie cookie);
 }

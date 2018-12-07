@@ -26,15 +26,14 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.UriBuilder;
 
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-
+import chappy.clients.common.cookie.CookieFactory;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.rest.LocalDateTimeContextResolver;
-import chappy.providers.cookie.CookieFactory;
 
 /**
  * @author Gabriel Dimitriu
@@ -102,9 +101,8 @@ public class RESTTransactionHolder implements IRESTTransactionHolder{
 		return this.currentCookie;
 	}
 
-	/**
-	 * @param chappyCookie the chappyCookie to set
-	 */
+	
+    @Override
 	public void setCookie(IChappyCookie chappyCookie) {
 		this.currentCookie = chappyCookie;
 	}

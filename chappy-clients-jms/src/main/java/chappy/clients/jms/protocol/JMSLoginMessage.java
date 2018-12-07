@@ -26,13 +26,13 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 
+import chappy.clients.common.cookie.CookieFactory;
 import chappy.clients.common.protocol.AbstractChappyLoginMessage;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.protocol.IJMSCommands;
 import chappy.interfaces.jms.protocol.IJMSProtocol;
 import chappy.interfaces.jms.protocol.IJMSProtocolKeys;
 import chappy.interfaces.jms.protocol.IJMSStatus;
-import chappy.providers.cookie.CookieFactory;
 
 /**
  * Chappy login request protocol message implementation for JMS.
