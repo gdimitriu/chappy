@@ -19,8 +19,6 @@
  */
 package chappy.tests.clients;
 
-import static org.junit.Assert.fail;
-
 import javax.ws.rs.core.UriBuilder;
 import chappy.configurations.providers.SystemConfigurationProvider;
 import chappy.configurations.system.SystemConfiguration;

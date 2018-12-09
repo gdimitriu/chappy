@@ -40,11 +40,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-providers</artifactId>
-			<version>${chappy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-clients-common</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>

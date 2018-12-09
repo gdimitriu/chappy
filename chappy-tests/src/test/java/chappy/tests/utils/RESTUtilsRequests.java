@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.tests.clients;
+package chappy.tests.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -33,8 +33,6 @@ import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;
 import chappy.clients.rest.ChappyRESTLogin;
 import chappy.clients.rest.ChappyRESTLogout;
-import chappy.tests.rest.transformers.test.RestCallsUtils;
-import chappy.tests.utils.TestUtils;
 
 /**
  * REST requests utils for testing purpose.

@@ -46,7 +46,8 @@ import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
 import chappy.services.servers.jms.ServerJMS;
-import chappy.tests.rest.transformers.test.RestCallsUtils;
+import chappy.tests.utils.JMSUtilsRequests;
+import chappy.tests.utils.RestCallsUtils;
 import chappy.tests.utils.TestUtils;
 import chappy.utils.streams.StreamUtils;
 

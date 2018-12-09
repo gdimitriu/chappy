@@ -55,4 +55,5 @@ public interface IRESTTransactionHolder extends IClientTransaction {
 	 * @throws Exception
 	 */
 	public void createConnectionToServer(final String serverName, final int port) throws Exception;
+
 }

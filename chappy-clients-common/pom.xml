@@ -23,12 +23,8 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- Chappy dependencies -->
 		<dependency>
-			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-configurations</artifactId>
-			<version>${chappy.version}</version>
-		</dependency>
-				<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-interfaces</artifactId>
 			<version>${chappy.version}</version>
@@ -40,7 +36,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
-			<artifactId>chappy-providers</artifactId>
+			<artifactId>chappy-policy</artifactId>
 			<version>${chappy.version}</version>
 		</dependency>
 	</dependencies>  	

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -23,6 +24,24 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+		<dependency>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-collections4</artifactId>
+    		<version>4.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.jms/jms-api -->
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms-api</artifactId>
+			<version>1.1-rev-1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>javax.jdo</artifactId>
+			<version>[3.2.0-m5, )</version>
+		</dependency>
+		<!-- Chappy dependencies -->
 		<dependency>
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-utils</artifactId>
@@ -32,11 +51,6 @@
 			<groupId>com.github.gdimitriu.chappy</groupId>
 			<artifactId>chappy-configurations</artifactId>
 			<version>${chappy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-			<version>${jersey.version}</version>
 		</dependency>
 	</dependencies>
 </project>

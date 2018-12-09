@@ -67,4 +67,34 @@ public interface IJMSTransactionHolder extends IClientTransaction {
 	 * @return message confirmation.
 	 */
 	public String closeAll();
+	
+	/**
+	 * @param serverName
+	 * @param port
+	 * @throws Exception 
+	 */
+	public void createConnectionToServer(final String serverName, final int port) throws Exception;
+	
+	/**
+	 * check is the connection is closed.
+	 * @return true if the connection is closed.
+	 */
+	public boolean isClosed();
+
+	/**
+	 * start a JMS transaction.
+	 * @throws JMSException
+	 */
+	public default void startTransaction() throws JMSException {
+		//nothing for default
+	}
+	
+	/**
+	 * create the consumer with filter for the correlation message.
+	 * @param correlationId
+	 * @throws JMSException
+	 */
+	public default void createMessageConsumerFilter(final String correlationId) throws JMSException {
+		//nothing for default.
+	}
 }

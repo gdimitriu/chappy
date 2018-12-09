@@ -122,6 +122,7 @@ public abstract class AbstractChappyAddTransformerMessage extends AbstractChappy
 	 * @return class definition as string
 	 * @throws IOException 
 	 */
+	@SuppressWarnings("resource")
 	private String getClassFromClassPathAsString(final String className, final String packageName) throws IOException {
 		String classPath = null;
 		Reflections ref = new Reflections(packageName);
@@ -137,8 +138,14 @@ public abstract class AbstractChappyAddTransformerMessage extends AbstractChappy
 			throw new FileNotFoundException("file not found on client side");
 		}
 		classPath = classPath.replace(".", "/");
-		classPath = actualClass.getProtectionDomain().getCodeSource().getLocation().getPath() + classPath  + ".class";
-		InputStream is = new FileInputStream(new File(classPath));
+		String realClassPath = actualClass.getProtectionDomain().getCodeSource().getLocation().getPath() + classPath  + ".class";
+		InputStream is = null;
+		try {
+			File realFile = new File(realClassPath);
+			is = new FileInputStream(realFile);
+		} catch (IOException e) {			
+			is = ClassLoader.getSystemResourceAsStream(classPath + ".class");
+		}
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		byte[] buffer = new byte[1024];
 		int count =0;

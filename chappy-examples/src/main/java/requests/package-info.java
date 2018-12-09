@@ -1,5 +1,5 @@
 /**
-    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+    Copyright (c) 2018 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
     This file is part of chappy project.
@@ -21,4 +21,4 @@
  * @author Gabriel Dimitriu
  *
  */
-package chappy.providers.cookie;
+package requests;

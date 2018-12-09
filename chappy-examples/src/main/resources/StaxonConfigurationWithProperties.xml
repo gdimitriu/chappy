@@ -1,0 +1,10 @@
+<?xml version = "1.0" ?>
+ <configuration>
+	<autoPrimitive>true</autoPrimitive>
+	<autoArray>true</autoArray>
+	<virtualNode>VirtualNode</virtualNode>
+	<inputProperty property = "firstIP" value = "firstIV"/>
+	<inputProperty property = "secondIP" value = "secondIV"/>
+	<outputProperty property = "firstOP" value= "firstOV"/>
+	<outputProperty property = "secondOP" value= "secondOV"/>
+</configuration>

@@ -43,6 +43,8 @@ import chappy.interfaces.jms.protocol.IJMSStatus;
 import chappy.interfaces.services.IServiceJMS;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.providers.transaction.TransactionProviders;
+import chappy.tests.utils.JMSUtilsRequests;
+import chappy.tests.utils.RESTUtilsRequests;
 import chappy.utils.streams.StreamUtils;
 
 /**

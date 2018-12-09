@@ -74,7 +74,6 @@ public class CustomTransformerStorageProvider {
 	public void loadPersistenceCustomTransformers() {
 		try {
 			IPersistence persistence = PersistenceProvider.getInstance().getSystemUpgradePersistence();
-			 
 			PersistenceManager pm = persistence.getFactory().getPersistenceManager();
 			Class<?> customPersistenceImpl = persistence.getImplementationOf(ICustomStepPersistence.class);
 			Transaction tx = pm.currentTransaction();

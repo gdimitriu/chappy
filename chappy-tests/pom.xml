@@ -55,12 +55,6 @@
 	<name>chappy-tests</name>
 	<description>functional tests</description>
 	<dependencies>
-		<!-- Jetty server -->
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
 		<!-- jersery multipart -->
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>

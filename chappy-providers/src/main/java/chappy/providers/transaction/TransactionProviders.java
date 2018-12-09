@@ -19,13 +19,13 @@
  */
 package chappy.providers.transaction;
 
+import chappy.clients.common.cookie.CookieFactory;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.exception.ForbiddenException;
 import chappy.interfaces.persistence.IPersistence;
 import chappy.interfaces.transactions.ITransaction;
 import chappy.persistence.providers.PersistenceProvider;
 import chappy.persistence.providers.TransactionStorageProvider;
-import chappy.providers.cookie.CookieFactory;
 
 /**
  * providers for transactions.

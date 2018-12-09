@@ -32,10 +32,10 @@ import javax.jms.Session;
 import org.apache.activemq.artemis.api.core.ActiveMQDisconnectedException;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 
+import chappy.clients.common.cookie.CookieFactory;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.jms.IJMSTransactionHolder;
 import chappy.interfaces.jms.resources.IJMSQueueNameConstants;
-import chappy.providers.cookie.CookieFactory;
 
 /**
  * implementation for JMS transaction holder.
@@ -246,11 +246,8 @@ public class JMSTransactionHolder implements IJMSTransactionHolder, ExceptionLis
 		return replyTo;
 	}
 
-	/**
-	 * @param serverName
-	 * @param port
-	 * @throws Exception 
-	 */
+	
+	@Override
 	public void createConnectionToServer(final String serverName, final int port) throws JMSException {
 		ConnectionFactory connFactory = null;
 		try {
@@ -271,12 +268,8 @@ public class JMSTransactionHolder implements IJMSTransactionHolder, ExceptionLis
 	public void setCurrentReplyToDestination(final Queue destination) {
 		this.replyTo = destination;
 	}
-	
-	/**
-	 * create the consumer with filter for the correlation message.
-	 * @param correlationId
-	 * @throws JMSException
-	 */
+
+	@Override
 	public void createMessageConsumerFilter(final String correlationId) throws JMSException {
 		if (replyTo == null) {
 			replyTo = currentSession.createQueue(IJMSQueueNameConstants.TRANSACTION_RETURN);
@@ -285,10 +278,7 @@ public class JMSTransactionHolder implements IJMSTransactionHolder, ExceptionLis
 		correlationId + "'");
 	}
 
-	/**
-	 * check is the connection is closed.
-	 * @return true if the connection is closed.
-	 */
+	@Override
 	public boolean isClosed() {
 		if (currentConnection == null || (exceptionReceived != null && exceptionReceived.getCause() instanceof ActiveMQDisconnectedException)) {
 			return true;
@@ -341,6 +331,7 @@ public class JMSTransactionHolder implements IJMSTransactionHolder, ExceptionLis
 		}
 	}
 	
+	@Override
 	public void startTransaction() throws JMSException {
 		Destination destination = currentSession.createQueue(IJMSQueueNameConstants.TRANSACTION);		
 		currentMessageProducer = currentSession.createProducer(destination);

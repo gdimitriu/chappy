@@ -33,4 +33,7 @@
 		</plugins>
 	</build>
 	<name>chappy-configurations</name>
+	<dependencies>
+		
+	</dependencies>
 </project>

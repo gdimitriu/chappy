@@ -24,7 +24,7 @@ import java.util.List;
 import org.datanucleus.ClassLoaderResolverImpl;
 
 /**
- * @author gdimitriu
+ * @author Gabriel Dimitriu
  *
  */
 public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {
@@ -45,7 +45,7 @@ public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {
 	}
 
 	@Override
-	public Class classForName(final String name) {
+	public Class<?> classForName(final String name) {
 		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
 		for (ClassLoader classLoader : classLoaders) {
 			try {
@@ -58,7 +58,7 @@ public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {
 	}
 	
 	@Override
-	public Class classForName(final String name, final boolean init) {
+	public Class<?> classForName(final String name, final boolean init) {
 		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
 		for (ClassLoader classLoader : classLoaders) {
 			try {
@@ -71,7 +71,7 @@ public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {
 	}
 	
 	@Override
-	public Class classForName(String name, ClassLoader primary, boolean initialize) {
+	public Class<?> classForName(String name, ClassLoader primary, boolean initialize) {
 		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
 		for (ClassLoader classLoader : classLoaders) {
 			try {
@@ -84,7 +84,7 @@ public class ChappyClassLoaderResolver extends ClassLoaderResolverImpl {
 	}
 	
 	@Override
-	public Class classForName(String name, ClassLoader primary) {
+	public Class<?> classForName(String name, ClassLoader primary) {
 		List<ClassLoader> classLoaders = ClassLoaderSingletonProvider.getInstance().getAllRuntimeClassLoaders();
 		for (ClassLoader classLoader : classLoaders) {
 			try {

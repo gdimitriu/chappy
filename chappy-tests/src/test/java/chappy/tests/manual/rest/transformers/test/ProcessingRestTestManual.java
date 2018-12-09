@@ -48,13 +48,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 import org.xml.sax.SAXException;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.clients.rest.ChappyRESTAddTransformer;
 import chappy.clients.rest.ChappyRESTListTransformers;

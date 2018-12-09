@@ -23,4 +23,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<!-- DATANUCLEUS PERSISTANCE -->
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-core</artifactId>
+			<version>[5.0.0-m1, 5.9)</version>
+		</dependency>
+	</dependencies>
 </project>

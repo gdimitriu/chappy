@@ -25,9 +25,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import chappy.clients.common.AbstractChappyAddFlow;
 import chappy.clients.common.transaction.ChappyClientTransactionHolder;
-import chappy.clients.common.transaction.RESTTransactionHolder;
 import chappy.clients.rest.protocol.RESTAddFlowMessage;
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.rest.IRESTTransactionHolder;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
@@ -58,8 +58,8 @@ public class ChappyRESTAddFlow extends AbstractChappyAddFlow implements IChappyR
 	public ChappyRESTAddFlow(final String flowName, final String flowConfiguration, final IClientTransaction client) {
 		if (client instanceof ChappyClientTransactionHolder) {
 			clientTransaction = (ChappyClientTransactionHolder) client;
-		} else if (client instanceof RESTTransactionHolder) {
-			clientTransaction.setRestTransaction((RESTTransactionHolder) client);
+		} else if (client instanceof IRESTTransactionHolder) {
+			clientTransaction.setRestTransaction((IRESTTransactionHolder) client);
 		}
 		setProtocol(new RESTAddFlowMessage(flowName, flowConfiguration));
 		getProtocol().setCookie(clientTransaction.getCookie());

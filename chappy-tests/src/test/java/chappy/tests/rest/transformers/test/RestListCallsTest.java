@@ -48,6 +48,7 @@ import chappy.interfaces.services.IChappyServiceNamesConstants;
 import chappy.interfaces.services.IServiceServer;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.services.servers.rest.ServerJetty;
+import chappy.tests.utils.RestCallsUtils;
 import chappy.tests.utils.TestUtils;
 
 /**

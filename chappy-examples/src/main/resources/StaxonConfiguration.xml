@@ -1,0 +1,6 @@
+<?xml version = "1.0" ?>
+ <configuration>
+	<autoPrimitive>true</autoPrimitive>
+	<autoArray>true</autoArray>
+	<virtualNode>VirtualNode</virtualNode>
+</configuration>

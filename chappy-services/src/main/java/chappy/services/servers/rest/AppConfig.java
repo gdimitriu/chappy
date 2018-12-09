@@ -22,10 +22,9 @@ package chappy.services.servers.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import chappy.interfaces.rest.LocalDateTimeContextResolver;
 import chappy.interfaces.rest.resources.IRestResourceProvider;
