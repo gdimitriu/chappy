@@ -74,12 +74,6 @@ public class ServerJetty implements IServiceServer {
 		}
 	}
 	
-	@Override
-	protected void finalize() throws Throwable {
-		stopServer();
-	}
-	
-	
 	/* (non-Javadoc)
 	 * @see chappy.services.servers.rest.IServicesServer#startServer()
 	 */

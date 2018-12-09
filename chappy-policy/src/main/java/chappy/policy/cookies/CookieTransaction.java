@@ -19,8 +19,12 @@
  */
 package chappy.policy.cookies;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,6 +41,7 @@ import chappy.policy.authentication.CredentialHolder;
 
 /**
  * Base class for cookie.
+ * 
  * @author Gabriel Dimitriu
  *
  */
@@ -53,23 +58,23 @@ public abstract class CookieTransaction implements IChappyCookie {
 	@XmlElement(name = "credentials")
 	/** name of the user */
 	private CredentialHolder credentials;
-	
+
 	@XmlElement(name = "transactionId")
 	/** transaction Id */
 	private String transactionId;
-	
+
 	@XmlElement(name = "correlationId")
 	/** correlation id for JMS */
 	private String correlationId;
-	
+
 	@XmlElement(name = "persistence")
 	/** persistence required flag */
 	private boolean persistence = false;
-	
+
 	@XmlElement(name = "servers")
 	/** servers available */
 	private ServerConnectionInfo[] servers = new ServerConnectionInfo[0];
-	
+
 	/**
 	 * base cookie.
 	 */
@@ -77,32 +82,41 @@ public abstract class CookieTransaction implements IChappyCookie {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see chappy.policy.cookies.IChappyCookie#getUserName()
 	 */
 	@Override
 	public String getUserName() {
 		return credentials.getUser();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see chappy.interfaces.cookies.IChappyCookie#getUserPassword()
 	 */
 	@Override
 	public String getUserPassword() {
 		return credentials.getPasswd();
 	}
-	
+
 	/**
 	 * set the user name
-	 * @param nameUser - the user name which own the cookie
-	 * @param passwd - the user password
+	 * 
+	 * @param nameUser
+	 *            - the user name which own the cookie
+	 * @param passwd
+	 *            - the user password
 	 */
 	public void setCredentials(final String nameUser, final String passwd) {
 		this.credentials = new CredentialHolder(nameUser, passwd);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see chappy.policy.cookies.IChappyCookie#getTransactionId()
 	 */
 	@Override
@@ -110,7 +124,9 @@ public abstract class CookieTransaction implements IChappyCookie {
 		return transactionId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see chappy.policy.cookies.IChappyCookie#setTransactionId(java.lang.String)
 	 */
 	@Override
@@ -118,7 +134,9 @@ public abstract class CookieTransaction implements IChappyCookie {
 		this.transactionId = transactionId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see chappy.policy.cookies.IChappyCookie#generateStorageId()
 	 */
 	@Override
@@ -140,7 +158,8 @@ public abstract class CookieTransaction implements IChappyCookie {
 	}
 
 	/**
-	 * @param restServerName the restServerName to set
+	 * @param restServerName
+	 *            the restServerName to set
 	 */
 	public void setRestServerName(final String restServerName) {
 		for (int i = 0; i < servers.length; i++) {
@@ -166,7 +185,8 @@ public abstract class CookieTransaction implements IChappyCookie {
 	}
 
 	/**
-	 * @param jmsServerName the jmsServerName to set
+	 * @param jmsServerName
+	 *            the jmsServerName to set
 	 */
 	public void setJmsServerName(final String jmsServerName) {
 		for (int i = 0; i < servers.length; i++) {
@@ -192,7 +212,8 @@ public abstract class CookieTransaction implements IChappyCookie {
 	}
 
 	/**
-	 * @param restServerPort the restServerPort to set
+	 * @param restServerPort
+	 *            the restServerPort to set
 	 */
 	public void setRestServerPort(final int restServerPort) {
 		for (int i = 0; i < servers.length; i++) {
@@ -207,7 +228,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 	 * @return the jmsServerPort
 	 */
 	@Override
-	public int getJmsServerPort() {		
+	public int getJmsServerPort() {
 		for (int i = 0; i < servers.length; i++) {
 			if ("jms".equals(servers[i].getType())) {
 				return servers[i].getServerPort();
@@ -217,7 +238,8 @@ public abstract class CookieTransaction implements IChappyCookie {
 	}
 
 	/**
-	 * @param jmsServerPort the jmsServerPort to set
+	 * @param jmsServerPort
+	 *            the jmsServerPort to set
 	 */
 	public void setJmsServerPort(final int jmsServerPort) {
 		for (int i = 0; i < servers.length; i++) {
@@ -239,42 +261,66 @@ public abstract class CookieTransaction implements IChappyCookie {
 	}
 
 	/**
-	 * @param correlationId the correlationId to set
+	 * @param correlationId
+	 *            the correlationId to set
 	 */
 	@Override
 	public void setCorrelationId(final String correlationId) {
 		this.correlationId = correlationId;
 	}
-	
+
 	@Override
 	public void update() {
-		SystemConfiguration[] configurations = SystemConfigurationProvider.getInstance()
-				.getSystemConfiguration().getServicesConfigurations();
+		SystemConfiguration[] configurations = SystemConfigurationProvider.getInstance().getSystemConfiguration()
+				.getServicesConfigurations();
 		servers = new ServerConnectionInfo[configurations.length];
-		for (int i = 0; i < servers.length; i++ ) {
+		for (int i = 0; i < servers.length; i++) {
 			servers[i] = new ServerConnectionInfo();
 			servers[i].setType(configurations[i].getName());
 			servers[i].setServerPort(Integer.parseInt(configurations[i].getPropertyValue("serverPort")));
-			String serverName = configurations[i].getPropertyValue("serverHost");
-			if (serverName.isEmpty()) {
+			String serverName = null;
+			try {
+				Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+				boolean found = false;
+				for (NetworkInterface netint : Collections.list(nets)) {
+					Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+					for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+						if (!inetAddress.getHostAddress().equals("127.0.0.1")
+								&& !inetAddress.getHostAddress().equals("0.0.0.0")) {
+							if (inetAddress instanceof Inet6Address)
+								continue;
+							serverName = inetAddress.getHostAddress();
+							found = true;
+							break;
+						}
+					}
+					if (found == true) {
+						break;
+					}
+				}
+
+			} catch (Exception e) {
 				try {
 					serverName = InetAddress.getLocalHost().getCanonicalHostName();
-				} catch (UnknownHostException e) {
+				} catch (UnknownHostException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 					serverName = "localhost";
-				} 
+				}
+
 			}
 			servers[i].setServerName(serverName);
 		}
 	}
-	
+
 	@Override
 	public boolean getPersistence() {
 		return this.persistence;
 	}
-	
-	
+
 	/**
-	 * @param persistence the persistence flag
+	 * @param persistence
+	 *            the persistence flag
 	 */
 	public void setPersistence(final boolean persistence) {
 		this.persistence = persistence;

@@ -219,14 +219,7 @@ public class ServerJMS implements IServiceJMS {
 	    jmsConfig.getConnectionFactoryConfigurations().add(cfConfig);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#finalize()
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		stopServer();
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see chappy.interfaces.services.IServiceServer#configure(java.lang.Object)
 	 */

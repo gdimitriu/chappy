@@ -24,7 +24,6 @@ import java.net.URI;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 
-import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.transactions.IClientTransaction;
 
 /**
