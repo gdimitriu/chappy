@@ -8,7 +8,6 @@
   <artifactId>chappy-client-distribution</artifactId>
   <name>chappy-client-distribution</name>
   <description>distribution for clients</description>
-  <packaging>pom</packaging>
   <build>
 		<plugins>
 			<plugin>
@@ -79,4 +78,5 @@
 			<version>${chappy.version}</version>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
 </project>
