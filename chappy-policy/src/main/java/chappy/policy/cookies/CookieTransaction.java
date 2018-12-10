@@ -19,13 +19,6 @@
  */
 package chappy.policy.cookies;
 
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.Enumeration;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -278,38 +271,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 			servers[i] = new ServerConnectionInfo();
 			servers[i].setType(configurations[i].getName());
 			servers[i].setServerPort(Integer.parseInt(configurations[i].getPropertyValue("serverPort")));
-			String serverName = null;
-			try {
-				Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-				boolean found = false;
-				for (NetworkInterface netint : Collections.list(nets)) {
-					Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-					for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-						if (!inetAddress.getHostAddress().equals("127.0.0.1")
-								&& !inetAddress.getHostAddress().equals("0.0.0.0")) {
-							if (inetAddress instanceof Inet6Address)
-								continue;
-							serverName = inetAddress.getHostAddress();
-							found = true;
-							break;
-						}
-					}
-					if (found == true) {
-						break;
-					}
-				}
-
-			} catch (Exception e) {
-				try {
-					serverName = InetAddress.getLocalHost().getCanonicalHostName();
-				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					serverName = "localhost";
-				}
-
-			}
-			servers[i].setServerName(serverName);
+			servers[i].setServerName(CookieUtils.getServerName());
 		}
 	}
 
