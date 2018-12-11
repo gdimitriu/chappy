@@ -81,12 +81,14 @@ public class JMSClientTransactionFlowTransformations {
 	 * 	- logout from chappy using JMS
 	 */
 	public void jmsChappyLoginLogout() {
+		System.out.println("jmsChappyLoginLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSHost, serverJMSPort);
 			JMSUtilsRequests.chappyLogout(transaction);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("jmsChappyLoginLogout is finished");
 	}
 	
 	/**
@@ -96,6 +98,7 @@ public class JMSClientTransactionFlowTransformations {
 	 *  - logiout from chappy usin JMS
 	 */
 	public void jmsChappyAddTransformer() {
+		System.out.println("jmsChappyAddTransformer is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSHost, serverJMSPort);
 			List<String> addTransformers = new ArrayList<>();
@@ -105,6 +108,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("jmsChappyAddTransformer is finished");
 	}
 	
 	/*
@@ -125,6 +129,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void push3CustomTransformersByTransactionAndMakeTransformation() {
+		System.out.println("push3CustomTransformersByTransactionAndMakeTransformation is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("ProcessingStep");
@@ -149,6 +154,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("push3CustomTransformersByTransactionAndMakeTransformation is finished");
 	}
 	
 	/**
@@ -162,6 +168,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void push3CustomTransformersByTransactionAndFlowMakeTransformation() {
+		System.out.println("push3CustomTransformersByTransactionAndFlowMakeTransformation is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("ProcessingStep");
@@ -189,6 +196,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("push3CustomTransformersByTransactionAndFlowMakeTransformation is finished");
 	}
 	
 	/**
@@ -201,6 +209,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput() {
+		System.out.println("pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		addTransformers.add("SplitterStep");
@@ -224,6 +233,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput is finished");
 	}
 	
 	/**
@@ -236,6 +246,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs() {
+		System.out.println("pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		try {
@@ -262,6 +273,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs is finished");
 	}
 	
 	/**
@@ -274,6 +286,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs() {
+		System.out.println("pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("SplitterStep");
 		try {
@@ -298,6 +311,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs is finished");
 	}
 	
 	/**
@@ -310,6 +324,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * 
 	 */
 	public void exceptionMissingTransformerInTransactionException() {
+		System.out.println("exceptionMissingTransformerInTransactionException is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSHost, serverJMSPort);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
@@ -324,6 +339,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("exceptionMissingTransformerInTransactionException is finished");
 	}
 	
 	/**
@@ -336,6 +352,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * 
 	 */
 	public void exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration() {
+		System.out.println("exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSHost, serverJMSPort);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
@@ -350,6 +367,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration is finished");
 	}
 	
 	/**
@@ -362,6 +380,7 @@ public class JMSClientTransactionFlowTransformations {
 	 * 
 	 */
 	public void exceptionXml2json2xmlStepsWrongXMLConfiguration() {
+		System.out.println("exceptionXml2json2xmlStepsWrongXMLConfiguration is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverJMSHost, serverJMSPort);
 			ChappyJMSTransformFlow transformer = new ChappyJMSTransformFlow(
@@ -376,6 +395,7 @@ public class JMSClientTransactionFlowTransformations {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("exceptionXml2json2xmlStepsWrongXMLConfiguration is finished");
 	}
 }
 	

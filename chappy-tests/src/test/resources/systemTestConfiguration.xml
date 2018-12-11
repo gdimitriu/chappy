@@ -80,7 +80,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:d:\chappy.ods</value>
+				<value>odf:file:target/data/chappy.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
@@ -107,7 +107,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:d:\chappyLogs.ods</value>
+				<value>odf:file:target/data/happyLogs.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
@@ -126,7 +126,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:d:\chappyUpgrade.ods</value>
+				<value>odf:file:target/data/chappyUpgrade.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
@@ -145,7 +145,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:d:\chappyFlows.ods</value>
+				<value>odf:file:target/data/chappyFlows.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>

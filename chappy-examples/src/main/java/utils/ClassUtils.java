@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.Set;
-
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.reflections.Reflections;
 
 import chappy.interfaces.transformers.AbstractStep;
@@ -66,7 +67,16 @@ public class ClassUtils {
 		}
 		classPath = classPath.replace(".", "/");
 		classPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + classPath  + ".class";
-		InputStream is = new FileInputStream(new File(classPath));
+		InputStream is = null;
+		ZipFile zipFile = null;
+		try {
+			is = new FileInputStream(new File(classPath));
+		} catch (Exception e) {
+			System.out.println("take from jar file" + getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+			zipFile = new ZipFile(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+			ZipEntry zipEntry = zipFile.getEntry(classPath + ".class");		
+			is =  zipFile.getInputStream(zipEntry);	
+		}
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		byte[] buffer = new byte[1024];
 		int count =0;
@@ -74,12 +84,16 @@ public class ClassUtils {
 			while((count = is.read(buffer,0,buffer.length))>0 ) {
 				outputStream.write(buffer,0,count);
 			}
-			is.close();
-			outputStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-		return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+		String str = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+		is.close();
+		if (zipFile != null) {
+			zipFile.close();
+		}
+		outputStream.close();
+		return str;
 	}
 }

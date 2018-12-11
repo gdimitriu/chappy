@@ -87,6 +87,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 * 	- logout from chappy using REST
 	 */
 	public void chappyJLoginRLogout() {
+		System.out.println("chappyJLoginRLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverHost, serverJMSPort);
 			
@@ -95,6 +96,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyJLoginRLogout is finished");
 	}
 	
 	/**
@@ -103,6 +105,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 * 	- logout from chappy using JMS
 	 */
 	public void chappyRLoginJLogout() {
+		System.out.println("chappyRLoginJLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverHost, serverRESTPort);
 			
@@ -111,6 +114,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyRLoginJLogout is finished");
 	}
 	
 	/*------------------------------------------------------------------------------------------------------
@@ -125,6 +129,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 *  - logout from chappy using REST
 	 */
 	public void chappyJLoginRAddTransformerRListRLogout() {
+		System.out.println("chappyJLoginRAddTransformerRListRLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverHost, serverJMSPort);
 			
@@ -138,6 +143,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyJLoginRAddTransformerRListRLogout is finished");
 	}
 	
 	/**
@@ -147,6 +153,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 *  - logout from chappy using JMS
 	 */
 	public void chappyRLoginJAddTransformerJListJLogout() {
+		System.out.println("chappyRLoginJAddTransformerJListJLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverHost, serverRESTPort);
 			
@@ -159,6 +166,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyRLoginJAddTransformerJListJLogout is finished");
 	}
 	
 	/**
@@ -169,6 +177,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 *  - logout from chappy using REST
 	 */
 	public void chappyJLoginRAddTransformerJListRLogout() {
+		System.out.println("chappyJLoginRAddTransformerJListRLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverHost, serverJMSPort);
 			
@@ -183,6 +192,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyJLoginRAddTransformerJListRLogout is finished");
 	}
 	
 	/**
@@ -193,6 +203,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 *  - logout from chappy using JMS
 	 */
 	public void chappyRLoginJAddTransformerRListJLogout() {
+		System.out.println("chappyRLoginJAddTransformerRListJLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverHost, serverRESTPort);
 			
@@ -207,6 +218,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyRLoginJAddTransformerRListJLogout is finished");
 	}
 	
 	/**
@@ -219,6 +231,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 *  - logout from chappy using JMS
 	 */
 	public void chappyRLoginJAdd1TransformerRAdd2TransformerJListRFlowJLogout() {
+		System.out.println("chappyRLoginJAdd1TransformerRAdd2TransformerJListRFlowJLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverHost, serverRESTPort);
 			
@@ -253,6 +266,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyRLoginJAdd1TransformerRAdd2TransformerJListRFlowJLogout is finished");
 	}
 	
 	/**
@@ -266,6 +280,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 *  - logout from chappy using REST
 	 */
 	public void chappyJLoginRAdd1TransformerJAdd2TransformerRListJFlowRLogout() {
+		System.out.println("chappyJLoginRAdd1TransformerJAdd2TransformerRListJFlowRLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = JMSUtilsRequests.chappyLogin(serverHost, serverJMSPort);
 			
@@ -301,6 +316,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyJLoginRAdd1TransformerJAdd2TransformerRListJFlowRLogout is finished");
 	}
 	
 	/**
@@ -320,6 +336,7 @@ public class MixedJMSClientRESTClientTransaction {
 	 * @throws FileNotFoundException
 	 */
 	public void chappyRLoginJAdd1TransformerRAdd4TransformerJListJAddFlowRFlowJFlowJLogout() {
+		System.out.println("chappyRLoginJAdd1TransformerRAdd4TransformerJListJAddFlowRFlowJFlowJLogout is started");
 		try {
 			ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverHost, serverRESTPort);
 			
@@ -374,6 +391,7 @@ public class MixedJMSClientRESTClientTransaction {
 			System.err.println(e.getLocalizedMessage());
 			fail(e.getLocalizedMessage());
 		}
+		System.out.println("chappyRLoginJAdd1TransformerRAdd4TransformerJListJAddFlowRFlowJFlowJLogout is finished");
 	}
 }
 	
