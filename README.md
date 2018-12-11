@@ -69,3 +69,9 @@ Run the tests from the package chappy-tests using maven :
 - the port could be modified from systemTestConfiguration.xml from the test resources.
 - mvn build, test
 - the chappy.tests.manual.rest.transformers.test contains the manual tests
+
+External Chappy server and clients :
+- the distribution of chappy server is done in module chappy-distribution (the zip file should be unziped on the target host and launch from the bin directory with java -jar chappy-program.jar ..\config\SystemConfiguration.xml).
+- the distribution of chappy client is don in module chappy-client-distribution (the zip file should be unziped on the client host).
+- examples are into the chappy-examples and should be run with: java -jar chappy-examples-1.0.0-SNAPSHOT.jar localhost 8100 61616 (if is done on localhost with the standard ports from SystemConfiguration.xml)
+- this was tested on aws, linux vm and windows local machine.
