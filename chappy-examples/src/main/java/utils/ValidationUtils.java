@@ -100,32 +100,38 @@ public final class ValidationUtils {
 		System.out.println("The validation of the " + message + "has failed in response from chappy server.");
 	}
 	
-	public static void assertEquals(String message, int expected, int real) {
-		// TODO Auto-generated method stub
-		
+	public static void assertEquals(final String message, final int expected, final int real) {
+		if (expected != real) {
+			System.out.println("Values are different: " + message + " : " + expected + " != " + real);
+		}
 	}
 
-	public static void assertEquals(String message, String expected, String real) {
-		// TODO Auto-generated method stub
-		
+	public static void assertEquals(final String message, final String expected, final String real) {
+		if (!expected.equals(real)) {
+			System.out.println("Values are different: " + message + " : "+ expected + " != " + real);
+		}
 	}
 	
-	public static void assertEquals(String expected, String real) {
-		
+	public static void assertEquals(final String expected, final String real) {
+		if (!expected.equals(real)) {
+			System.out.println("Values are different: " + expected + " != " + real);
+		}		
 	}
-	public static void assertEquals(int expected, int real) {
-		// TODO Auto-generated method stub
-		
+	public static void assertEquals(final int expected, final int real) {
+		if (expected != real) {
+			System.out.println("Values are different: " + expected + " != " + real);
+		}
 	}
-	public static void assertFalse(String message, boolean real) {
-		// TODO Auto-generated method stub
-		
+	public static void assertFalse(final String message, final boolean real) {
+		if (real) {
+			System.out.println("The real should be false but is true");
+		}
 	}
 
-	public static void assertNull(String message, Object real) {
-		// TODO Auto-generated method stub
-		
+	public static void assertNull(final String message, final Object real) {
+		if(real != null) {
+			System.out.println("Validation of null failed " + message + " : " + real.toString());
+		}
 	}
-
 
 }

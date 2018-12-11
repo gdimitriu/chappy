@@ -87,6 +87,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void push3CustomTransformersByTransactionAndMakeTransformation() {
+		System.out.println("push3CustomTransformersByTransactionAndMakeTransformation is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("ProcessingStep");
@@ -114,6 +115,7 @@ public class RestClientTrasactionFlowTransformations {
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
+		System.out.println("push3CustomTransformersByTransactionAndMakeTransformation is finished");
 	}
 
 	/**
@@ -126,7 +128,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput() {
-
+		System.out.println("pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		addTransformers.add("SplitterStep");
@@ -154,6 +156,7 @@ public class RestClientTrasactionFlowTransformations {
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
+		System.out.println("pushCustomSpliterEnvelopperByTransactionAndMakeIntegrationWithOneInput is finished");
 	}
 	
 
@@ -167,6 +170,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs() {
+		System.out.println("pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("EnveloperStep");
 		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverRESThost, serverRESTPort);
@@ -196,6 +200,7 @@ public class RestClientTrasactionFlowTransformations {
 		}
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
+		System.out.println("pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs is finished");
 	}
 	
 	/**
@@ -208,7 +213,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * @throws FileNotFoundException
 	 */
 	public void pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs() {
-		
+		System.out.println("pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("SplitterStep");
 		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverRESThost, serverRESTPort);
@@ -228,7 +233,7 @@ public class RestClientTrasactionFlowTransformations {
 			List<String> actual = transformer.getOutputResultAsString();
 			assertEquals(2, actual.size());
 			List<String> expected = new ArrayList<>();
-			expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/firstMEssage.txt"));
+			expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/firstMessage.txt"));
 			expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/secondMessage.txt"));
 			try {
 				ValidationUtils.compareTwoListOfStrings(expected, actual);
@@ -240,7 +245,8 @@ public class RestClientTrasactionFlowTransformations {
 		}
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
-		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());		
+		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
+		System.out.println("pushCustomSplitterByTransactionAndMakeIntegrationWitOneInputAndMutipleOutputs is finished");
 	}
 	
 	/**
@@ -253,7 +259,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * 
 	 */
 	public void exceptionMissingTransformerInTransactionException() {
-		
+		System.out.println("exceptionMissingTransformerInTransactionException is started");
 		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverRESThost, serverRESTPort);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
@@ -268,6 +274,7 @@ public class RestClientTrasactionFlowTransformations {
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
+		System.out.println("exceptionMissingTransformerInTransactionException is finished");
 	}
 	
 	/**
@@ -280,6 +287,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * 
 	 */
 	public void exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration() {
+		System.out.println("exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration is started");
 		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverRESThost, serverRESTPort);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
@@ -290,6 +298,7 @@ public class RestClientTrasactionFlowTransformations {
 		assertEquals("Status should be 403", Status.FORBIDDEN.getStatusCode(), transformer.getStatusCode());
 		assertEquals(StreamUtils.getStringFromResource("exceptions/xml2json2xmlwithconfiguration.out"),
 				transformer.getTransactionErrorMessage());
+		System.out.println("exceptionXml2json2xmlStepsWithConfigurationWrongXMLConfiguration is finished");
 	}
 	
 	/**
@@ -302,7 +311,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * 
 	 */
 	public void exceptionXml2json2xmlStepsWrongXMLConfigurationTest() {
-		
+		System.out.println("exceptionXml2json2xmlStepsWrongXMLConfigurationTest is started");
 		ChappyClientTransactionHolder transaction = RESTUtilsRequests.chappyLogin(serverRESThost, serverRESTPort);
 		
 		ChappyRESTTransformFlow transformer = new ChappyRESTTransformFlow(
@@ -313,6 +322,7 @@ public class RestClientTrasactionFlowTransformations {
 		assertEquals("Status should be 403", Status.FORBIDDEN.getStatusCode(), transformer.getStatusCode());
 		assertEquals(StreamUtils.getStringFromResource("exceptions/xml2json2xml.out"),
 				transformer.getTransactionErrorMessage());
+		System.out.println("exceptionXml2json2xmlStepsWrongXMLConfigurationTest is finished");
 	}
 	
 	
@@ -328,6 +338,7 @@ public class RestClientTrasactionFlowTransformations {
 	 * @throws JsonProcessingException 
 	 */
 	public void push3CustomTransformersByTransactionPushFlowAndMakeTransformation() {
+		System.out.println("push3CustomTransformersByTransactionPushFlowAndMakeTransformation is started");
 		List<String> addTransformers = new ArrayList<>();
 		addTransformers.add("PreProcessingStep");
 		addTransformers.add("ProcessingStep");
@@ -359,5 +370,6 @@ public class RestClientTrasactionFlowTransformations {
 		
 		ChappyRESTLogout logout = new ChappyRESTLogout(transaction).send();
 		assertEquals("could not logout", Status.OK.getStatusCode(), logout.getStatusCode());
+		System.out.println("push3CustomTransformersByTransactionPushFlowAndMakeTransformation is finished");
 	}
 }

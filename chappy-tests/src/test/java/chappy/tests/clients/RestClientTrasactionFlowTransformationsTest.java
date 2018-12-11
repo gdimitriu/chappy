@@ -245,7 +245,7 @@ public class RestClientTrasactionFlowTransformationsTest {
 			List<String> actual = transformer.getOutputResultAsString();
 			assertEquals(2, actual.size());
 			List<String> expected = new ArrayList<>();
-			expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/firstMEssage.txt"));
+			expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/firstMessage.txt"));
 			expected.add(StreamUtils.getStringFromResource("transaction/dynamic/multipleinputoutput/secondMessage.txt"));
 			TestUtils.compareTwoListOfStrings(expected, actual);
 		} else {
