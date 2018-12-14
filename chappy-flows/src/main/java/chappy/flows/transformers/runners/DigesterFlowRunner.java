@@ -22,6 +22,8 @@ package chappy.flows.transformers.runners;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.jdo.annotations.PersistenceCapable;
+
 import org.apache.commons.digester3.Digester;
 import chappy.configurations.transformers.StaxonConfiguration;
 import chappy.flows.transformers.dynamicflows.DigesterStepsFactory;
@@ -36,6 +38,7 @@ import chappy.utils.streams.wrappers.StreamHolder;
  * @author Gabriel Dimitriu
  *
  */
+@PersistenceCapable(detachable = "true")
 public class DigesterFlowRunner implements IFlowRunner {
 	
 	/** configuration stream */

@@ -63,6 +63,7 @@
 			<xs:enumeration value="HBase"/>
 			<xs:enumeration value="Cassandra" />
 			<xs:enumeration value="MongoDb" />
+			<xs:enumeration value="Postgress" />
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

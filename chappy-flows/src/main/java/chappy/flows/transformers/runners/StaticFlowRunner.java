@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.PersistenceCapable;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -58,6 +59,7 @@ import chappy.utils.streams.wrappers.StreamHolder;
  * @author Gabriel Dimitriu
  *
  */
+@PersistenceCapable(detachable = "true")
 public class StaticFlowRunner implements IFlowRunner{
 
 	/** flow configuration steps */

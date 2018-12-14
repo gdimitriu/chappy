@@ -46,7 +46,7 @@ public class ProcessingRestTestManualServer {
 	 */
 	public ProcessingRestTestManualServer() throws JAXBException, SAXException {
 		SystemConfigurationProvider.getInstance().readSystemConfiguration(
-				getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
+				getClass().getClassLoader().getResourceAsStream("SystemConfigurationPostgress.xml"));
 		SystemConfiguration configuration = SystemConfigurationProvider.getInstance().getSystemConfiguration()
 				.getFirstConfiguration();
 		port = Integer.parseInt(configuration.getProperty());

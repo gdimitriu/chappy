@@ -22,6 +22,8 @@ package chappy.flows.transformers.runners;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.jdo.annotations.PersistenceCapable;
+
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
@@ -34,6 +36,7 @@ import chappy.utils.streams.wrappers.StreamHolder;
  * @author Gabriel Dimitriu
  *
  */
+@PersistenceCapable(detachable = "true")
 public class StaxonSimpleFlowRunner implements IFlowRunner {
 
 	private String mode;

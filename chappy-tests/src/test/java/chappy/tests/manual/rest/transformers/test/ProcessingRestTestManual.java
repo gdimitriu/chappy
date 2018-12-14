@@ -650,12 +650,12 @@ public class ProcessingRestTestManual {
 	
 	public static void main(String[] args) throws JAXBException, SAXException, FileNotFoundException {
 		ProcessingRestTestManual test = new ProcessingRestTestManual();
-		//test.push3CustomTransformersByTransactionAndMakeTransformationGetStatistics();
+		test.push3CustomTransformersByTransactionAndMakeTransformationGetStatistics();
 		System.out.println("finished");
 		//test.cachingTests();
 		//test.pushCustomEnvelopperByTransactionAndMakeIntegrationWithMultipleInputs();
 		//test.xml2xmlXsltOneStepWParametersTest();
-		test.clientLoginLogout();
+		//test.clientLoginLogout();
 	}
 
 	

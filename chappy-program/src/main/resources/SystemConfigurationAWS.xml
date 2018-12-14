@@ -18,13 +18,13 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>. 
  -->
- <configurations>
+<configurations>
 	<configuration>
-  		<name>rest</name>
-  		<property>
-  			<name>serverPort</name>
-  			<value>8100</value>
-  		</property>
+		<name>rest</name>
+		<property>
+			<name>serverPort</name>
+			<value>8100</value>
+		</property>
 	</configuration>
 	<configuration>
 		<name>jms</name>
@@ -36,7 +36,7 @@
 			<name>serverName</name>
 			<value>ChappyJMSserver</value>
 		</property>
- 		<property>
+		<property>
 			<name>protocolType</name>
 			<value>tcp</value>
 		</property>
@@ -46,7 +46,7 @@
 		</property>
 		<property>
 			<name>journalDirectory</name>
-			<value>target/data/journal</value>
+			<value>../persistence/data/journal</value>
 		</property>
 		<property>
 			<name>serverHost</name>
@@ -66,11 +66,11 @@
 		</property>
 		<property>
 			<name>bindindDirectory</name>
-			<value>target/data/binding</value>
+			<value>../persistence/data/binding</value>
 		</property>
 		<property>
 			<name>largeMessageDirectory</name>
-			<value>target/data/largeMessage</value>
+			<value>../persistence/data/largeMessage</value>
 		</property>
 	</configuration>
 	<persistence>
@@ -80,7 +80,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:target/data/chappy.ods</value>
+				<value>odf:file:../persistence/chappy.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
@@ -107,7 +107,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:target/data/happyLogs.ods</value>
+				<value>odf:file:../persistence/chappyLogs.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
@@ -126,7 +126,7 @@
 			<plugin>ODF</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:target/data/chappyUpgrade.ods</value>
+				<value>odf:file:../persistence/chappyUpgrade.ods</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
@@ -142,10 +142,26 @@
 		<persistenceUnit>SystemFlow</persistenceUnit>
 		<framework>datanucleus</framework>
 		<feature>
-			<plugin>ODF</plugin>
+			<plugin>Postgress</plugin>
 			<property>
 				<name>javax.jdo.option.ConnectionURL</name>
-				<value>odf:file:target/data/chappyFlows.ods</value>
+				<value>jdbc:postgresql://chappy.c8qrsut9fdgi.us-east-1.rds.amazonaws.com:5432/chappy</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.ConnectionUserName</name>
+				<value>chappy</value>
+			</property>
+			<property>
+				<name>javax.jdo.PersistenceManagerFactoryClass</name>
+				<value>org.datanucleus.api.jdo.JDOPersistenceManagerFactory</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.ConnectionPassword</name>
+				<value>12345678</value>
+			</property>
+			<property>
+				<name>javax.jdo.option.ConnectionDriverName</name>
+				<value>org.postgresql.Driver</value>
 			</property>
 			<property>
 				<name>javax.jdo.option.Mapping</name>
