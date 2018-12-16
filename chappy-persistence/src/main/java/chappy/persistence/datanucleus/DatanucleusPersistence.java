@@ -132,7 +132,8 @@ public class DatanucleusPersistence implements IPersistence {
 		Map<Object, Object> props = new HashMap<Object, Object>();
 		props.putAll(persistenceUnit.getProperties());
 		props.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, runtimeClassLoader);
-		props.put("datanucleus.autoStartClassNames", classes.get(0));
+		props.put("datanucleus.autoStartClassNames", classes);
+		props.put("datanucleus.rdbms.dynamicSchemaUpdates", true);
 		props.put(PropertyNames.PROPERTY_MAX_FETCH_DEPTH, "-1");
 		props.put(PropertyNames.PROPERTY_CLASSLOADER_RESOLVER_NAME, "chappy.loaders.resolver.ChappyClassLoaderResolver");
 		try {

@@ -24,6 +24,6 @@ package chappy.interfaces.markers;
  * @author Gabriel Dimitriu
  *
  */
-public interface ISystemLogsPersistence {
+public interface ISystemLogsPersistence extends ISystemLogsPersistenceMarker{
 
 }

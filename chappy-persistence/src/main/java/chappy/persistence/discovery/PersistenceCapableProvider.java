@@ -28,6 +28,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import org.reflections.Reflections;
 
 import chappy.interfaces.constants.IChappyPackagesConstants;
+import chappy.utils.classes.RTIClassUtils;
 
 /**
  * @author Gabriel Dimitriu
@@ -66,12 +67,12 @@ public class PersistenceCapableProvider {
 	 */
 	static public List<String> getPersistenceType(final String type) throws ClassNotFoundException {
 		List<String> classes = new ArrayList<String>();
-		String marker = "I" + type + "Persistence";
+		String marker = "I" + type + "PersistenceMarker";
 		Reflections reflections = new Reflections("chappy");
 		Class<?> markerClass = Class.forName(IChappyPackagesConstants.CHAPPY_INTERFACES_MARKERS + marker);
 		Set<Class<?>> allPresistedclasses = reflections.getTypesAnnotatedWith(PersistenceCapable.class);
 		for (Class<?> cl : allPresistedclasses) {
-			Class<?>[] interfaces = cl.getInterfaces();
+			List<Class<?>> interfaces = RTIClassUtils.getAllInterfaces(cl);
 			for (Class<?> implInterface : interfaces) {
 				if (implInterface.equals(markerClass)) {
 					classes.add(cl.getName());

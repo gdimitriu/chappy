@@ -1,5 +1,5 @@
 /**
-    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+    Copyright (c) 2018 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
     This file is part of chappy project.
@@ -17,13 +17,27 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.markers;
+package chappy.utils.classes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Marker for system upgrade persistence.
+ * This holds the utils necessary for runtime information for clases.
  * @author Gabriel Dimitriu
  *
  */
-public interface ISystemUpgradePersistence extends ISystemUpgradePersistenceMarker{
+public final class RTIClassUtils {
 
+	public static List<Class<?>> getAllInterfaces(final Class<?> targetClass) {
+		List<Class<?>> allInterfaces = new ArrayList<>();
+		Class<?>[] interfaces = targetClass.getInterfaces();
+		for (Class<?> cl : interfaces) {
+			allInterfaces.add(cl);
+			if(cl.getInterfaces().length != 0) {
+				allInterfaces.addAll(getAllInterfaces(cl));
+			}
+		}
+		return allInterfaces;
+	}
 }

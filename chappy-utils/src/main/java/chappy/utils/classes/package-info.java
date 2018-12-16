@@ -1,5 +1,5 @@
 /**
-    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+    Copyright (c) 2018 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
     This file is part of chappy project.
@@ -17,13 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with Chappy.  If not, see <http://www.gnu.org/licenses/>.
  */
-package chappy.interfaces.markers;
-
 /**
- * Marker for system upgrade persistence.
+ * This package holds all utils necessary for using reflection or rti from classes.
  * @author Gabriel Dimitriu
  *
  */
-public interface ISystemUpgradePersistence extends ISystemUpgradePersistenceMarker{
-
-}
+package chappy.utils.classes;

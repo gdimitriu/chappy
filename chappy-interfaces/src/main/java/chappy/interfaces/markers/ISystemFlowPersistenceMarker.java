@@ -1,5 +1,5 @@
 /**
-    Copyright (c) 2017 Gabriel Dimitriu All rights reserved.
+    Copyright (c) 2018 Gabriel Dimitriu All rights reserved.
 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
     This file is part of chappy project.
@@ -20,10 +20,9 @@
 package chappy.interfaces.markers;
 
 /**
- * Marker for system upgrade persistence.
  * @author Gabriel Dimitriu
  *
  */
-public interface ISystemUpgradePersistence extends ISystemUpgradePersistenceMarker{
+public interface ISystemFlowPersistenceMarker {
 
 }

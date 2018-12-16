@@ -31,7 +31,7 @@ import chappy.interfaces.flows.IFlowRunner;
  * @author Gabriel Dimitriu
  *
  */
-public interface ISystemFlowPersistence {
+public interface ISystemFlowPersistence extends ISystemFlowPersistenceMarker{
 
 	/**
 	 * @return the storageId

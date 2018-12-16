@@ -27,13 +27,14 @@ import javax.xml.bind.JAXBException;
 import org.xml.sax.SAXException;
 
 import chappy.interfaces.cookies.IChappyCookie;
+import chappy.interfaces.markers.ISystemFlowPersistenceMarker;
 import chappy.utils.streams.wrappers.StreamHolder;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public interface IFlowRunner {
+public interface IFlowRunner extends ISystemFlowPersistenceMarker {
 	/**
 	 * This will create the steps from the configuration.
 	 * @throws Exception 
