@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Join;
 import javax.jdo.annotations.Order;
@@ -59,6 +60,7 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	
 	@Persistent(defaultFetchGroup = "true")
 	@Join(column = "DatanucleusFlowTransactionPersistence_runners")
+	@Extension(key = "datanucleus", vendorName = "implementation-classes", value = "chappy.flows.transformers.runner.StaticFlowRunner, chappy.flows.transformers.runner.StaxonSimpleFlowRunner, chappy.flows.transformers.runner.DigesterFlowRunner")
 	private Map<String, IFlowRunner> flowRunners = new HashMap<>();
 	
 	/**
