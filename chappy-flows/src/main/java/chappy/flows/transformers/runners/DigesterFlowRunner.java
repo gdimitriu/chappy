@@ -41,11 +41,14 @@ import chappy.utils.streams.wrappers.StreamHolder;
 @PersistenceCapable(detachable = "true")
 public class DigesterFlowRunner implements IFlowRunner {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/** configuration stream */
 	private InputStream configurationStream = null;
 	/** data from multipart */
 	private MultiDataQueryHolder multipart = null;
-	
 	private Digester digester = new Digester();
 	/**
 	 * constructor need for reflection

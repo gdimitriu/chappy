@@ -62,6 +62,10 @@ import chappy.utils.streams.wrappers.StreamHolder;
 @PersistenceCapable(detachable = "true")
 public class StaticFlowRunner implements IFlowRunner{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/** flow configuration steps */
 	private FlowConfiguration configuration = null;
 	/** multi-part request from rest which contains mapping. */

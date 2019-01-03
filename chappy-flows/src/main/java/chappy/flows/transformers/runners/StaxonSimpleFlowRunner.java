@@ -39,6 +39,11 @@ import chappy.utils.streams.wrappers.StreamHolder;
 @PersistenceCapable(detachable = "true")
 public class StaxonSimpleFlowRunner implements IFlowRunner {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String mode;
 	
 	private String configuration;

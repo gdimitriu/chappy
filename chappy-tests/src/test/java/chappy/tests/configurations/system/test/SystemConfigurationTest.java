@@ -59,7 +59,7 @@ public class SystemConfigurationTest {
 				.unmarshal(getClass().getClassLoader().getResourceAsStream("systemTestConfiguration.xml"));
 		SystemConfiguration configuration = configurations.getFirstConfiguration();
 		assertEquals("name", "rest", configuration.getName());
-		assertEquals("port", "8099", configuration.getProperty());
+		assertEquals("port", "8100", configuration.getProperty());
 	}
 	
 }

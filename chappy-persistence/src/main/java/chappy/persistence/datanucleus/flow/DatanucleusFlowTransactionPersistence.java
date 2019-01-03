@@ -58,9 +58,9 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	@Persistent(defaultFetchGroup = "true")
 	private String cookieTransactionId;
 	
-	@Persistent(defaultFetchGroup = "true")
-	@Join(column = "DatanucleusFlowTransactionPersistence_runners")
-	@Extension(key = "datanucleus", vendorName = "implementation-classes", value = "chappy.flows.transformers.runner.StaticFlowRunner, chappy.flows.transformers.runner.StaxonSimpleFlowRunner, chappy.flows.transformers.runner.DigesterFlowRunner")
+	@Persistent(defaultFetchGroup = "true", serializedElement="true")
+	@Join(table = "DatanucleusFlowTransactionPersistence_runners")
+	@Extension(key = "mapping-strategy", value = "per-implementation", vendorName = "datanucleus")
 	private Map<String, IFlowRunner> flowRunners = new HashMap<>();
 	
 	/**

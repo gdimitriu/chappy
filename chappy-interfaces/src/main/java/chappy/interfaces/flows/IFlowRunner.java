@@ -20,6 +20,7 @@
 package chappy.interfaces.flows;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -34,7 +35,7 @@ import chappy.utils.streams.wrappers.StreamHolder;
  * @author Gabriel Dimitriu
  *
  */
-public interface IFlowRunner extends ISystemFlowPersistenceMarker {
+public interface IFlowRunner extends ISystemFlowPersistenceMarker, Serializable {
 	/**
 	 * This will create the steps from the configuration.
 	 * @throws Exception 
