@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 import org.datanucleus.PropertyNames;
 import org.datanucleus.enhancer.DataNucleusEnhancer;

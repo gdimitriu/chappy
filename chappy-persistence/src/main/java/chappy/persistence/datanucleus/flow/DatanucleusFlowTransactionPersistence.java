@@ -20,14 +20,12 @@
 package chappy.persistence.datanucleus.flow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Join;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -58,10 +56,16 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	@Persistent(defaultFetchGroup = "true")
 	private String cookieTransactionId;
 	
-	@Persistent(defaultFetchGroup = "true", serializedElement="true")
-	@Join(table = "DatanucleusFlowTransactionPersistence_runners")
+	@Persistent(defaultFetchGroup = "true")
+	@Order
+	@Join(column = "DatanucleusFlowTransactionPersistence_flowRunnersNames")
+	private List<String> flowRunnersNames = new ArrayList<>();
+	
+	@Persistent(defaultFetchGroup = "true", serializedElement = "true")
+	@Order
+	@Join(column = "DatanucleusFlowTransactionPersistence_flowRunnersInstances")
 	@Extension(key = "mapping-strategy", value = "per-implementation", vendorName = "datanucleus")
-	private Map<String, IFlowRunner> flowRunners = new HashMap<>();
+	private List<IFlowRunner> flowRunnersInstances = new ArrayList<>();
 	
 	/**
 	 * 
@@ -148,18 +152,25 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 		DatanucleusTransaction trans = new DatanucleusTransaction(transactionId, true, listOftransformers, cookieTransactionId);
 		trans.setPersistedTransaction(this);
 		trans.setPersistenceFlowManager(pm);
-		trans.setFlowRunners(flowRunners);
+		trans.setFlowRunners(flowRunnersNames, flowRunnersInstances);
 		return trans;
 	}
-	
+
 	@Override
-	public Map<String, IFlowRunner> getFlowRunners() {
-		return this.flowRunners;
+	public void setFlowRunners(final List<String> names, final List<IFlowRunner> instances) {
+		flowRunnersNames.clear();
+		flowRunnersNames.addAll(names);
+		flowRunnersInstances.clear();
+		flowRunnersInstances.addAll(instances);
 	}
-	
+
 	@Override
-	public void setFlowRunners(final Map<String, IFlowRunner> runners) {
-		this.flowRunners.clear();
-		this.flowRunners.putAll(runners);
+	public List<String> getFlowRunnersNames() {
+		return flowRunnersNames;
+	}
+
+	@Override
+	public List<IFlowRunner> getFlowRunnersInstances() {
+		return flowRunnersInstances;
 	}
 }

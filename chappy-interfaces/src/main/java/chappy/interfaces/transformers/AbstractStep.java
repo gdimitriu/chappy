@@ -31,6 +31,11 @@ import chappy.utils.streams.wrappers.StreamHolder;
 
 public abstract class AbstractStep implements ITransformerStep {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/** disable the step */
 	private String disabled = "false";
 	

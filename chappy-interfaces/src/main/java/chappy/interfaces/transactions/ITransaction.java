@@ -21,8 +21,6 @@ package chappy.interfaces.transactions;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.persistence.ICustomStepPersistence;
@@ -191,15 +189,22 @@ public interface ITransaction {
 	void removeFlowRunner(final String nameOfFlow);
 	
 	/**
-	 * set the map of flow runners.
-	 * @param runners from this transaction.
+	 * set the flow runners.
+	 * @param names runners names from this transaction.
+	 * @param instances runners instances for this transaction.
 	 */
-	void setFlowRunners(final Map<String, IFlowRunner> runners);
+	void setFlowRunners(final List<String> names, final List<IFlowRunner> instances);
 	
 
 	/**
-	 * get the map of the flow runners.
-	 * @return hash map of the flow runners
+	 * get the flow runners names
+	 * @return list of the flow runners names
 	 */
-	Map<String, IFlowRunner> getFlowRunners();
+	List<String> getFlowRunnersNames();
+	
+	/**
+	 * get the flow runners instances.
+	 * @return list of the low runners instances
+	 */
+	List<IFlowRunner> getFlowRunnersInstances();
 }

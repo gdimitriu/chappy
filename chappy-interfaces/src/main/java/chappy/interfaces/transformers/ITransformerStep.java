@@ -19,10 +19,12 @@
  */
 package chappy.interfaces.transformers;
 
+import java.io.Serializable;
 import java.util.List;
 
 import chappy.configurations.transformers.StaxonConfiguration;
 import chappy.interfaces.flows.MultiDataQueryHolder;
+import chappy.interfaces.markers.ISystemFlowPersistenceMarker;
 import chappy.interfaces.statisticslogs.ILogs;
 import chappy.utils.streams.wrappers.StreamHolder;
 import chappy.utils.streams.wrappers.WrapperUtils;
@@ -34,7 +36,7 @@ import chappy.utils.streams.wrappers.WrapperUtils;
  * @author Gabriel Dimitriu
  *
  */
-public interface ITransformerStep {
+public interface ITransformerStep extends Serializable, ISystemFlowPersistenceMarker {
 
 	/**
 	 * set disabled state for the step.

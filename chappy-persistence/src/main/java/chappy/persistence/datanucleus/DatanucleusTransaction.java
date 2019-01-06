@@ -234,7 +234,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			e.printStackTrace();
 		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
-		persistedTransaction.setFlowRunners(getFlowRunners());
+		persistedTransaction.setFlowRunners(getFlowRunnersNames(), getFlowRunnersInstances());
 		Transaction transaction = persistenceFlowManager.currentTransaction();
 		transaction.begin();
 		persistedTransaction = persistenceFlowManager.makePersistent(persistedTransaction);
@@ -279,7 +279,7 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 			obj.setCookieTransactionId(getTransactionId());
 		}
 		persistedTransaction.setListOftransformers(getListOfCustomTansformers());
-		persistedTransaction.setFlowRunners(getFlowRunners());
+		persistedTransaction.setFlowRunners(getFlowRunnersNames(), getFlowRunnersInstances());
 		if (cookie != null) {
 			persistedTransaction.setStorageId(cookie.generateStorageId());
 		}

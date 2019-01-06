@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -71,6 +72,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	/** multi-part request from rest which contains mapping. */
 	private MultiDataQueryHolder internalMultipart;
 	/** list of steps to be executed */
+	@NotPersistent
 	private List<ITransformerStep> stepList = new ArrayList<ITransformerStep>();
 	
 	/** cookie of the  transaction */
@@ -79,7 +81,14 @@ public class StaticFlowRunner implements IFlowRunner{
 	 * constructor need for reflection.
 	 */
 	public StaticFlowRunner() {
-		
+		if(configuration != null) {
+			try {
+				createSteps();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
@@ -104,6 +113,9 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
 	@Override
 	public void createSteps() throws Exception {
+		if (stepList.isEmpty()) {
+			return;
+		}
 		StepConfiguration[] steps = configuration.getSteps();
 		for (StepConfiguration conf : steps) {
 			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName());

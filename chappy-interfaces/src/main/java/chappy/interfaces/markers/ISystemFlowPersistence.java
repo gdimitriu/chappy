@@ -20,8 +20,6 @@
 package chappy.interfaces.markers;
 
 import java.util.List;
-import java.util.Map;
-
 import javax.jdo.PersistenceManager;
 
 import chappy.interfaces.flows.IFlowRunner;
@@ -64,8 +62,24 @@ public interface ISystemFlowPersistence extends ISystemFlowPersistenceMarker{
 	
 	public void setListOftransformers(final List<String> listOftransformers);
 	
-	public Map<String, IFlowRunner> getFlowRunners();
+	/**
+	 * set the flow runners.
+	 * @param names runners names from this transaction.
+	 * @param instances runners instances for this transaction.
+	 */
+	public void setFlowRunners(final List<String> names, final List<IFlowRunner> instances);
 	
-	public void setFlowRunners(final Map<String, IFlowRunner> runners);
+
+	/**
+	 * get the flow runners names
+	 * @return list of the flow runners names
+	 */
+	List<String> getFlowRunnersNames();
+	
+	/**
+	 * get the flow runners instances.
+	 * @return list of the low runners instances
+	 */
+	public List<IFlowRunner> getFlowRunnersInstances();
 	
 }

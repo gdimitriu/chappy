@@ -33,6 +33,7 @@ import chappy.exception.providers.ExceptionMappingProvider;
 import chappy.interfaces.exception.IChappyException;
 import chappy.interfaces.flows.IFlowRunner;
 import chappy.interfaces.flows.MultiDataQueryHolder;
+import chappy.loaders.resolver.ClassLoaderSingletonProvider;
 
 /**
  * @author Gabriel Dimitriu
@@ -44,7 +45,7 @@ public class TransformersFlowRunnerProvider {
 	private static TransformersFlowRunnerProvider singleton = new TransformersFlowRunnerProvider();
 	
 	/** map of runners and string correspondence */
-	Map<String, Class<? extends IFlowRunner>> runners = null;
+	Map<String, Class<?>> runners = null;
 	
 	/**
 	 * constructor for singleton.
@@ -75,11 +76,17 @@ public class TransformersFlowRunnerProvider {
 			runners = null;
 			return;
 		}
-		runners = new HashMap<String, Class<? extends IFlowRunner>>();
+		runners = new HashMap<String, Class<?>>();
 		for (Class<? extends IFlowRunner> elem : availableRunners) {
 			String name = elem.getSimpleName().replace("[", "").replace("]","");
 			name = name.substring(0, name.indexOf("Runner"));
-			runners.put(name, elem);
+			try {
+				runners.put(name, ClassLoaderSingletonProvider.getInstance().getRegisteredClassLoader("runtime-SystemFlow").loadClass
+						(elem.getCanonicalName()));
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	/**
@@ -103,7 +110,7 @@ public class TransformersFlowRunnerProvider {
 		}
 		IFlowRunner runner = null;
 		try {
-			runner = runners.get(name).newInstance();
+			runner = (IFlowRunner) runners.get(name).newInstance();
 			runner.setConfigurations(configurationStream, multipart);
 		} catch (Exception e) {
 			if (e instanceof IChappyException) {

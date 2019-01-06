@@ -21,10 +21,7 @@ package chappy.interfaces.transactions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import chappy.interfaces.flows.IFlowRunner;
 
 /**
@@ -46,7 +43,8 @@ public abstract class AbstractTransaction implements ITransaction {
 	private String cookieTransactionId;
 	
 	/** cache of flow runners */
-	private Map<String, IFlowRunner> flowRunners = new HashMap<>();	
+	private List<String> flowRunnersNames = new ArrayList<>();
+	private List<IFlowRunner> flowRunnersInstances = new ArrayList<>();
 	
 	/**
 	 * 
@@ -145,31 +143,46 @@ public abstract class AbstractTransaction implements ITransaction {
 	
 	@Override
 	public void putFlowRunner(final String nameOfFlow, final IFlowRunner flowRunner) {
-		flowRunners.put(nameOfFlow, flowRunner);		
+		int index = flowRunnersNames.indexOf(nameOfFlow);
+		if (index > -1) {
+			flowRunnersInstances.remove(index);
+			flowRunnersNames.remove(index);
+		}
+		flowRunnersNames.add(nameOfFlow);
+		flowRunnersInstances.add(flowRunner);
 	}
 	
 	@Override
 	public IFlowRunner getFlowRunner(final String nameOfFlow) {
-		if (flowRunners.containsKey(nameOfFlow)) {
-			return flowRunners.get(nameOfFlow);
+		int index = flowRunnersNames.indexOf(nameOfFlow);
+		if (index > -1) {
+			return flowRunnersInstances.get(index);
 		}
 		return null;
 	}
 	
 	@Override
 	public void removeFlowRunner(final String nameOfFlow) {
-		if (flowRunners.containsKey(nameOfFlow)) {
-			flowRunners.remove(nameOfFlow);
+		int index = flowRunnersNames.indexOf(nameOfFlow);
+		if (index > -1) {
+			flowRunnersInstances.remove(index);
+			flowRunnersNames.remove(index);
 		}
 	}
 	
 	@Override
-	public void setFlowRunners(final Map<String, IFlowRunner> runners) {
-		flowRunners = runners;
+	public void setFlowRunners(final List<String> names, final List<IFlowRunner> instances) {
+		flowRunnersNames = names;
+		flowRunnersInstances = instances;
 	}
 	
 	@Override
-	public Map<String, IFlowRunner> getFlowRunners() {
-		return flowRunners;
+	public List<String> getFlowRunnersNames() {
+		return flowRunnersNames;
+	}
+	
+	@Override
+	public List<IFlowRunner> getFlowRunnersInstances() {
+		return flowRunnersInstances;
 	}
 }
