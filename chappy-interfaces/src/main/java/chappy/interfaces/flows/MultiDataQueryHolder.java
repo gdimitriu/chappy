@@ -19,38 +19,43 @@
  */
 package chappy.interfaces.flows;
 
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+
+import chappy.utils.streams.StreamUtils;
 
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class MultiDataQueryHolder {
-	
-	/** holder for REST FormDataMultiPart */
-	private MultiValuedMap<String, Object> bodyValues = null;
-	
-	/** holder for MultivaluedMap<String,String> from REST queries*/
-	private MultiValuedMap<String, String> queries = null;
-	
-	public MultiDataQueryHolder() {
-		queries = new HashSetValuedHashMap<String, String>();
-		bodyValues = new HashSetValuedHashMap<String, Object>();
-	}
-	
+public class MultiDataQueryHolder implements Serializable{
 	
 	/**
-	 * get the body values multimap.
-	 * @return multimap of the body values
+	 * serial version.
 	 */
-	public MultiValuedMap<String, Object> getBodyValues() {
-		return bodyValues;
+	private static final long serialVersionUID = 1L;
+
+	/** holder for REST FormDataMultiPart */
+	private List<String> bodyNames = null;
+	
+	private List<List<String>> bodyValues = null;
+	
+	/** holder for MultivaluedMap<String,String> from REST queries*/
+	private List<String> queriesNames = null;
+	private List<List<String>> queriesValues = null;
+	
+	public MultiDataQueryHolder() {
+		bodyNames = new ArrayList<>();
+		bodyValues = new ArrayList<>();
+		queriesNames = new ArrayList<>();
+		queriesValues = new ArrayList<>();
 	}
 	
 	/**
@@ -58,15 +63,11 @@ public class MultiDataQueryHolder {
 	 * @return multimap of the queries
 	 */
 	public MultiValuedMap<String, String> getQueries() {
+		 MultiValuedMap<String, String> queries = new HashSetValuedHashMap<>();
+		 for (int i = 0 ; i < queriesNames.size(); i++) {
+			 queries.putAll(queriesNames.get(i), queriesValues.get(i));
+		 }
 		return queries;
-	}
-	
-	/**
-	 * set the multimap of the body values.
-	 * @param bodies
-	 */
-	public void setBodyValues(final MultiValuedMap<String, Object> bodies) {
-		this.bodyValues = bodies;
 	}
 	
 	/**
@@ -74,7 +75,10 @@ public class MultiDataQueryHolder {
 	 * @param queries as multimap
 	 */
 	public void setQueries(final MultiValuedMap<String, String> queries) {
-		this.queries = queries;
+		for (String key : queries.keySet()) {
+			queriesNames.add(key);
+			queriesValues.add((List<String>) queries.get(key));
+		}
 	}
 	
 	/**
@@ -83,7 +87,8 @@ public class MultiDataQueryHolder {
 	 * @param values of query
 	 */
 	public void setQuery(final String key, final List<String> values) {
-		values.stream().forEach(val -> queries.put(key, val));
+		this.queriesNames.add(key);
+		this.queriesValues.add(values);
 	}
 	
 	/**
@@ -92,36 +97,19 @@ public class MultiDataQueryHolder {
 	 * @param values to add
 	 */
 	public void setValue(final String key, final List<Object> values) {
-		values.stream().forEach(val -> bodyValues.put(key, val));
-	}
-	
-	/**
-	 * get the collection of value from key element corresponding to body value.
-	 * @param key to search
-	 * @return collection of values
-	 */
-	public Collection<Object> getBodyValue(final String key) {
-		return (Collection<Object>) bodyValues.get(key);
-	}
-	
-	/**
-	 * get the collection of value from key element corresponding to a query.
-	 * @param key to search
-	 * @param T type of element
-	 * @return collection of type element.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> Collection<T> getQueryValueAs(final String key, final Class<?> T) {
-		return (Collection<T>) queries.get(key);
-	}
-	
-	/**
-	 * get the collection of value from key element corresponding to a query.
-	 * @param key to search
-	 * @return collection of values
-	 */
-	public Collection<String> getQueryValue(final String key) {
-		return (Collection<String>) queries.get(key);
+		this.bodyNames.add(key);
+		if (values.get(0) instanceof InputStream) {
+			List<String> vals = new ArrayList<>();
+			values.stream().forEach(a -> vals.add(StreamUtils.toStringFromStream((InputStream)a)));
+			this.bodyValues.add(vals);
+			return;
+		}
+		if (values.get(0) instanceof String) {
+			List<String> vals = new ArrayList<>();
+			values.stream().forEach(a -> vals.add((String) a));
+			this.bodyValues.add(vals);
+			return;
+		}
 	}
 	
 	/**
@@ -132,16 +120,37 @@ public class MultiDataQueryHolder {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Collection<T> getBodyValueAs(final String key, final Class<?> T) {
-		return (Collection<T>) bodyValues.get(key);
+		int index = bodyNames.indexOf(key);
+		if (index > -1 && T == InputStream.class) {
+			List<InputStream> vals = new ArrayList<>();
+			bodyValues.get(index).stream().forEach(a -> vals.add(StreamUtils.toInputStreamFromString(a)));
+			return (Collection<T>) vals;
+		}
+		if (index > -1 && T == String.class) {
+			return (Collection<T>) bodyValues;
+		}
+		return new ArrayList<>();
 	}
 	
+	/**
+	 * get the collection of value from key element corresponding to a query.
+	 * @param key to search
+	 * @return collection of values
+	 */
+	public Collection<String> getQueryValue(final String key) {
+		int index = queriesNames.indexOf(key);
+		if (index > -1) {
+			return queriesValues.get(index);
+		}
+		return new ArrayList<>();
+	}
 	
 	/**
-	 * get the set of string key values.
+	 * get the list of string key values.
 	 * @return a set containing all keys.
 	 */
-	public Set<String> getQueriesSet() {
-		return queries.keySet();
+	public List<String> getQueriesList() {		
+		return queriesNames;
 	}
 	
 	/**
@@ -149,13 +158,14 @@ public class MultiDataQueryHolder {
 	 * @param key the query key
 	 * @return value of the query
 	 */
-	@SuppressWarnings("rawtypes" )
-	public Object getFirstQuery(final String key) {
-		Object col = queries.get(key);
-		if (col != null) {
-			return ((Collection) col).iterator().next();
-		} else {
-			return null;
+	public String getFirstQuery(final String key) {
+		int index = queriesNames.indexOf(key);
+		if (index > -1) {
+			if (queriesValues.get(index).isEmpty()) {
+				return null;
+			}
+			return queriesValues.get(index).get(0);
 		}
+		return null;
 	}
 }

@@ -19,6 +19,7 @@
  */
 package chappy.interfaces.markers;
 
+import java.io.IOException;
 import java.util.List;
 import javax.jdo.PersistenceManager;
 
@@ -82,4 +83,40 @@ public interface ISystemFlowPersistence extends ISystemFlowPersistenceMarker{
 	 */
 	public List<IFlowRunner> getFlowRunnersInstances();
 	
+	/**
+	 * put the flow in cache.
+	 * @param nameOfFlow
+	 * @param flowRunner
+	 */
+	void putFlowRunner(final String nameOfFlow, final IFlowRunner flowRunner);
+	
+	/**
+	 * get the flow from cache
+	 * @param nameOfFlow
+	 * @return flow to be executed.
+	 */
+	IFlowRunner getFlowRunner(final String nameOfFlow);
+	
+	/**
+	 * remove the flow from cache.
+	 * @param nameOfFlow to be removed.
+	 */
+	void removeFlowRunner(final String nameOfFlow);
+	
+	
+	/**
+	 * @return the persistence
+	 */
+	boolean isPersistence();
+
+	/**
+	 * @param persistance the persistence to set
+	 */
+	void setPersistence(final boolean persistence);
+	
+	/**
+	 * add a transformer.
+	 * @param transformerName name of the transformer.
+	 */
+	void addTransformer(final String userName, final String fullName, final byte[] originalByteCode) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException;
 }

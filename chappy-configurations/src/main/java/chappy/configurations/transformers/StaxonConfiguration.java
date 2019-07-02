@@ -20,6 +20,8 @@
  
 package chappy.configurations.transformers;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,7 +35,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StaxonConfiguration {
+public class StaxonConfiguration implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/** if the message has array on root */
 	@XmlElement(name = "autoArray")

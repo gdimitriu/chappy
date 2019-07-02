@@ -114,7 +114,7 @@ public class XslStep extends AbstractStep {
 		Transformer transformer = TransformerFactory.newInstance(factoryEngine,
 				getClass().getClassLoader()).newTransformer(mappingSource);
 	
-		Iterator<String> it = dataHolder.getQueriesSet().iterator();
+		Iterator<String> it = dataHolder.getQueriesList().iterator();
         
 		while(it.hasNext()){
         	String theKey = (String) it.next();

@@ -19,6 +19,7 @@
  */
 package chappy.flows.transformers.staticflows;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +40,12 @@ import chappy.interfaces.transformers.ITransformerStep;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StepConfiguration {
+public class StepConfiguration implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@XmlAttribute(name = "class")
 	private String name = null;

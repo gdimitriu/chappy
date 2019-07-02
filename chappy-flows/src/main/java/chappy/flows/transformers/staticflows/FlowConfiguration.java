@@ -19,6 +19,8 @@
  */
 package chappy.flows.transformers.staticflows;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,8 +34,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "flow")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FlowConfiguration {
+public class FlowConfiguration implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@XmlElement(name = "steps")
 	private StepsConfiguration steps = null;
 

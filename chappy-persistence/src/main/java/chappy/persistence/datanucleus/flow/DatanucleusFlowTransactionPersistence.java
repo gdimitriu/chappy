@@ -19,13 +19,13 @@
  */
 package chappy.persistence.datanucleus.flow;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Join;
-import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -48,7 +48,7 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	@Persistent(defaultFetchGroup = "true")
 	@Order
 	@Join(column = "DatanucleusFlowTransactionPersistence_listOfTransformers")
-	private List<String> listOftransformers = new ArrayList<String>();
+	private List<String> listOftransformers = new ArrayList<>();
 	
 	@Persistent(defaultFetchGroup = "true")
 	private String storageId;
@@ -67,6 +67,9 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	@Extension(key = "mapping-strategy", value = "per-implementation", vendorName = "datanucleus")
 	private List<IFlowRunner> flowRunnersInstances = new ArrayList<>();
 	
+	/** true if it has to be persist */
+	@Persistent(defaultFetchGroup = "true")
+	private boolean persistence = false;
 	/**
 	 * 
 	 */
@@ -74,14 +77,37 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 		// TODO Auto-generated constructor stub
 	}
 	
+	public DatanucleusFlowTransactionPersistence(final String id, final boolean persistence, final List<String> transformers, final String cookieTransactionId) {
+		this.persistence = persistence;
+		this.transactionId = id;
+		this.cookieTransactionId = cookieTransactionId;
+		this.listOftransformers = new ArrayList<String>();
+		if (transformers != null && !transformers.isEmpty()) {
+			this.listOftransformers.addAll(transformers);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#isPersistence()
+	 */
+	@Override
+	public boolean isPersistence() {
+		return persistence;
+	}
+
+	/* (non-Javadoc)
+	 * @see chappy.transaction.base.ITransaction#setPersistence(boolean)
+	 */
+	@Override
+	public void setPersistence(final boolean persistence) {
+		this.persistence = persistence;
+	}
+	
 	/**
 	 * @return the transactionId
 	 */
 	@Override
 	public String getTransactionId() {
-//		if (cookieTransactionId != null) {
-//			return cookieTransactionId;
-//		}
 		return transactionId;
 	}
 	
@@ -172,5 +198,43 @@ public class DatanucleusFlowTransactionPersistence implements ISystemFlowPersist
 	@Override
 	public List<IFlowRunner> getFlowRunnersInstances() {
 		return flowRunnersInstances;
+	}
+	
+	@Override
+	public void putFlowRunner(final String nameOfFlow, final IFlowRunner flowRunner) {
+		int index = flowRunnersNames.indexOf(nameOfFlow);
+		if (index > -1) {
+			flowRunnersInstances.remove(index);
+			flowRunnersNames.remove(index);
+		}
+		flowRunnersNames.add(nameOfFlow);
+		flowRunnersInstances.add(flowRunner);
+	}
+	
+	@Override
+	public IFlowRunner getFlowRunner(final String nameOfFlow) {
+		int index = flowRunnersNames.indexOf(nameOfFlow);
+		if (index > -1) {
+			return flowRunnersInstances.get(index);
+		}
+		return null;
+	}
+	
+	@Override
+	public void removeFlowRunner(final String nameOfFlow) {
+		int index = flowRunnersNames.indexOf(nameOfFlow);
+		if (index > -1) {
+			flowRunnersInstances.remove(index);
+			flowRunnersNames.remove(index);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see chappy.interfaces.transactions.ITransaction#addTransformer(java.lang.String, java.lang.String, byte[])
+	 */
+	@Override
+	public void addTransformer(final String userName, final String fullName, final byte[] originalByteCode)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+		this.listOftransformers.add(fullName);
 	}
 }

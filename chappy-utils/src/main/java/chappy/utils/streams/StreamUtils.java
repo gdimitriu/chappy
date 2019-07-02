@@ -20,6 +20,7 @@
 package chappy.utils.streams;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,5 +100,9 @@ public final class StreamUtils {
 
 	        return os.toByteArray();
 	    }
+	}
+
+	public static InputStream toInputStreamFromString(final String str) {
+		return  new ByteArrayInputStream(str.getBytes());
 	}
 }

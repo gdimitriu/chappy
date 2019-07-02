@@ -19,6 +19,8 @@
  */
 package chappy.flows.transformers.staticflows;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,8 +34,13 @@ import chappy.configurations.transformers.ConfigurationProperties;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StepParameters {
+public class StepParameters implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@XmlElement(name = "mode")
 	private String mode = null;
 	

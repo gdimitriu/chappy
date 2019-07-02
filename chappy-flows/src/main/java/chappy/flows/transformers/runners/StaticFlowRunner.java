@@ -26,11 +26,11 @@ import java.util.List;
 
 import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -66,6 +66,7 @@ public class StaticFlowRunner implements IFlowRunner{
 	/**
 	 * 
 	 */
+	@NotPersistent
 	private static final long serialVersionUID = 1L;
 	/** flow configuration steps */
 	private FlowConfiguration configuration = null;
@@ -113,9 +114,6 @@ public class StaticFlowRunner implements IFlowRunner{
 	 */
 	@Override
 	public void createSteps() throws Exception {
-		if (stepList.isEmpty()) {
-			return;
-		}
 		StepConfiguration[] steps = configuration.getSteps();
 		for (StepConfiguration conf : steps) {
 			ITransformerStep step = TransformerProvider.getInstance().createStep(conf.getName());

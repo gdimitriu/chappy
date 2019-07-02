@@ -22,6 +22,9 @@
 				</dependencies>
 				<configuration>
 					<useSystemClassLoader>true</useSystemClassLoader>
+					<argLine>
+						--illegal-access-permit
+					</argLine>
 					<includes>
 						<include>**/chappy/tests/all/AllTests.java</include>
 					</includes>

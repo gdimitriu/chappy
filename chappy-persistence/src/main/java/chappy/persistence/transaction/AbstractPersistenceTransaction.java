@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.List;
 
 import chappy.interfaces.persistence.IPersistence;
-import chappy.interfaces.transactions.AbstractTransaction;
+import chappy.interfaces.transactions.ITransaction;
+import chappy.persistence.datanucleus.flow.DatanucleusFlowTransactionPersistence;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 import chappy.persistence.providers.PersistenceProvider;
 
@@ -31,7 +32,7 @@ import chappy.persistence.providers.PersistenceProvider;
  * @author Gabriel Dimitriu
  *
  */
-public abstract class AbstractPersistenceTransaction extends AbstractTransaction {
+public abstract class AbstractPersistenceTransaction extends DatanucleusFlowTransactionPersistence implements ITransaction {
 
 	
 	/** persistence implementation */

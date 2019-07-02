@@ -19,6 +19,7 @@
  */
 package chappy.policy.cookies;
 
+import javax.jdo.annotations.NotPersistent;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -33,6 +34,7 @@ public class CookieTransactionsToken extends CookieTransaction{
 	/**
 	 * 
 	 */
+	@NotPersistent
 	private static final long serialVersionUID = 1L;
 
 	/**

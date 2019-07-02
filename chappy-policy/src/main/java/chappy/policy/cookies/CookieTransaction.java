@@ -19,6 +19,8 @@
  */
 package chappy.policy.cookies;
 
+import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PersistenceCapable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -41,11 +43,13 @@ import chappy.policy.authentication.CredentialHolder;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@PersistenceCapable(detachable = "true")
 public abstract class CookieTransaction implements IChappyCookie {
 
 	/**
 	 * default but is overridden in the implementation class.
 	 */
+	@NotPersistent
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "credentials")
@@ -66,6 +70,7 @@ public abstract class CookieTransaction implements IChappyCookie {
 
 	@XmlElement(name = "servers")
 	/** servers available */
+	@NotPersistent
 	private ServerConnectionInfo[] servers = new ServerConnectionInfo[0];
 
 	/**

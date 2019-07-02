@@ -24,14 +24,14 @@ import java.io.IOException;
 import chappy.interfaces.cookies.IChappyCookie;
 import chappy.interfaces.persistence.ICustomStepPersistence;
 import chappy.interfaces.persistence.IPersistence;
-import chappy.interfaces.transactions.AbstractTransaction;
+import chappy.persistence.datanucleus.DatanucleusTransaction;
 import chappy.persistence.providers.CustomTransformerStorageProvider;
 
 /**
  * @author Gabriel Dimitriu
  *
  */
-public class ChappyTransaction extends AbstractTransaction {
+public class ChappyTransaction extends DatanucleusTransaction {
 
 	/**
 	 * 

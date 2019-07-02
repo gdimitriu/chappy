@@ -19,6 +19,8 @@
  */
 package chappy.configurations.transformers;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,8 +31,13 @@ import javax.xml.bind.annotation.XmlAttribute;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConfigurationProperties {
+public class ConfigurationProperties implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	@XmlAttribute(name = "property")
 	private String property = null;
 	@XmlAttribute(name = "value")

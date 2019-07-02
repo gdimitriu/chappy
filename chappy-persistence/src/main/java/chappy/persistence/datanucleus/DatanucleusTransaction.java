@@ -310,4 +310,15 @@ public class DatanucleusTransaction extends AbstractPersistenceTransaction {
 		super.putFlowRunner(nameOfFlow, flowRunner);
 		persist(null);
 	}
+	
+	@Override
+	public List<String> getListOfCustomTansformers() {
+		return getListOftransformers();
+	}
+
+
+	@Override
+	public void setListOfTansformers(final List<String> listOfTansformers) {
+		setListOftransformers(listOfTansformers);
+	}
 }
