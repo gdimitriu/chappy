@@ -56,7 +56,7 @@ Chappy uses the following libraries and technologies:
 - Datanucleus for persistence.
 - Staxon for json2xml and xml2json transformations.
 - Saxon for xml2xml mapping.
-- Apache Digester for running a flow in one step.
+- Apache Digester for running a flow in one step(this will be removed because is too old and java11 issues and flow is better than Digester).
 - JAXB for data-binding.
 - JUnit for unitests.
 - Maven for building.
