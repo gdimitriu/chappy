@@ -15,7 +15,7 @@
 		<staxon.version>9.7.0-14</staxon.version>
 		<asm.version>5.2</asm.version>
 		<chappy.version>1.0.0-SNAPSHOT</chappy.version>
-		<jackson.version>2.9.9</jackson.version>
+		<jackson.version>[2.9.10.1,)</jackson.version>
 		<activeMQArtemisJms.version>2.6.3</activeMQArtemisJms.version>
 	</properties>
 	<build>
