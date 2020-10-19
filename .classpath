@@ -5,11 +5,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-11-openjdk-11.0.3.7-1.windows.ojdkbuild.x86_64">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-configurations"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-flows"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chappy-interfaces"/>
